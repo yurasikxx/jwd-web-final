@@ -1,6 +1,9 @@
-package com.epam.jwd.app;
+/*package com.epam.jwd.app;
 
+import com.epam.jwd.dao.BetDao;
+import com.epam.jwd.dao.SqlThrowingFunction;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
+import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Competition;
@@ -9,7 +12,6 @@ import com.epam.jwd.model.Role;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
 import com.epam.jwd.pool.ConnectionPoolManager;
-import com.epam.jwd.pool.SqlThrowingFunction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -98,5 +100,32 @@ public class Main {
             return Collections.emptyList();
         }
     }
+}*/
 
-}
+package com.epam.jwd.app;
+
+import com.epam.jwd.dao.BetDao;
+import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
+import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.pool.ConnectionPoolManager;
+
+    public class Main {
+
+        public static void main(String[] args) {
+            System.out.println("start");
+
+            try {
+                ConnectionPoolManager.getInstance().init();
+                BetDao betDao = new BetDao();
+                betDao.findAll().forEach(System.out::println);
+                System.out.println(betDao.findById(2L));
+                System.out.println(betDao.findBetByName("Milan - PSG. Match winner: PSG"));
+                ConnectionPoolManager.getInstance().destroy();
+            } catch (CouldNotInitializeConnectionPoolException | DaoException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("end");
+        }
+
+    }
