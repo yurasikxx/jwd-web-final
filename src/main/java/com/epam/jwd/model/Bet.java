@@ -4,23 +4,23 @@ import java.util.Objects;
 
 public class Bet extends AbstractBaseEntity {
 
-    private final Competition competition;
-    private final BetType betType;
+    private final Integer betTotal;
+    private final Betslip betslip;
     private final Person person;
 
-    public Bet(Long id, Competition competition, BetType betType, Person person) {
+    public Bet(Long id, Integer betTotal, Betslip betslip, Person person) {
         super(id);
-        this.competition = competition;
-        this.betType = betType;
+        this.betTotal = betTotal;
+        this.betslip = betslip;
         this.person = person;
     }
 
-    public Competition getCompetition() {
-        return competition;
+    public Integer getBetTotal() {
+        return betTotal;
     }
 
-    public BetType getBetType() {
-        return betType;
+    public Betslip getBetslip() {
+        return betslip;
     }
 
     public Person getPerson() {
@@ -31,21 +31,21 @@ public class Bet extends AbstractBaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Bet bet = (Bet) o;
-        return Objects.equals(competition, bet.competition) && betType == bet.betType && Objects.equals(person, bet.person);
+        return Objects.equals(betTotal, bet.betTotal) && Objects.equals(betslip, bet.betslip) && Objects.equals(person, bet.person);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(competition, betType, person);
+        return Objects.hash(super.hashCode(), betTotal, betslip, person);
     }
 
     @Override
     public String toString() {
         return "Bet{" +
-                super.toString() +
-                ", competition=" + competition +
-                ", betType=" + betType +
+                "betTotal=" + betTotal +
+                ", betslip=" + betslip +
                 ", person=" + person +
                 '}';
     }

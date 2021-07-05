@@ -18,8 +18,8 @@ public class Main {
             ConnectionPoolManager.getInstance().init();
             BetDao betDao = new BetDao();
             betDao.findAll().forEach(System.out::println);
-            System.out.println(betDao.findById(2L));
-            System.out.println(betDao.findBetByName("Milan - PSG. Match winner: PSG"));
+            System.out.println(betDao.findById(5L));
+            System.out.println(betDao.findBetByTotal(100));
             ConnectionPoolManager.getInstance().destroy();
         } catch (CouldNotInitializeConnectionPoolException | DaoException | InterruptedException e) {
             e.printStackTrace();

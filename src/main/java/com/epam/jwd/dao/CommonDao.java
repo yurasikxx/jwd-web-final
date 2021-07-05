@@ -17,27 +17,31 @@ import java.util.Optional;
 
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
-    private static final String FIND_ALL_SQL_QUERY = "select b.id, b_name, c.id, c_name, s.id,\n" +
-            " t_home.id, t_home.t_name, t_home.t_country, t_home.t_rate,\n" +
+    private static final String FIND_ALL_SQL_QUERY = "select b.id, b.bet_total, bs.id, bs.coefficient, c.id, s.s_name,\n" +
+            " t_home.id, t_home.t_name, t_home.t_country, t_home.t_rate, \n" +
             " t_away.id, t_away.t_name, t_away.t_country, t_away.t_rate,\n" +
-            " bt.id, p.id, p_name, p_login, p_password, pr_id from %s b\n" +
-            "join competition c on b.c_id = c.id\n" +
+            " bt_name, p.id, p.p_login, p.p_password, pr.pr_name from bet b\n" +
+            "join betslip bs on b.bs_id = bs.id\n" +
+            "join competition c on bs.c_id = c.id\n" +
             "join sport s on c.s_id = s.id\n" +
             "join team t_home on c.t_home_id = t_home.id\n" +
             "join team t_away on c.t_away_id = t_away.id\n" +
-            "join bet_type bt on b.bt_id = bt.id\n" +
-            "join person p on b.p_id = p.id";
-    private static final String FIND_BY_ID_SQL_QUERY = "select b.id, b_name, c.id, c_name, s.id,\n" +
-            " t_home.id, t_home.t_name, t_home.t_country, t_home.t_rate,\n" +
-            " t_away.id, t_away.t_name, t_away.t_country, t_away.t_rate,\n" +
-            " bt.id, p.id, p_name, p_login, p_password, pr_id from %s b\n" +
-            "join competition c on b.c_id = c.id\n" +
-            "join sport s on c.s_id = s.id\n" +
-            "join team t_home on c.t_home_id = t_home.id\n" +
-            "join team t_away on c.t_away_id = t_away.id\n" +
-            "join bet_type bt on b.bt_id = bt.id\n" +
+            "join bet_type bt on bs.bt_id = bt.id\n" +
             "join person p on b.p_id = p.id\n" +
-            "where b.id = ?";
+            "join person_role pr on p.pr_id = pr.id;";
+    private static final String FIND_BY_ID_SQL_QUERY = "select b.id, b.bet_total, bs.id, bs.coefficient, c.id, s.s_name,\n" +
+            " t_home.id, t_home.t_name, t_home.t_country, t_home.t_rate, \n" +
+            " t_away.id, t_away.t_name, t_away.t_country, t_away.t_rate,\n" +
+            " bt_name, p.id, p.p_login, p.p_password, pr.pr_name from bet b\n" +
+            "join betslip bs on b.bs_id = bs.id\n" +
+            "join competition c on bs.c_id = c.id\n" +
+            "join sport s on c.s_id = s.id\n" +
+            "join team t_home on c.t_home_id = t_home.id\n" +
+            "join team t_away on c.t_away_id = t_away.id\n" +
+            "join bet_type bt on bs.bt_id = bt.id\n" +
+            "join person p on b.p_id = p.id\n" +
+            "join person_role pr on p.pr_id = pr.id\n" +
+            "where b.id = ?;";
 
     private final String tableName;
     private final String findAllSql;

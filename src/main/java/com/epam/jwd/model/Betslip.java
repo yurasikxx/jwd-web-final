@@ -4,18 +4,18 @@ import java.util.Objects;
 
 public class Betslip extends AbstractBaseEntity {
 
-    private final Integer coefficient;
+    private final Double coefficient;
     private final Competition competition;
     private final BetType betType;
 
-    public Betslip(Long id, Integer coefficient, Competition competition, BetType betType) {
+    public Betslip(Long id, Double coefficient, Competition competition, BetType betType) {
         super(id);
         this.coefficient = coefficient;
         this.competition = competition;
         this.betType = betType;
     }
 
-    public Integer getCoefficient() {
+    public Double getCoefficient() {
         return coefficient;
     }
 
