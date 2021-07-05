@@ -19,7 +19,6 @@ public enum Sport implements BaseEntity {
         return id;
     }
 
-    @Override
     public String getName() {
         return name;
     }

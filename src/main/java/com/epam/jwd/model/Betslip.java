@@ -2,17 +2,21 @@ package com.epam.jwd.model;
 
 import java.util.Objects;
 
-public class Bet extends AbstractBaseEntity {
+public class Betslip extends AbstractBaseEntity {
 
+    private final Integer coefficient;
     private final Competition competition;
     private final BetType betType;
-    private final Person person;
 
-    public Bet(Long id, Competition competition, BetType betType, Person person) {
+    public Betslip(Long id, Integer coefficient, Competition competition, BetType betType) {
         super(id);
+        this.coefficient = coefficient;
         this.competition = competition;
         this.betType = betType;
-        this.person = person;
+    }
+
+    public Integer getCoefficient() {
+        return coefficient;
     }
 
     public Competition getCompetition() {
@@ -23,30 +27,26 @@ public class Bet extends AbstractBaseEntity {
         return betType;
     }
 
-    public Person getPerson() {
-        return person;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bet bet = (Bet) o;
-        return Objects.equals(competition, bet.competition) && betType == bet.betType && Objects.equals(person, bet.person);
+        if (!super.equals(o)) return false;
+        Betslip betslip = (Betslip) o;
+        return Objects.equals(coefficient, betslip.coefficient) && Objects.equals(competition, betslip.competition) && betType == betslip.betType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(competition, betType, person);
+        return Objects.hash(super.hashCode(), coefficient, competition, betType);
     }
 
     @Override
     public String toString() {
-        return "Bet{" +
-                super.toString() +
+        return "Betslip{" +
+                "coefficient=" + coefficient +
                 ", competition=" + competition +
                 ", betType=" + betType +
-                ", person=" + person +
                 '}';
     }
 

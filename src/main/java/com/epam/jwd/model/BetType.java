@@ -6,7 +6,8 @@ public enum BetType implements BaseEntity {
     AWAY_TEAM_WIN(2L, "Away team win"),
     DRAW(3L, "Draw"),
     HOME_TEAM_WILL_NOT_LOSE(4L, "Home team won't lose"),
-    AWAY_TEAM_WILL_NOT_LOSE(5L, "Away team won't lose");
+    AWAY_TEAM_WILL_NOT_LOSE(5L, "Away team won't lose"),
+    NO_DRAW(6L, "No draw");
 
     private final Long id;
     private final String name;
@@ -21,7 +22,6 @@ public enum BetType implements BaseEntity {
         return id;
     }
 
-    @Override
     public String getName() {
         return name;
     }

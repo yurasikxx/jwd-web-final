@@ -8,8 +8,8 @@ public class Competition extends AbstractBaseEntity {
     private final Team home;
     private final Team away;
 
-    public Competition(Long id, String name, Sport sport, Team home, Team away) {
-        super(id, name);
+    public Competition(Long id, Sport sport, Team home, Team away) {
+        super(id);
         this.sport = sport;
         this.home = home;
         this.away = away;
@@ -44,8 +44,7 @@ public class Competition extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Competition{" +
-                super.toString() +
-                ", sport=" + sport +
+                "sport=" + sport +
                 ", home=" + home +
                 ", away=" + away +
                 '}';

@@ -8,8 +8,8 @@ public class Person extends AbstractBaseEntity {
     private final String password;
     private final Role role;
 
-    public Person(Long id, String name, String login, String password, Role role) {
-        super(id, name);
+    public Person(Long id, String login, String password, Role role) {
+        super(id);
         this.login = login;
         this.password = password;
         this.role = role;
@@ -31,20 +31,20 @@ public class Person extends AbstractBaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Person person = (Person) o;
         return Objects.equals(login, person.login) && Objects.equals(password, person.password) && role == person.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(login, password, role);
+        return Objects.hash(super.hashCode(), login, password, role);
     }
 
     @Override
     public String toString() {
         return "Person{" +
-                super.toString() +
-                ", login='" + login + '\'' +
+                "login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 '}';

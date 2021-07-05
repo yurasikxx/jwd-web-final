@@ -5,11 +5,9 @@ import java.util.Objects;
 public abstract class AbstractBaseEntity implements BaseEntity {
 
     private final Long id;
-    private final String name;
 
-    public AbstractBaseEntity(Long id, String name) {
+    public AbstractBaseEntity(Long id) {
         this.id = id;
-        this.name = name;
     }
 
     @Override
@@ -18,27 +16,23 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractBaseEntity that = (AbstractBaseEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "id=" + id +
-                ", name='" + name + '\'';
+        return "AbstractBaseEntity{" +
+                "id=" + id +
+                '}';
     }
 
 }
