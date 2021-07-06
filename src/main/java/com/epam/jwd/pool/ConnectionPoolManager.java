@@ -1,12 +1,18 @@
 package com.epam.jwd.pool;
 
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,9 +21,33 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPoolManager implements ConnectionPool {
 
-    private static final int INIT_CONNECTIONS_AMOUNT = 8;
-    private static final int MAX_CONNECTIONS_AMOUNT = 32;
-    private static final int CONNECTIONS_GROW_FACTOR = 4;
+    private static final Logger LOGGER = LogManager.getLogger(ConnectionPoolManager.class);
+    private static final Properties properties = new Properties();
+    private static final String FAILED_TO_OPEN_CONNECTION_MSG = "failed to open connection";
+    private static final String DRIVER_REGISTRATION_FAILED_MSG = "driver registration failed";
+    private static final String DATABASE_PROPERTIES_FILE_PATH = "." + File.separator + "src" + File.separator + "main" +
+            File.separator + "resources" + File.separator + "database.properties";
+    private static final String DATABASE_URL;
+    private static final String DATABASE_USERNAME;
+    private static final String DATABASE_PASSWORD;
+    private static final int NUMBER_OF_ADDED_CONNECTIONS;
+    private static final int INIT_POOL_SIZE;
+    private static final int MAX_POOL_SIZE;
+
+    static {
+        try {
+            properties.load(new FileReader(DATABASE_PROPERTIES_FILE_PATH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        DATABASE_URL = properties.getProperty("db.url");
+        DATABASE_USERNAME = properties.getProperty("user");
+        DATABASE_PASSWORD = properties.getProperty("password");
+        NUMBER_OF_ADDED_CONNECTIONS = Integer.parseInt(properties.getProperty("numberOfAddedConnections"));
+        INIT_POOL_SIZE = Integer.parseInt(properties.getProperty("initPoolSize"));
+        MAX_POOL_SIZE = Integer.parseInt(properties.getProperty("maxPoolSize"));
+    }
 
     private final AtomicBoolean initialized;
     private final AtomicInteger connectionsOpened;
@@ -56,19 +86,19 @@ public class ConnectionPoolManager implements ConnectionPool {
             if (initialized.compareAndSet(false, true)) {
                 registerDrivers();
                 try {
-                    for (int i = 0; i < INIT_CONNECTIONS_AMOUNT; i++) {
-                        final Connection connection = DriverManager
-                                .getConnection("jdbc:mysql://localhost:3306/totalizator",
-                                        "root", "root");
+                    for (int i = 0; i < INIT_POOL_SIZE; i++) {
+                        final Connection connection = DriverManager.getConnection(DATABASE_URL,
+                                DATABASE_USERNAME,
+                                DATABASE_PASSWORD);
                         final ProxyConnection proxyConnection = new ProxyConnection(connection);
                         idle.add(proxyConnection);
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage());
                     initialized.set(false);
-                    throw new CouldNotInitializeConnectionPoolException("failed to open connection", e);
+                    throw new CouldNotInitializeConnectionPoolException(FAILED_TO_OPEN_CONNECTION_MSG, e);
                 }
-                connectionsOpened.set(INIT_CONNECTIONS_AMOUNT);
+                connectionsOpened.set(INIT_POOL_SIZE);
             }
         } finally {
             init.unlock();
@@ -77,19 +107,19 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     @Override
     public Connection takeConnection() throws SQLException, InterruptedException {
+        final int currentOpenedConnections = connectionsOpened.get();
         ProxyConnection connection = null;
 
         try {
             connection = idle.take();
             busy.add(connection);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
-/*        final int currentOpenedConnections = connectionsOpened.get();
-        if (idle.size() <= currentOpenedConnections * 0.25 && currentOpenedConnections < MAX_CONNECTIONS_AMOUNT) {
-            // grow connection pool size
-        }*/
+        if (idle.size() <= currentOpenedConnections * 0.25 && currentOpenedConnections < MAX_POOL_SIZE - 4) {
+            addConnectionToPool();
+        }
 
         return connection;
     }
@@ -102,7 +132,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                     idle.put((ProxyConnection) connection);
                     busy.remove(connection);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -117,7 +147,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                     try {
                         connection.realClose();
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        LOGGER.error(e.getMessage());
                     }
                 }
 
@@ -125,9 +155,10 @@ public class ConnectionPoolManager implements ConnectionPool {
                     try {
                         connection.realClose();
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        LOGGER.error(e.getMessage());
                     }
                 }
+
                 deregisterDrivers();
             }
         } finally {
@@ -136,28 +167,38 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
-        System.out.println("sql drivers registration start...");
         try {
-            DriverManager.registerDriver(DriverManager.getDriver("jdbc:mysql://localhost:3306/totalizator"));
-            System.out.println("registration successful");
+            DriverManager.registerDriver(DriverManager.getDriver(DATABASE_URL));
         } catch (SQLException e) {
-            System.out.println("registration unsuccessful");
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             initialized.set(false);
-            throw new CouldNotInitializeConnectionPoolException("driver registration failed", e);
+            throw new CouldNotInitializeConnectionPoolException(DRIVER_REGISTRATION_FAILED_MSG, e);
         }
     }
 
     private void deregisterDrivers() {
-        System.out.println("sql drivers unregistering start...");
         final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             try {
                 DriverManager.deregisterDriver(drivers.nextElement());
             } catch (SQLException e) {
-                e.printStackTrace();
-                System.out.println("unregistering drivers failed");
+                LOGGER.error(e.getMessage());
             }
+        }
+    }
+
+    private void addConnectionToPool() {
+        try {
+            for (int i = 0; i < NUMBER_OF_ADDED_CONNECTIONS; i++) {
+                final Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
+                final ProxyConnection proxyConnection = new ProxyConnection(connection);
+                idle.add(proxyConnection);
+            }
+
+            final int currentOpenedConnections = connectionsOpened.get() + NUMBER_OF_ADDED_CONNECTIONS;
+            connectionsOpened.set(currentOpenedConnections);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
         }
     }
 
