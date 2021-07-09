@@ -4,23 +4,23 @@ import java.util.Objects;
 
 public class Bet extends AbstractBaseEntity {
 
-    private final Integer betTotal;
     private final Betslip betslip;
+    private final Integer betTotal;
     private final Person person;
 
-    public Bet(Long id, Integer betTotal, Betslip betslip, Person person) {
+    public Bet(Long id, Betslip betslip, Integer betTotal, Person person) {
         super(id);
-        this.betTotal = betTotal;
         this.betslip = betslip;
+        this.betTotal = betTotal;
         this.person = person;
-    }
-
-    public Integer getBetTotal() {
-        return betTotal;
     }
 
     public Betslip getBetslip() {
         return betslip;
+    }
+
+    public Integer getBetTotal() {
+        return betTotal;
     }
 
     public Person getPerson() {
@@ -33,19 +33,19 @@ public class Bet extends AbstractBaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Bet bet = (Bet) o;
-        return Objects.equals(betTotal, bet.betTotal) && Objects.equals(betslip, bet.betslip) && Objects.equals(person, bet.person);
+        return Objects.equals(betslip, bet.betslip) && Objects.equals(betTotal, bet.betTotal) && Objects.equals(person, bet.person);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), betTotal, betslip, person);
+        return Objects.hash(super.hashCode(), betslip, betTotal, person);
     }
 
     @Override
     public String toString() {
         return "Bet{" +
-                "betTotal=" + betTotal +
-                ", betslip=" + betslip +
+                "betslip=" + betslip +
+                ", betTotal=" + betTotal +
                 ", person=" + person +
                 '}';
     }
