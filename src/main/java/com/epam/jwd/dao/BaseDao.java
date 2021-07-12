@@ -8,14 +8,14 @@ import java.util.Optional;
 
 public interface BaseDao<T extends BaseEntity> {
 
-    T create(T entity) throws DaoException;
+    void save(String... values) throws DaoException;
 
     List<T> findAll() throws DaoException;
 
     Optional<T> findById(Long id) throws DaoException;
 
-    T update(T entity) throws DaoException;
+    void update(String... values) throws DaoException;
 
-    void delete(T entity) throws DaoException;
+    void delete(Long id) throws DaoException;
 
 }

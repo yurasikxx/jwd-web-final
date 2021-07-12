@@ -13,6 +13,7 @@ import java.util.List;
 
 public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
+    private static final String SELECT_ALL_SQL_QUERY = "select bs.id, bs.c_id, bs.bt_id, bs.coefficient from %s;";
     private static final String FIND_ALL_SQL_QUERY = "select bs.id, bs.c_id, c.s_id, s.s_name, \n" +
             "c.t_home_id, th.t_name, th.t_country, th.t_rate, \n" +
             "c.t_away_id, ta.t_name, ta.t_country, ta.t_rate,\n" +
@@ -46,14 +47,38 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private static final String AWAY_TEAM_NAME_COLUMN = "ta.t_name";
     private static final String AWAY_TEAM_COUNTRY_COLUMN = "ta.t_country";
     private static final String AWAY_TEAM_RATE_COLUMN = "ta.t_rate";
+    private static final String BET_TYPE_ID_COLUMN = "bt_id";
     private static final String BET_TYPE_NAME_COLUMN = "bt_name";
     private static final String BETSLIP_COEFFICIENT_COLUMN = "coefficient";
 
     private final String findByCoefficientSql;
 
     public BetslipDao() {
-        super(TABLE_NAME, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BETSLIP_ID_COLUMN);
+        super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BETSLIP_ID_COLUMN);
         this.findByCoefficientSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BETSLIP_COEFFICIENT_COLUMN);
+    }
+
+    @Override
+    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[0]));
+        resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[1]));
+        resultSet.updateInt(BET_TYPE_ID_COLUMN, Integer.parseInt(values[2]));
+        resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, Double.parseDouble(values[3]));
+        resultSet.insertRow();
+        resultSet.moveToCurrentRow();
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+        long id = resultSet.getLong(1);
+
+        if (id == Long.parseLong(values[0])) {
+            resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[1]));
+            resultSet.updateInt(BET_TYPE_ID_COLUMN, Integer.parseInt(values[2]));
+            resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, Double.parseDouble(values[3]));
+            resultSet.updateRow();
+        }
     }
 
     @Override

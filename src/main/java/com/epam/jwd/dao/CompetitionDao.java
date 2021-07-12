@@ -11,6 +11,7 @@ import java.util.List;
 
 public class CompetitionDao extends CommonDao<Competition> implements CompetitionBaseDao {
 
+    private static final String SELECT_ALL_SQL_QUERY = "select c.id, c.s_id, t_home_id, t_away_id from %s;";
     private static final String FIND_ALL_SQL_QUERY = "select c.id, c.s_id, s.s_name, \n" +
             "c.t_home_id, th.t_name, th.t_country, th.t_rate, \n" +
             "c.t_away_id, ta.t_name, ta.t_country, ta.t_rate\n" +
@@ -42,8 +43,31 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     private final String findBySportSql;
 
     public CompetitionDao() {
-        super(TABLE_NAME, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, COMPETITION_ID_COLUMN);
+        super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, COMPETITION_ID_COLUMN);
         this.findBySportSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, SPORT_NAME_COLUMN);
+    }
+
+    @Override
+    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[0]));
+        resultSet.updateInt(SPORT_ID_COLUMN, Integer.parseInt(values[1]));
+        resultSet.updateInt(HOME_TEAM_ID_COLUMN, Integer.parseInt(values[2]));
+        resultSet.updateInt(AWAY_TEAM_ID_COLUMN, Integer.parseInt(values[3]));
+        resultSet.insertRow();
+        resultSet.moveToCurrentRow();
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+        long id = resultSet.getLong(1);
+
+        if (id == Long.parseLong(values[0])) {
+            resultSet.updateInt(SPORT_ID_COLUMN, Integer.parseInt(values[1]));
+            resultSet.updateInt(HOME_TEAM_ID_COLUMN, Integer.parseInt(values[2]));
+            resultSet.updateInt(AWAY_TEAM_ID_COLUMN, Integer.parseInt(values[3]));
+            resultSet.updateRow();
+        }
     }
 
     @Override

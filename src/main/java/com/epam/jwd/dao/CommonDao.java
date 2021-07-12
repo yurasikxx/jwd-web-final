@@ -3,6 +3,8 @@ package com.epam.jwd.dao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.model.BaseEntity;
 import com.epam.jwd.pool.ConnectionPoolManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,17 +19,29 @@ import java.util.Optional;
 
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
+    private static final Logger LOGGER = LogManager.getLogger(CommonDao.class);
+
+    private final String selectAllSql;
     private final String findAllSql;
     private final String findByIdSql;
 
-    public CommonDao(String tableName, String findAllSql, String findByFieldSql, String idColumnName) {
+    public CommonDao(String tableName, String selectAllSql, String findAllSql, String findByFieldSql, String idColumnName) {
+        this.selectAllSql = String.format(selectAllSql, tableName);
         this.findAllSql = String.format(findAllSql, tableName);
         this.findByIdSql = String.format(findByFieldSql, tableName, idColumnName);
     }
 
     @Override
-    public T create(T entity) throws DaoException {
-        return null;
+    public void save(String... values) throws DaoException {
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
+             final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_UPDATABLE)) {
+            try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
+                saveResultSet(resultSet, values);
+            }
+        } catch (SQLException | InterruptedException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @Override
@@ -41,19 +55,41 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
     }
 
     @Override
-    public T update(T entity) throws DaoException {
-        return null;
+    public void update(String... values) throws DaoException {
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
+             final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_UPDATABLE)) {
+            try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
+                while (resultSet.next()) {
+                    updateResultSet(resultSet, values);
+                }
+            }
+        } catch (SQLException | InterruptedException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @Override
-    public void delete(T entity) throws DaoException {
-
+    public void delete(Long id) throws DaoException {
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
+             final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                     ResultSet.CONCUR_UPDATABLE)) {
+            try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
+                while (resultSet.next()) {
+                    long localId = resultSet.getLong(1);
+                    if (localId == id) {
+                        resultSet.deleteRow();
+                    }
+                }
+            }
+        } catch (SQLException | InterruptedException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
-    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer,
-                                           String sql) {
-        try (final Connection conn = ConnectionPoolManager.getInstance().takeConnection();
-             final PreparedStatement statement = conn.prepareStatement(sql)) {
+    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer, String sql) {
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
+             final PreparedStatement statement = connection.prepareStatement(sql)) {
             preparationConsumer.accept(statement);
             try (final ResultSet resultSet = statement.executeQuery()) {
                 List<T> entities = new ArrayList<>();
@@ -64,14 +100,14 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 return entities;
             }
         } catch (SQLException | InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return Collections.emptyList();
         }
     }
 
     protected List<T> findEntities(String sql) {
-        try (final Connection conn = ConnectionPoolManager.getInstance().takeConnection();
-             final Statement statement = conn.createStatement()) {
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
+             final Statement statement = connection.createStatement()) {
             try (final ResultSet resultSet = statement.executeQuery(sql)) {
                 List<T> entities = new ArrayList<>();
                 while (resultSet.next()) {
@@ -81,7 +117,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 return entities;
             }
         } catch (SQLException | InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -91,6 +127,10 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 .filter(Objects::nonNull)
                 .findFirst();
     }
+
+    protected abstract void saveResultSet(ResultSet resultSet, String... values) throws SQLException;
+
+    protected abstract void updateResultSet(ResultSet resultSet, String... values) throws SQLException;
 
     protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
 

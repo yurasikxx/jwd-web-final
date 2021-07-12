@@ -16,6 +16,7 @@ import java.util.List;
 
 public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
+    private final static String SELECT_ALL_SQL_QUERY = "select b.id, b.bs_id, b.bet_total, b.p_id from %s;";
     private final static String FIND_ALL_BET_SQL_QUERY = "select b.id, bs.c_id, c.s_id, s.s_name, \n" +
             "c.t_home_id, th.t_name, th.t_country, th.t_rate, \n" +
             "c.t_away_id, ta.t_name, ta.t_country, ta.t_rate,\n" +
@@ -69,8 +70,31 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private final String findByTotalSql;
 
     public BetDao() {
-        super(TABLE_NAME, FIND_ALL_BET_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_ID_COLUMN);
+        super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_BET_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_ID_COLUMN);
         this.findByTotalSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BET_TOTAL_COLUMN);
+    }
+
+    @Override
+    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateInt(BET_ID_COLUMN, Integer.parseInt(values[0]));
+        resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[1]));
+        resultSet.updateInt(BET_TOTAL_COLUMN, Integer.parseInt(values[2]));
+        resultSet.updateInt(PERSON_ID_COLUMN, Integer.parseInt(values[3]));
+        resultSet.insertRow();
+        resultSet.moveToCurrentRow();
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+        long id = resultSet.getLong(1);
+
+        if (id == Long.parseLong(values[0])) {
+            resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[1]));
+            resultSet.updateInt(BET_TOTAL_COLUMN, Integer.parseInt(values[2]));
+            resultSet.updateInt(PERSON_ID_COLUMN, Integer.parseInt(values[3]));
+            resultSet.updateRow();
+        }
     }
 
     @Override
