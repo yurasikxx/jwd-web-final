@@ -40,32 +40,45 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     private static final String AWAY_TEAM_COUNTRY_COLUMN = "ta.t_country";
     private static final String AWAY_TEAM_RATE_COLUMN = "ta.t_rate";
 
+    private static volatile CompetitionDao instance;
     private final String findBySportSql;
 
-    public CompetitionDao() {
+    public static CompetitionDao getInstance() {
+        if (instance == null) {
+            synchronized (CompetitionDao.class) {
+                if (instance == null) {
+                    instance = new CompetitionDao();
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    private CompetitionDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, COMPETITION_ID_COLUMN);
         this.findBySportSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, SPORT_NAME_COLUMN);
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void saveResultSet(ResultSet resultSet, Competition competition) throws SQLException {
         resultSet.moveToInsertRow();
-        resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[0]));
-        resultSet.updateInt(SPORT_ID_COLUMN, Integer.parseInt(values[1]));
-        resultSet.updateInt(HOME_TEAM_ID_COLUMN, Integer.parseInt(values[2]));
-        resultSet.updateInt(AWAY_TEAM_ID_COLUMN, Integer.parseInt(values[3]));
+        resultSet.updateLong(COMPETITION_ID_COLUMN, competition.getId());
+        resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
+        resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
+        resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
         resultSet.insertRow();
         resultSet.moveToCurrentRow();
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void updateResultSet(ResultSet resultSet, Competition competition) throws SQLException {
         long id = resultSet.getLong(1);
 
-        if (id == Long.parseLong(values[0])) {
-            resultSet.updateInt(SPORT_ID_COLUMN, Integer.parseInt(values[1]));
-            resultSet.updateInt(HOME_TEAM_ID_COLUMN, Integer.parseInt(values[2]));
-            resultSet.updateInt(AWAY_TEAM_ID_COLUMN, Integer.parseInt(values[3]));
+        if (id == competition.getId()) {
+            resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
+            resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
+            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
             resultSet.updateRow();
         }
     }

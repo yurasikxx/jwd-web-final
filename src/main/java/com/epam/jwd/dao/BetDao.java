@@ -67,32 +67,45 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private static final String PERSON_PASSWORD_COLUMN = "p_password";
     private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
 
+    private static volatile BetDao instance;
     private final String findByTotalSql;
 
-    public BetDao() {
+    public static BetDao getInstance() {
+        if (instance == null) {
+            synchronized (BetDao.class) {
+                if (instance == null) {
+                    instance = new BetDao();
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    private BetDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_BET_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_ID_COLUMN);
         this.findByTotalSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BET_TOTAL_COLUMN);
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void saveResultSet(ResultSet resultSet, Bet bet) throws SQLException {
         resultSet.moveToInsertRow();
-        resultSet.updateInt(BET_ID_COLUMN, Integer.parseInt(values[0]));
-        resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[1]));
-        resultSet.updateInt(BET_TOTAL_COLUMN, Integer.parseInt(values[2]));
-        resultSet.updateInt(PERSON_ID_COLUMN, Integer.parseInt(values[3]));
+        resultSet.updateLong(BET_ID_COLUMN, bet.getId());
+        resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
+        resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
+        resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
         resultSet.insertRow();
         resultSet.moveToCurrentRow();
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void updateResultSet(ResultSet resultSet, Bet bet) throws SQLException {
         long id = resultSet.getLong(1);
 
-        if (id == Long.parseLong(values[0])) {
-            resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[1]));
-            resultSet.updateInt(BET_TOTAL_COLUMN, Integer.parseInt(values[2]));
-            resultSet.updateInt(PERSON_ID_COLUMN, Integer.parseInt(values[3]));
+        if (id == bet.getId()) {
+            resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
+            resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
+            resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
             resultSet.updateRow();
         }
     }

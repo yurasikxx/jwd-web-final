@@ -51,32 +51,45 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private static final String BET_TYPE_NAME_COLUMN = "bt_name";
     private static final String BETSLIP_COEFFICIENT_COLUMN = "coefficient";
 
+    private static volatile BetslipDao instance;
     private final String findByCoefficientSql;
 
-    public BetslipDao() {
+    public static BetslipDao getInstance() {
+        if (instance == null) {
+            synchronized (BetslipDao.class) {
+                if (instance == null) {
+                    instance = new BetslipDao();
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    private BetslipDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BETSLIP_ID_COLUMN);
         this.findByCoefficientSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BETSLIP_COEFFICIENT_COLUMN);
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void saveResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
         resultSet.moveToInsertRow();
-        resultSet.updateInt(BETSLIP_ID_COLUMN, Integer.parseInt(values[0]));
-        resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[1]));
-        resultSet.updateInt(BET_TYPE_ID_COLUMN, Integer.parseInt(values[2]));
-        resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, Double.parseDouble(values[3]));
+        resultSet.updateLong(BETSLIP_ID_COLUMN, betslip.getId());
+        resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
+        resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
+        resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
         resultSet.insertRow();
         resultSet.moveToCurrentRow();
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, String... values) throws SQLException {
+    protected void updateResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
         long id = resultSet.getLong(1);
 
-        if (id == Long.parseLong(values[0])) {
-            resultSet.updateInt(COMPETITION_ID_COLUMN, Integer.parseInt(values[1]));
-            resultSet.updateInt(BET_TYPE_ID_COLUMN, Integer.parseInt(values[2]));
-            resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, Double.parseDouble(values[3]));
+        if (id == betslip.getId()) {
+            resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
+            resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
+            resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
             resultSet.updateRow();
         }
     }

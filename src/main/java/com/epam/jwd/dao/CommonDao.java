@@ -20,6 +20,10 @@ import java.util.Optional;
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     private static final Logger LOGGER = LogManager.getLogger(CommonDao.class);
+    private static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";
+    private static final String FAILED_TO_FIND_PREPARED_ENTITIES_MSG = "Failed to find prepared entities";
+    private static final String FAILED_TO_UPDATE_ENTITY_MSG = "Failed to update entity";
+    private static final String FAILED_TO_DELETE_ENTITY_MSG = "Failed to delete entity";
 
     private final String selectAllSql;
     private final String findAllSql;
@@ -32,20 +36,23 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
     }
 
     @Override
-    public void save(String... values) throws DaoException {
+    public T save(T entity) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
-                saveResultSet(resultSet, values);
+                saveResultSet(resultSet, entity);
             }
         } catch (SQLException | InterruptedException e) {
             LOGGER.error(e.getMessage());
+            throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
+
+        return entity;
     }
 
     @Override
-    public List<T> findAll() throws DaoException {
+    public List<T> findAll() {
         return findEntities(findAllSql);
     }
 
@@ -55,18 +62,21 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
     }
 
     @Override
-    public void update(String... values) throws DaoException {
+    public T update(T entity) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
-                    updateResultSet(resultSet, values);
+                    updateResultSet(resultSet, entity);
                 }
             }
         } catch (SQLException | InterruptedException e) {
             LOGGER.error(e.getMessage());
+            throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
+
+        return entity;
     }
 
     @Override
@@ -84,10 +94,11 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             }
         } catch (SQLException | InterruptedException e) {
             LOGGER.error(e.getMessage());
+            throw new DaoException(FAILED_TO_DELETE_ENTITY_MSG);
         }
     }
 
-    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer, String sql) {
+    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer, String sql) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final PreparedStatement statement = connection.prepareStatement(sql)) {
             preparationConsumer.accept(statement);
@@ -101,7 +112,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             }
         } catch (SQLException | InterruptedException e) {
             LOGGER.error(e.getMessage());
-            return Collections.emptyList();
+            throw new DaoException(FAILED_TO_FIND_PREPARED_ENTITIES_MSG);
         }
     }
 
@@ -128,9 +139,9 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 .findFirst();
     }
 
-    protected abstract void saveResultSet(ResultSet resultSet, String... values) throws SQLException;
+    protected abstract void saveResultSet(ResultSet resultSet, T entity) throws SQLException;
 
-    protected abstract void updateResultSet(ResultSet resultSet, String... values) throws SQLException;
+    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws SQLException;
 
     protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
 

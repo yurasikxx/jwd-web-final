@@ -1,20 +1,18 @@
-package com.epam.jwd.dao;
+package com.epam.jwd.service;
 
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.BaseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface BaseDao<T extends BaseEntity> {
+public interface BaseService<T extends BaseEntity> {
 
     T save(T entity) throws DaoException;
 
     List<T> findAll();
 
-    Optional<T> findById(Long id) throws DaoException;
-
-    T update(T entity) throws DaoException;
+    T findById(Long id) throws ServiceException, DaoException;
 
     void delete(Long id) throws DaoException;
 
