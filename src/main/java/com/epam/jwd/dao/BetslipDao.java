@@ -10,6 +10,7 @@ import com.epam.jwd.model.Team;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
@@ -73,8 +74,11 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
+        AtomicLong betslipAmount = new AtomicLong(findAll().size());
+        long id = betslipAmount.incrementAndGet();
+
         resultSet.moveToInsertRow();
-        resultSet.updateLong(BETSLIP_ID_COLUMN, betslip.getId());
+        resultSet.updateLong(BETSLIP_ID_COLUMN, id);
         resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
         resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
         resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());

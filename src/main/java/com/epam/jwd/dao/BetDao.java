@@ -13,6 +13,7 @@ import com.epam.jwd.model.Team;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
@@ -89,8 +90,11 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Bet bet) throws SQLException {
+        AtomicLong betAmount = new AtomicLong(findAll().size());
+        long id = betAmount.incrementAndGet();
+
         resultSet.moveToInsertRow();
-        resultSet.updateLong(BET_ID_COLUMN, bet.getId());
+        resultSet.updateLong(BET_ID_COLUMN, id);
         resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
         resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
         resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());

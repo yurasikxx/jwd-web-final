@@ -8,6 +8,7 @@ import com.epam.jwd.model.Team;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CompetitionDao extends CommonDao<Competition> implements CompetitionBaseDao {
 
@@ -62,8 +63,11 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Competition competition) throws SQLException {
+        AtomicLong competitionAmount = new AtomicLong(findAll().size());
+        long id = competitionAmount.incrementAndGet();
+
         resultSet.moveToInsertRow();
-        resultSet.updateLong(COMPETITION_ID_COLUMN, competition.getId());
+        resultSet.updateLong(COMPETITION_ID_COLUMN, id);
         resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
         resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
         resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());

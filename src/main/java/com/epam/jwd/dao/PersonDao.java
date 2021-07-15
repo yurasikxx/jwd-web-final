@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
@@ -50,8 +51,11 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Person person) throws SQLException {
+        AtomicLong personAmount = new AtomicLong(findAll().size());
+        long id = personAmount.incrementAndGet();
+
         resultSet.moveToInsertRow();
-        resultSet.updateLong(PERSON_ID_COLUMN, person.getId());
+        resultSet.updateLong(PERSON_ID_COLUMN, id);
         resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
         resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
         resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());

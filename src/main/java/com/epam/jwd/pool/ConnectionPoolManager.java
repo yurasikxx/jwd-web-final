@@ -4,9 +4,8 @@ import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -25,8 +24,7 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final Properties properties = new Properties();
     private static final String FAILED_TO_OPEN_CONNECTION_MSG = "failed to open connection";
     private static final String DRIVER_REGISTRATION_FAILED_MSG = "driver registration failed";
-    private static final String DATABASE_PROPERTIES_FILE_PATH = "." + File.separator + "src" + File.separator + "main" +
-            File.separator + "resources" + File.separator + "database.properties";
+    private static final String DATABASE_PROPERTIES_FILE_NAME = "database.properties";
     private static final String DATABASE_URL;
     private static final String DATABASE_USERNAME;
     private static final String DATABASE_PASSWORD;
@@ -35,10 +33,10 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final int MAX_POOL_SIZE;
 
     static {
-        try {
-            properties.load(new FileReader(DATABASE_PROPERTIES_FILE_PATH));
+        try (InputStream propertyFile = ConnectionPoolManager.class.getClassLoader().getResourceAsStream(DATABASE_PROPERTIES_FILE_NAME)) {
+            properties.load(propertyFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
         DATABASE_URL = properties.getProperty("db.url");
@@ -168,7 +166,7 @@ public class ConnectionPoolManager implements ConnectionPool {
 
     private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
         try {
-            DriverManager.registerDriver(DriverManager.getDriver(DATABASE_URL));
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             initialized.set(false);
