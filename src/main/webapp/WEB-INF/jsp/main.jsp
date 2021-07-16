@@ -14,5 +14,7 @@
 <h1>Please click below to see all competitions: </h1>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=competition_page">Competition page</a>
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=log_in_page">Log in</a>
 </body>
 </html>

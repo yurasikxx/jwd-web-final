@@ -23,6 +23,15 @@ public class ApplicationController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        process(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        process(req, resp);
+    }
+
+    private void process(HttpServletRequest req, HttpServletResponse resp) {
         final Command command = ApplicationCommand.getInstance().resolveCommand(req);
         final BaseCommandRequest request = new CommandRequest(req);
         final BaseCommandResponse response = command.execute(request);
@@ -37,7 +46,6 @@ public class ApplicationController extends HttpServlet {
         } catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage());
         }
-
     }
 
 }
