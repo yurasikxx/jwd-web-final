@@ -2,8 +2,9 @@ package com.epam.jwd.controller;
 
 import com.epam.jwd.command.ApplicationCommand;
 import com.epam.jwd.command.Command;
+import com.epam.jwd.command.BaseCommandRequest;
+import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.CommandRequest;
-import com.epam.jwd.command.CommandResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/controller")
+@WebServlet("/controller")
 public class ApplicationController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationController.class);
@@ -23,12 +24,8 @@ public class ApplicationController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         final Command command = ApplicationCommand.getInstance().resolveCommand(req);
-        final CommandResponse response = command.execute(new CommandRequest() {
-            @Override
-            public void setAttribute(String name, Object value) {
-                req.setAttribute(name, value);
-            }
-        });
+        final BaseCommandRequest request = new CommandRequest(req);
+        final BaseCommandResponse response = command.execute(request);
 
         try {
             if (response.isRedirect()) {
@@ -40,6 +37,7 @@ public class ApplicationController extends HttpServlet {
         } catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage());
         }
+
     }
 
 }

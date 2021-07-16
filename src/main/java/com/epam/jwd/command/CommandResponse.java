@@ -1,9 +1,23 @@
 package com.epam.jwd.command;
 
-public interface CommandResponse {
+public class CommandResponse implements BaseCommandResponse {
 
-    String getPath();
+    private final String path;
+    private final boolean redirect;
 
-    boolean isRedirect();
+    public CommandResponse(String path, boolean redirect) {
+        this.path = path;
+        this.redirect = redirect;
+    }
+
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public boolean isRedirect() {
+        return redirect;
+    }
 
 }

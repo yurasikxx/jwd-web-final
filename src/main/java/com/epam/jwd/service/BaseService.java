@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface BaseService<T extends BaseEntity> {
 
-    T save(T entity) throws DaoException;
-
     List<T> findAll();
 
     T findById(Long id) throws ServiceException, DaoException;

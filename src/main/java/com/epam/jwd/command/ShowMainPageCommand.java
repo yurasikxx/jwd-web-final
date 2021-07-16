@@ -2,7 +2,11 @@ package com.epam.jwd.command;
 
 public class ShowMainPageCommand implements Command {
 
+    private static final String MAIN_JSP_PATH = "/WEB-INF/jsp/main.jsp";
+    private static final boolean REDIRECT = false;
+
     private static volatile ShowMainPageCommand instance;
+    private final BaseCommandResponse mainPageResponse = new CommandResponse(MAIN_JSP_PATH, REDIRECT);
 
     private ShowMainPageCommand() {
     }
@@ -19,21 +23,9 @@ public class ShowMainPageCommand implements Command {
         return instance;
     }
 
-    private static final CommandResponse SHOW_MAIN_PAGE = new CommandResponse() {
-        @Override
-        public String getPath() {
-            return "/WEB-INF/jsp/main.jsp";
-        }
-
-        @Override
-        public boolean isRedirect() {
-            return false;
-        }
-    };
-
     @Override
-    public CommandResponse execute(CommandRequest request) {
-        return SHOW_MAIN_PAGE;
+    public BaseCommandResponse execute(BaseCommandRequest request) {
+        return mainPageResponse;
     }
 
 }

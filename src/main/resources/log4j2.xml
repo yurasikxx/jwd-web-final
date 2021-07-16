@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration>
     <Appenders>
-        <Console name="LogToConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n" />
-        </Console>
-        <File name="ErrorFileAppender" fileName="logs\error.log" immediateFlush="false" append="false">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n" />
+        <File name="FileAppender" fileName="logs/application.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.epam" level="info" additivity="false">
-            <AppenderRef ref="LogToConsole" level="info" />
-            <AppenderRef ref="ErrorFileAppender" level="error"/>
+        <Logger name="com.epam.jwd" level="all" additivity="false">
+            <AppenderRef ref="FileAppender"/>
         </Logger>
-        <Root level="info">
-            <AppenderRef ref="LogToConsole"/>
-        </Root>
     </Loggers>
 </Configuration>
