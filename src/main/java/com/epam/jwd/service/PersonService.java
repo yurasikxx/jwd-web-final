@@ -46,10 +46,10 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public Person save(Person person) throws DaoException {
+    public void update(Person person) throws DaoException {
         final char[] rawPassword = person.getPassword().toCharArray();
         final String encryptedPassword = hasher.hashToString(MIN_COST, rawPassword);
-        return personBaseDao.save(new Person(person.getId(), person.getLogin(), encryptedPassword, person.getRole()));
+        personBaseDao.update(new Person(person.getId(), person.getLogin(), encryptedPassword, person.getRole()));
     }
 
     @Override
@@ -81,9 +81,8 @@ public class PersonService implements PersonBaseService {
 
     @Override
     public boolean canLogIn(Person person) {
-        final byte[] enteredPassword = person.getPassword().getBytes(UTF_8);
-
         try {
+            final byte[] enteredPassword = person.getPassword().getBytes(UTF_8);
             final Person persistedPerson = this.findByLogin(person.getLogin());
             final byte[] encryptedPassword = persistedPerson.getPassword().getBytes(UTF_8);
             return verifyer.verify(enteredPassword, encryptedPassword).verified;

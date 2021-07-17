@@ -1,6 +1,7 @@
 package com.epam.jwd.command;
 
 import com.epam.jwd.model.Competition;
+import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class ShowCompetitionPageCommand implements Command {
     private static final boolean REDIRECT = false;
 
     private static volatile ShowCompetitionPageCommand instance;
-    private final CompetitionService competitionService;
+    private final CompetitionBaseService competitionService;
     private final BaseCommandResponse competitionPageResponse = new CommandResponse(COMPETITION_JSP_PATH, REDIRECT);
 
     private ShowCompetitionPageCommand() {

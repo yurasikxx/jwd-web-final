@@ -1,9 +1,9 @@
 package com.epam.jwd.controller;
 
 import com.epam.jwd.command.ApplicationCommand;
-import com.epam.jwd.command.Command;
 import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
+import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

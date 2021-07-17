@@ -1,6 +1,8 @@
 package com.epam.jwd.command;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 public class CommandRequest implements BaseCommandRequest {
 
@@ -8,6 +10,29 @@ public class CommandRequest implements BaseCommandRequest {
 
     public CommandRequest(HttpServletRequest request) {
         this.request = request;
+    }
+
+    @Override
+    public HttpSession createSession() {
+        return request.getSession(true);
+    }
+
+    @Override
+    public Optional<HttpSession> getCurrentSession() {
+        return Optional.ofNullable(request.getSession(false));
+    }
+
+    @Override
+    public void invalidateCurrentSession() {
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return request.getParameter(name);
     }
 
     @Override

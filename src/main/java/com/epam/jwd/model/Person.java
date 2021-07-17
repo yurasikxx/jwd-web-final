@@ -15,6 +15,10 @@ public class Person extends AbstractBaseEntity {
         this.role = role;
     }
 
+    public Person(String login, String password) {
+        this(null, login, password, Role.USER);
+    }
+
     public String getLogin() {
         return login;
     }

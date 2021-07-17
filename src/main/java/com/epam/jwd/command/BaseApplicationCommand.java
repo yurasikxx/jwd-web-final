@@ -4,6 +4,7 @@ public enum BaseApplicationCommand {
     MAIN_PAGE(ShowMainPageCommand.getInstance()),
     LOG_IN_PAGE(ShowLogInPageCommand.getInstance()),
     LOG_IN(LogInCommand.getInstance()),
+    LOG_OUT(LogOutCommand.getInstance()),
     COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 
