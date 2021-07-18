@@ -82,17 +82,17 @@ public class PersonService implements PersonBaseService {
     @Override
     public boolean canLogIn(Person person) {
         try {
-            for (int i = 0; i < this.findAll().size(); i++) {
+/*            for (int i = 0; i < this.findAll().size(); i++) {
                 try {
                     this.update(this.findAll().get(i));
                 } catch (DaoException e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
 
-            final byte[] enteredPassword = person.getPassword().getBytes(UTF_8);
+            final char[] enteredPassword = person.getPassword().toCharArray();
             final Person persistedPerson = this.findByLogin(person.getLogin());
-            final byte[] encryptedPassword = persistedPerson.getPassword().getBytes(UTF_8);
+            final char[] encryptedPassword = persistedPerson.getPassword().toCharArray();
             return verifyer.verify(enteredPassword, encryptedPassword).verified;
         } catch (ServiceException | DaoException e) {
             LOGGER.error(USER_CAN_NOT_LOG_IN_MSG);
