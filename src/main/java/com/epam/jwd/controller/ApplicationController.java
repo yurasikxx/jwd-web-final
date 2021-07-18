@@ -27,6 +27,7 @@ import java.util.List;
 public class ApplicationController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationController.class);
+
     private final PersonBaseService personService = PersonService.getInstance();
     private final PersonBaseDao personDao = PersonDao.getInstance();
     private final List<Person> persons = personService.findAll();
@@ -34,14 +35,7 @@ public class ApplicationController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-
-        for (int i = 0; i < personService.findAll().size(); i++) {
-            try {
-                personService.update(personService.findAll().get(i));
-            } catch (DaoException e) {
-                e.printStackTrace();
-            }
-        }
+        initPersonDataUpdate();
     }
 
     @Override
@@ -56,15 +50,18 @@ public class ApplicationController extends HttpServlet {
 
     @Override
     public void destroy() {
-        for (int i = 0; i < personDao.findAll().size(); i++) {
+        destroyPersonDataUpdate();
+        super.destroy();
+    }
+
+    private void initPersonDataUpdate() {
+        for (int i = 0; i < personService.findAll().size(); i++) {
             try {
-                personDao.update(persons.get(i));
+                personService.update(personService.findAll().get(i));
             } catch (DaoException e) {
                 e.printStackTrace();
             }
         }
-
-        super.destroy();
     }
 
     private void process(HttpServletRequest req, HttpServletResponse resp) {
@@ -81,6 +78,16 @@ public class ApplicationController extends HttpServlet {
             }
         } catch (IOException | ServletException e) {
             LOGGER.error(e.getMessage());
+        }
+    }
+
+    private void destroyPersonDataUpdate() {
+        for (int i = 0; i < personDao.findAll().size(); i++) {
+            try {
+                personDao.update(persons.get(i));
+            } catch (DaoException e) {
+                e.printStackTrace();
+            }
         }
     }
 

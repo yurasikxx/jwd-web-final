@@ -1,5 +1,6 @@
 package com.epam.jwd.pool;
 
+import com.epam.jwd.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
 
 import java.sql.Connection;
@@ -13,6 +14,6 @@ public interface ConnectionPool {
 
     void releaseConnection(Connection connection) throws InterruptedException;
 
-    void destroy() throws InterruptedException;
+    void destroy() throws CouldNotDestroyConnectionPoolException, InterruptedException;
 
 }

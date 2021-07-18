@@ -1,5 +1,6 @@
 package com.epam.jwd.pool;
 
+import com.epam.jwd.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +21,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPoolManager implements ConnectionPool {
 
+    public static final String FAILED_TO_INITIALIZE_CONNECTION_POOL_MSG = "failed to initialize connection pool";
+    public static final String FAILED_TO_DESTROY_CONNECTION_POOL_MSG = "failed to destroy connection pool";
+
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPoolManager.class);
     private static final Properties properties = new Properties();
-    private static final String FAILED_TO_OPEN_CONNECTION_MSG = "failed to open connection";
     private static final String DRIVER_REGISTRATION_FAILED_MSG = "driver registration failed";
     private static final String DATABASE_PROPERTIES_FILE_NAME = "database.properties";
     private static final String DATABASE_URL;
@@ -94,10 +97,12 @@ public class ConnectionPoolManager implements ConnectionPool {
                 } catch (SQLException e) {
                     LOGGER.error(e.getMessage());
                     initialized.set(false);
-                    throw new CouldNotInitializeConnectionPoolException(FAILED_TO_OPEN_CONNECTION_MSG, e);
+                    throw new CouldNotInitializeConnectionPoolException(FAILED_TO_INITIALIZE_CONNECTION_POOL_MSG, e);
                 }
                 connectionsOpened.set(INIT_POOL_SIZE);
             }
+
+
         } finally {
             init.unlock();
         }
@@ -137,7 +142,7 @@ public class ConnectionPoolManager implements ConnectionPool {
     }
 
     @Override
-    public void destroy() throws InterruptedException {
+    public void destroy() throws CouldNotDestroyConnectionPoolException, InterruptedException {
         destroy.lock();
         try {
             if (initialized.compareAndSet(true, false)) {
@@ -146,6 +151,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                         connection.realClose();
                     } catch (SQLException e) {
                         LOGGER.error(e.getMessage());
+                        throw new CouldNotDestroyConnectionPoolException(FAILED_TO_DESTROY_CONNECTION_POOL_MSG, e);
                     }
                 }
 
@@ -154,6 +160,7 @@ public class ConnectionPoolManager implements ConnectionPool {
                         connection.realClose();
                     } catch (SQLException e) {
                         LOGGER.error(e.getMessage());
+                        throw new CouldNotDestroyConnectionPoolException(FAILED_TO_DESTROY_CONNECTION_POOL_MSG, e);
                     }
                 }
 
