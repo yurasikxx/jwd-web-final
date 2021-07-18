@@ -1,9 +1,15 @@
 package com.epam.jwd.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Role implements BaseEntity {
 
     ADMINISTRATOR(1L, "Administrator"),
-    USER(2L, "User");
+    USER(2L, "User"),
+    UNAUTHORIZED(3L, "Unauthorized");
+
+    private static final List<Role> ALL_AVAILABLE_ROLES = Arrays.asList(Role.values());
 
     private final Long id;
     private final String name;
@@ -20,6 +26,10 @@ public enum Role implements BaseEntity {
 
     public String getName() {
         return name;
+    }
+
+    public static List<Role> valuesAsList() {
+        return ALL_AVAILABLE_ROLES;
     }
 
     public static Role resolveRoleById(Long id) {

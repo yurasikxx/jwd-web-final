@@ -1,24 +1,40 @@
 package com.epam.jwd.command;
 
+import com.epam.jwd.model.Role;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static com.epam.jwd.model.Role.ADMINISTRATOR;
+import static com.epam.jwd.model.Role.USER;
+import static com.epam.jwd.model.Role.UNAUTHORIZED;
+
 public enum BaseApplicationCommand {
     MAIN_PAGE(ShowMainPageCommand.getInstance()),
-    LOG_IN_PAGE(ShowLogInPageCommand.getInstance()),
-    LOG_IN(LogInCommand.getInstance()),
-    LOG_OUT(LogOutCommand.getInstance()),
-    COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance()),
+    LOG_IN_PAGE(ShowLogInPageCommand.getInstance(), UNAUTHORIZED),
+    LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
+    LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, USER),
+    COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance(), ADMINISTRATOR),
+    ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 
     private final Command command;
+    private final List<Role> allowedRoles;
 
-    BaseApplicationCommand(Command command) {
+    BaseApplicationCommand(Command command, Role... roles) {
         this.command = command;
+        this.allowedRoles = roles != null && roles.length > 0 ? Arrays.asList(roles) : Role.valuesAsList();
     }
 
     public Command getCommand() {
         return command;
     }
 
-    static BaseApplicationCommand of(String name) {
+    public List<Role> getAllowedRoles() {
+        return allowedRoles;
+    }
+
+    public static BaseApplicationCommand of(String name) {
         for (BaseApplicationCommand command : values()) {
             if (command.name().equalsIgnoreCase(name)) {
                 return command;

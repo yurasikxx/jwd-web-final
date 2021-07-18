@@ -1,5 +1,6 @@
 package com.epam.jwd.dao;
 
+import com.epam.jwd.exception.BusinessValidationException;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
@@ -26,6 +27,8 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     private static final String PERSON_PASSWORD_COLUMN = "p_password";
     private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
     private static final String PERSON_ROLE_NAME_COLUMN = "pr_name";
+    private static final String UNAUTHORIZED_UPDATE_MSG = "Unauthorized person can not be updated into database";
+    private static final String UNAUTHORIZED_SAVE_MSG = "Unauthorized person can not be saved into database";
 
     private static volatile PersonDao instance;
     private final String findByLoginSql;
@@ -50,9 +53,13 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Person person) throws SQLException {
+    protected void saveResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
         AtomicLong personAmount = new AtomicLong(findAll().size());
         long id = personAmount.incrementAndGet();
+
+        if (Role.UNAUTHORIZED.equals(person.getRole())) {
+            throw new BusinessValidationException(UNAUTHORIZED_SAVE_MSG);
+        }
 
         resultSet.moveToInsertRow();
         resultSet.updateLong(PERSON_ID_COLUMN, id);
@@ -64,8 +71,12 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, Person person) throws SQLException {
+    protected void updateResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
         long id = resultSet.getLong(1);
+
+        if (Role.UNAUTHORIZED.equals(person.getRole())) {
+            throw new BusinessValidationException(UNAUTHORIZED_UPDATE_MSG);
+        }
 
         if (id == person.getId()) {
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());

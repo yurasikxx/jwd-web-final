@@ -82,6 +82,14 @@ public class PersonService implements PersonBaseService {
     @Override
     public boolean canLogIn(Person person) {
         try {
+            for (int i = 0; i < this.findAll().size(); i++) {
+                try {
+                    this.update(this.findAll().get(i));
+                } catch (DaoException e) {
+                    e.printStackTrace();
+                }
+            }
+
             final byte[] enteredPassword = person.getPassword().getBytes(UTF_8);
             final Person persistedPerson = this.findByLogin(person.getLogin());
             final byte[] encryptedPassword = persistedPerson.getPassword().getBytes(UTF_8);

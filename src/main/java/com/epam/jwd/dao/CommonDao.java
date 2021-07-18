@@ -1,5 +1,6 @@
 package com.epam.jwd.dao;
 
+import com.epam.jwd.exception.BusinessValidationException;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.model.BaseEntity;
 import com.epam.jwd.pool.ConnectionPoolManager;
@@ -43,7 +44,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 saveResultSet(resultSet, entity);
             }
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException | InterruptedException | BusinessValidationException e) {
             LOGGER.error(e.getMessage());
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
@@ -71,7 +72,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                     updateResultSet(resultSet, entity);
                 }
             }
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException | InterruptedException | BusinessValidationException e) {
             LOGGER.error(e.getMessage());
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
@@ -139,9 +140,9 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 .findFirst();
     }
 
-    protected abstract void saveResultSet(ResultSet resultSet, T entity) throws SQLException;
+    protected abstract void saveResultSet(ResultSet resultSet, T entity) throws SQLException, BusinessValidationException;
 
-    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws SQLException;
+    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws SQLException, BusinessValidationException;
 
     protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
 

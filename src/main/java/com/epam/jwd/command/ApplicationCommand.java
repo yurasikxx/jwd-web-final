@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ApplicationCommand {
 
-    private static final String COMMAND_PARAMETER_NAME = "command";
+    public static final String COMMAND_PARAMETER_NAME = "command";
 
     private static volatile ApplicationCommand instance;
 

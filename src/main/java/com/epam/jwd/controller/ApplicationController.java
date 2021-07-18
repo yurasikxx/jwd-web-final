@@ -5,6 +5,9 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandRequest;
+import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.service.PersonBaseService;
+import com.epam.jwd.service.PersonService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
