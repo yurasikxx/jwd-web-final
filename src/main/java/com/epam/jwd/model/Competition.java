@@ -43,11 +43,9 @@ public class Competition extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Competition{" +
-                "sport=" + sport +
-                ", home=" + home +
-                ", away=" + away +
-                '}';
+        return sport.getName() +
+                ", " + home.getName() +
+                " - " + away.getName();
     }
 
 }

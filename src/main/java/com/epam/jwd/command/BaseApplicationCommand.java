@@ -6,15 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.epam.jwd.model.Role.ADMINISTRATOR;
-import static com.epam.jwd.model.Role.USER;
 import static com.epam.jwd.model.Role.UNAUTHORIZED;
+import static com.epam.jwd.model.Role.USER;
 
 public enum BaseApplicationCommand {
     MAIN_PAGE(ShowMainPageCommand.getInstance()),
     LOG_IN_PAGE(ShowLogInPageCommand.getInstance(), UNAUTHORIZED),
     LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
     LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, USER),
-    COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance(), ADMINISTRATOR),
+    PERSON_PAGE(ShowPersonPageCommand.getInstance(), ADMINISTRATOR),
+    COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance()),
     ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 
@@ -43,4 +44,5 @@ public enum BaseApplicationCommand {
 
         return DEFAULT;
     }
+
 }

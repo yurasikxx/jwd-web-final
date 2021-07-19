@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class CurrentTimeTag extends SimpleTagSupport {
 
-    private static final String TAG_OUTPUT = "<h5>Current time: %s</h5>";
+    private static final String TAG_OUTPUT = "Current time: %s";
 
     @Override
     public void doTag() throws JspException {

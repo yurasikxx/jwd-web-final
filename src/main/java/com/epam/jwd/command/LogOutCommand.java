@@ -3,8 +3,12 @@ package com.epam.jwd.command;
 public class LogOutCommand implements Command {
 
     private static final String INDEX_JSP_PATH = "/index.jsp";
+
     private static volatile LogOutCommand instance;
     private final BaseCommandResponse logoutCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+
+    private LogOutCommand() {
+    }
 
     public static LogOutCommand getInstance() {
         if (instance == null) {
@@ -23,4 +27,5 @@ public class LogOutCommand implements Command {
         request.invalidateCurrentSession();
         return logoutCommandResponse;
     }
+
 }

@@ -47,11 +47,9 @@ public class Person extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Person{" +
-                "login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
+        return "Name: " + login +
+                ", Password: " + password +
+                ", Role: " + role;
     }
 
 }

@@ -10,8 +10,8 @@ import static com.epam.jwd.command.LogInCommand.PERSON_NAME_SESSION_ATTRIBUTE_NA
 
 public class UserWelcomeTag extends TagSupport {
 
-    private static final String PERSON_WELCOME_MSG = "<h1>Hello, %s";
-    private static final String DEFAULT_WELCOME_MSG = "Hello!";
+    private static final String PERSON_WELCOME_MSG = "Hello, %s";
+    private static final String DEFAULT_WELCOME_MSG = "Hello! Click below to sign in :)";
 
     @Override
     public int doStartTag() throws JspException {
@@ -21,7 +21,7 @@ public class UserWelcomeTag extends TagSupport {
     }
 
     @Override
-    public int doEndTag() throws JspException {
+    public int doEndTag() {
         return EVAL_PAGE;
     }
 
