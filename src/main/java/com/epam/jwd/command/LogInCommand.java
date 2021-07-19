@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 public class LogInCommand implements Command {
 
     public static final String PERSON_ROLE_SESSION_ATTRIBUTE_NAME = "personRole";
+    public static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
 
     private static final String LOGIN_PARAMETER_NAME = "login";
     private static final String PASSWORD_PARAMETER_NAME = "password";
@@ -18,7 +19,6 @@ public class LogInCommand implements Command {
     private static final String INVALID_CREDENTIALS_MSG = "wrong login or password";
     private static final String INDEX_JSP_PATH = "/index.jsp";
     private static final String ERROR_LOGIN_JSP_PATH = "/WEB-INF/jsp/login.jsp";
-    private static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
 
     private static volatile LogInCommand instance;
     private final PersonBaseService personService;

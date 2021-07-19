@@ -1,14 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jwd" uri="custom" %>
 <%@ page import="com.epam.jwd.model.Role" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>1XPari Totalizator</title>
 </head>
 <body>
-<c:if test="${not empty sessionScope.personName}">
-    <h1>Hello, ${sessionScope.personName}</h1>
-</c:if>
+<jwd:welcome/>
+<br>
 <c:choose>
     <c:when test="${empty sessionScope.personName}">
         <a href="${pageContext.request.contextPath}/controller?command=log_in_page">Log in</a>
@@ -23,5 +23,6 @@
         <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
     </c:otherwise>
 </c:choose>
+<jwd:time/>
 </body>
 </html>
