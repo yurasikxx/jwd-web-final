@@ -11,6 +11,8 @@ import static com.epam.jwd.model.Role.USER;
 
 public enum BaseApplicationCommand {
     MAIN_PAGE(ShowMainPageCommand.getInstance()),
+    REGISTER_PAGE(ShowRegisterPageCommand.getInstance(), UNAUTHORIZED),
+    REGISTER(RegisterCommand.getInstance(), UNAUTHORIZED),
     LOG_IN_PAGE(ShowLogInPageCommand.getInstance(), UNAUTHORIZED),
     LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
     LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, USER),

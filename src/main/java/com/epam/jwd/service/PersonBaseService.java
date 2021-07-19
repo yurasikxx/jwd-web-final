@@ -9,12 +9,22 @@ import java.util.List;
 
 public interface PersonBaseService extends BaseService<Person> {
 
+    void init();
+
+    Person save(Person person) throws DaoException;
+
+    boolean canRegister(Person person);
+
     void update(Person person) throws DaoException;
+
+    boolean canLogIn(Person person);
 
     List<Person> findByRole(Role role) throws DaoException;
 
     Person findByLogin(String login) throws ServiceException, DaoException;
 
-    boolean canLogIn(Person person);
+    void getNewRegisteredPersons(Person person);
+
+    void destroy();
 
 }

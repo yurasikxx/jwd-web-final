@@ -11,6 +11,8 @@
 <br>
 <c:choose>
     <c:when test="${empty sessionScope.personName}">
+        <a href="${pageContext.request.contextPath}/controller?command=register_page">Sign up</a>
+        <br>
         <a href="${pageContext.request.contextPath}/controller?command=log_in_page">Log in</a>
         <br>
     </c:when>

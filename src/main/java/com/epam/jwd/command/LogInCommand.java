@@ -8,22 +8,24 @@ import com.epam.jwd.service.PersonService;
 
 import javax.servlet.http.HttpSession;
 
+import static com.epam.jwd.command.ShowLogInPageCommand.LOGIN_JSP_PATH;
+
 public class LogInCommand implements Command {
 
     public static final String PERSON_ROLE_SESSION_ATTRIBUTE_NAME = "personRole";
-    public static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
 
-    private static final String LOGIN_PARAMETER_NAME = "login";
-    private static final String PASSWORD_PARAMETER_NAME = "password";
-    private static final String ERROR_ATTRIBUTE_NAME = "error";
-    private static final String INVALID_CREDENTIALS_MSG = "wrong login or password";
-    private static final String INDEX_JSP_PATH = "/index.jsp";
-    private static final String ERROR_LOGIN_JSP_PATH = "/WEB-INF/jsp/login.jsp";
+    protected static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
+    protected static final String INDEX_JSP_PATH = "/index.jsp";
+    protected static final String LOGIN_PARAMETER_NAME = "login";
+    protected static final String PASSWORD_PARAMETER_NAME = "password";
+    protected static final String ERROR_ATTRIBUTE_NAME = "error";
+
+    private static final String INVALID_CREDENTIALS_MSG = "Wrong login or password";
 
     private static volatile LogInCommand instance;
     private final PersonBaseService personService;
-    private final BaseCommandResponse loginSuccessResponse = new CommandResponse(INDEX_JSP_PATH, true);
-    private final BaseCommandResponse loginErrorCommandResponse = new CommandResponse(ERROR_LOGIN_JSP_PATH, false);
+    private final BaseCommandResponse loginSuccessCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+    private final BaseCommandResponse loginErrorCommandResponse = new CommandResponse(LOGIN_JSP_PATH, false);
 
     private LogInCommand() {
         this.personService = PersonService.getInstance();
@@ -72,7 +74,7 @@ public class LogInCommand implements Command {
             e.printStackTrace();
         }
 
-        return loginSuccessResponse;
+        return loginSuccessCommandResponse;
     }
 
 }
