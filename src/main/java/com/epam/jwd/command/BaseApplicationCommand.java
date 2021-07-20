@@ -10,14 +10,17 @@ import static com.epam.jwd.model.Role.UNAUTHORIZED;
 import static com.epam.jwd.model.Role.USER;
 
 public enum BaseApplicationCommand {
+
     MAIN_PAGE(ShowMainPageCommand.getInstance()),
     REGISTER_PAGE(ShowRegisterPageCommand.getInstance(), UNAUTHORIZED),
     REGISTER(RegisterCommand.getInstance(), UNAUTHORIZED),
     LOG_IN_PAGE(ShowLogInPageCommand.getInstance(), UNAUTHORIZED),
     LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
     LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, USER),
-    PERSON_PAGE(ShowPersonPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance()),
+    BETSLIP_PAGE(ShowBetslipPageCommand.getInstance(), ADMINISTRATOR, USER),
+    BET_PAGE(ShowBetPageCommand.getInstance(), ADMINISTRATOR),
+    PERSON_PAGE(ShowPersonPageCommand.getInstance(), ADMINISTRATOR),
     ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 

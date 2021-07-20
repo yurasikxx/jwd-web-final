@@ -2,14 +2,14 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Persons</title>
+    <title>Bet</title>
 </head>
 <body>
-<c:if test="${not empty requestScope.person}">
-    Persons
+<c:if test="${not empty requestScope.bet}">
+    Bets:
     <br>
-    <c:forEach var="person" items="${requestScope.person}">
-        ${person}
+    <c:forEach var="bet" items="${requestScope.bet}">
+        ${bet}
         <br>
     </c:forEach>
 </c:if>

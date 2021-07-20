@@ -18,9 +18,17 @@
     </c:when>
     <c:otherwise>
         <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
-            Please click below to see all persons:
+            See below to next moves:
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=person_page">Person page</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_page">Bet page</a>
+            <br>
+        </c:if>
+        <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR or sessionScope.personRole eq Role.USER}">
+            Please click below to see all betslips:
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_page">Betslip page</a>
             <br>
         </c:if>
         <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>

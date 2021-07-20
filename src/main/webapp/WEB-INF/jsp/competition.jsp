@@ -6,12 +6,12 @@
 </head>
 <body>
 <c:if test="${not empty requestScope.competition}">
-    <h3>Competitions: </h3>
-    <ul>
-        <c:forEach var="competition" items="${requestScope.competition}">
-            <li>${competition}</li>
-        </c:forEach>
-    </ul>
+    Competitions:
+    <br>
+    <c:forEach var="competition" items="${requestScope.competition}">
+        ${competition}
+        <br>
+    </c:forEach>
 </c:if>
 </body>
 </html>

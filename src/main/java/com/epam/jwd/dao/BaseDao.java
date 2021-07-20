@@ -14,7 +14,7 @@ public interface BaseDao<T extends BaseEntity> {
 
     Optional<T> findById(Long id) throws DaoException;
 
-    T update(T entity) throws DaoException;
+    void update(T entity) throws DaoException;
 
     void delete(Long id) throws DaoException;
 

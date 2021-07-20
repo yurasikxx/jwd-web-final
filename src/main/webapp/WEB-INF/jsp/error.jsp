@@ -4,6 +4,8 @@
     <title>Error</title>
 </head>
 <body>
-<h1>Something went wrong...</h1>
+Something went wrong...
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
 </body>
 </html>

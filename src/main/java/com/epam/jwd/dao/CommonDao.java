@@ -63,7 +63,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
     }
 
     @Override
-    public T update(T entity) throws DaoException {
+    public void update(T entity) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
@@ -77,7 +77,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
 
-        return entity;
     }
 
     @Override
