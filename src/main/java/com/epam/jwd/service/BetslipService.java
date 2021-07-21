@@ -61,7 +61,7 @@ public class BetslipService implements BetslipBaseService {
 
     @Override
     public void delete(Long id) throws DaoException {
-
+        betslipDao.delete(id);
     }
 
 }

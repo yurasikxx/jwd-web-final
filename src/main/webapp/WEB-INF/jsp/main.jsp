@@ -9,6 +9,7 @@
 <body>
 <jwd:welcome/>
 <br>
+<br>
 <c:choose>
     <c:when test="${empty sessionScope.personName}">
         <a href="${pageContext.request.contextPath}/controller?command=register_page">Sign up</a>
@@ -22,22 +23,29 @@
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Person management</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=bet_page">Bet page</a>
+            <a href="${pageContext.request.contextPath}/controller?command=competition_management_page">Competition management</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip management</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Bet management</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
+            <br>
             <br>
         </c:if>
-        <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR or sessionScope.personRole eq Role.USER}">
-            Please click below to see all betslips:
+        <c:if test="${sessionScope.personRole eq Role.USER}">
+            See below to next moves:
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=betslip_page">Betslip page</a>
+            <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
+            <br>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
         </c:if>
-        <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
     </c:otherwise>
 </c:choose>
-<br>
-Please click below to see all competitions:
-<br>
-<a href="${pageContext.request.contextPath}/controller?command=competition_page">Competition page</a>
 <br>
 <jwd:time/>
 </body>

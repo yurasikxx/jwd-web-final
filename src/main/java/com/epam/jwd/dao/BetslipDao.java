@@ -74,11 +74,24 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
-        AtomicLong betslipAmount = new AtomicLong(findAll().size());
-        long id = betslipAmount.incrementAndGet();
+        final AtomicLong betslipAmount = new AtomicLong(findAll().size());
+        final AtomicLong idCounter = new AtomicLong(1);
+        final List<Betslip> betslips = this.findAll();
 
-        resultSet.moveToInsertRow();
-        resultSet.updateLong(BETSLIP_ID_COLUMN, id);
+        if (betslipAmount.get() == betslips.get(betslips.size() - 1).getId()) {
+            long id = betslipAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BETSLIP_ID_COLUMN, id);
+        } else {
+            while (idCounter.get() == betslips.get((int) (idCounter.get() - 1)).getId()) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BETSLIP_ID_COLUMN, idCounter.get());
+        }
+
         resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
         resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
         resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());

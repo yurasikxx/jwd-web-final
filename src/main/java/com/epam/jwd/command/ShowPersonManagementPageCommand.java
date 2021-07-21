@@ -5,6 +5,7 @@ public class ShowPersonManagementPageCommand implements Command {
     private static final String PERSON_JSP_PATH = "/WEB-INF/jsp/person.jsp";
 
     private static volatile ShowPersonManagementPageCommand instance;
+
     private final BaseCommandResponse personCommandResponse = new CommandResponse(PERSON_JSP_PATH, false);
 
     private ShowPersonManagementPageCommand() {

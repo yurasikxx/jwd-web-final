@@ -90,11 +90,24 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Bet bet) throws SQLException {
-        AtomicLong betAmount = new AtomicLong(findAll().size());
-        long id = betAmount.incrementAndGet();
+        final AtomicLong betAmount = new AtomicLong(findAll().size());
+        final AtomicLong idCounter = new AtomicLong(1);
+        final List<Bet> bets = this.findAll();
 
-        resultSet.moveToInsertRow();
-        resultSet.updateLong(BET_ID_COLUMN, id);
+        if (betAmount.get() == bets.get(bets.size() - 1).getId()) {
+            long id = betAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_ID_COLUMN, id);
+        } else {
+            while (idCounter.get() == bets.get((int) (idCounter.get() - 1)).getId()) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
+        }
+        
         resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
         resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
         resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());

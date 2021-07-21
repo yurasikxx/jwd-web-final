@@ -6,25 +6,26 @@ import com.epam.jwd.service.BetslipService;
 
 import java.util.List;
 
-public class ShowBetslipPageCommand implements Command {
+import static com.epam.jwd.command.ShowPersonListPageCommand.LIST_JSP_PATH;
 
-    private static final String BETSLIP_JSP_PATH = "/WEB-INF/jsp/betslip.jsp";
-    private static final String BETSLIP_ATTRIBUTE_NAME = "betslip";
+public class ShowBetslipListPageCommand implements Command {
 
-    private static volatile ShowBetslipPageCommand instance;
+    protected static final String BETSLIP_ATTRIBUTE_NAME = "betslip";
 
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(BETSLIP_JSP_PATH, false);
+    private static volatile ShowBetslipListPageCommand instance;
+
     private final BetslipBaseService betslipService;
+    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(LIST_JSP_PATH, false);
 
-    private ShowBetslipPageCommand() {
+    private ShowBetslipListPageCommand() {
         this.betslipService = BetslipService.getInstance();
     }
 
-    public static ShowBetslipPageCommand getInstance() {
+    public static ShowBetslipListPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowBetslipPageCommand.class) {
+            synchronized (ShowBetslipListPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowBetslipPageCommand();
+                    instance = new ShowBetslipListPageCommand();
                 }
             }
         }

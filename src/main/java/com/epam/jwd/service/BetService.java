@@ -41,7 +41,7 @@ public class BetService implements BetBaseService {
 
     @Override
     public void delete(Long id) throws DaoException {
-
+        betDao.delete(id);
     }
 
     @Override

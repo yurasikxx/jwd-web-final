@@ -43,11 +43,9 @@ public class Bet extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Bet{" +
-                "betslip=" + betslip +
-                ", betTotal=" + betTotal +
-                ", person=" + person +
-                '}';
+        return "Betslip: " + betslip +
+                ", Total: " + betTotal +
+                ", Person: " + person;
     }
 
 }

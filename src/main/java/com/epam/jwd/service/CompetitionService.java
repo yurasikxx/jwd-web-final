@@ -13,10 +13,10 @@ public class CompetitionService implements CompetitionBaseService {
 
     private static final String COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG = "Competition wasn't found by given id: %s";
     private static volatile CompetitionService instance;
-    private final CompetitionBaseDao competitionBaseDao;
+    private final CompetitionBaseDao competitionDao;
 
     private CompetitionService() {
-        this.competitionBaseDao = CompetitionDao.getInstance();
+        this.competitionDao = CompetitionDao.getInstance();
     }
 
     public static CompetitionService getInstance() {
@@ -32,8 +32,10 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
-    public Competition save(Competition entity) throws ServiceException, DaoException {
-        return null;
+    public Competition save(Competition competition) throws ServiceException, DaoException {
+        competitionDao.save(competition);
+
+        return competition;
     }
 
     @Override
@@ -53,23 +55,23 @@ public class CompetitionService implements CompetitionBaseService {
 
     @Override
     public List<Competition> findAll() {
-        return competitionBaseDao.findAll();
+        return competitionDao.findAll();
     }
 
     @Override
     public Competition findById(Long id) throws ServiceException, DaoException {
-        return competitionBaseDao.findById(id).
+        return competitionDao.findById(id).
                 orElseThrow(() -> new ServiceException(String.format(COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG, id)));
     }
 
     @Override
     public void delete(Long id) throws DaoException {
-        competitionBaseDao.delete(id);
+        competitionDao.delete(id);
     }
 
     @Override
     public List<Competition> findBySportName(Sport sport) throws DaoException {
-        return competitionBaseDao.findBySportName(sport);
+        return competitionDao.findBySportName(sport);
     }
 
 }

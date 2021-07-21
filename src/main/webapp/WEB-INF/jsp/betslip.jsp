@@ -1,17 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Betslip</title>
+    <title>Betslip management</title>
 </head>
 <body>
-<c:if test="${not empty requestScope.betslip}">
-    Betslips:
-    <br>
-    <c:forEach var="betslip" items="${requestScope.betslip}">
-        ${betslip}
-        <br>
-    </c:forEach>
-</c:if>
+Available betslip operations:
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">View all betslips</a>
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=betslip_deleting_page">Delete betslip</a>
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
+<br>
 </body>
 </html>

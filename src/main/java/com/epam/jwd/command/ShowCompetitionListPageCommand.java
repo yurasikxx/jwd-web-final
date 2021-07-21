@@ -6,24 +6,26 @@ import com.epam.jwd.service.CompetitionService;
 
 import java.util.List;
 
-public class ShowCompetitionPageCommand implements Command {
+import static com.epam.jwd.command.ShowPersonListPageCommand.LIST_JSP_PATH;
 
-    private static final String COMPETITION_ATTRIBUTE_NAME = "competition";
-    private static final String COMPETITION_JSP_PATH = "/WEB-INF/jsp/competition.jsp";
+public class ShowCompetitionListPageCommand implements Command {
 
-    private static volatile ShowCompetitionPageCommand instance;
+    protected static final String COMPETITION_ATTRIBUTE_NAME = "competition";
+
+    private static volatile ShowCompetitionListPageCommand instance;
+
     private final CompetitionBaseService competitionService;
-    private final BaseCommandResponse competitionPageResponse = new CommandResponse(COMPETITION_JSP_PATH, false);
+    private final BaseCommandResponse competitionPageResponse = new CommandResponse(LIST_JSP_PATH, false);
 
-    private ShowCompetitionPageCommand() {
+    private ShowCompetitionListPageCommand() {
         this.competitionService = CompetitionService.getInstance();
     }
 
-    public static ShowCompetitionPageCommand getInstance() {
+    public static ShowCompetitionListPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowCompetitionPageCommand.class) {
+            synchronized (ShowCompetitionListPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowCompetitionPageCommand();
+                    instance = new ShowCompetitionListPageCommand();
                 }
             }
         }

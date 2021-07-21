@@ -6,25 +6,26 @@ import com.epam.jwd.service.BetService;
 
 import java.util.List;
 
-public class ShowBetPageCommand implements Command {
+import static com.epam.jwd.command.ShowPersonListPageCommand.LIST_JSP_PATH;
 
-    private static final String BET_JSP_PATH = "/WEB-INF/jsp/bet.jsp";
-    private static final String BET_ATTRIBUTE_NAME = "bet";
+public class ShowBetListPageCommand implements Command {
 
-    private static volatile ShowBetPageCommand instance;
+    protected static final String BET_ATTRIBUTE_NAME = "bet";
 
-    private final BaseCommandResponse betCommandResponse = new CommandResponse(BET_JSP_PATH, false);
+    private static volatile ShowBetListPageCommand instance;
+
     private final BetBaseService betService;
+    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(LIST_JSP_PATH, false);
 
-    private ShowBetPageCommand() {
+    private ShowBetListPageCommand() {
         this.betService = BetService.getInstance();
     }
 
-    public static ShowBetPageCommand getInstance() {
+    public static ShowBetListPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowBetPageCommand.class) {
+            synchronized (ShowBetListPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowBetPageCommand();
+                    instance = new ShowBetListPageCommand();
                 }
             }
         }
@@ -37,7 +38,7 @@ public class ShowBetPageCommand implements Command {
         final List<Bet> bets = betService.findAll();
         request.setAttribute(BET_ATTRIBUTE_NAME, bets);
 
-        return betCommandResponse;
+        return betslipCommandResponse;
     }
 
 }

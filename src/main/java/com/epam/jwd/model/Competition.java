@@ -45,7 +45,11 @@ public class Competition extends AbstractBaseEntity {
     public String toString() {
         return sport.getName() +
                 ", " + home.getName() +
-                " - " + away.getName();
+                " (" + home.getCountry() + ")" +
+                ", Rate: " + home.getRate() +
+                " - " + away.getName() +
+                " (" + away.getCountry() + ")" +
+                ", Rate: " + away.getRate();
     }
 
 }

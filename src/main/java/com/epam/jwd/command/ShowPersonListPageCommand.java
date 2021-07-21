@@ -8,13 +8,13 @@ import java.util.List;
 
 public class ShowPersonListPageCommand implements Command {
 
+    protected static final String LIST_JSP_PATH = "/WEB-INF/jsp/viewing.jsp";
     protected static final String PERSON_ATTRIBUTE_NAME = "person";
 
-    private static final String SHOWING_PERSON_LIST_JSP_PATH = "/WEB-INF/jsp/showingPersonList.jsp";
-
     private static volatile ShowPersonListPageCommand instance;
+
     private final PersonBaseService personService;
-    private final BaseCommandResponse personCommandResponse = new CommandResponse(SHOWING_PERSON_LIST_JSP_PATH, false);
+    private final BaseCommandResponse personCommandResponse = new CommandResponse(LIST_JSP_PATH, false);
 
     private ShowPersonListPageCommand() {
         this.personService = PersonService.getInstance();

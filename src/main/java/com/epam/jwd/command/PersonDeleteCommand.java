@@ -2,17 +2,23 @@ package com.epam.jwd.command;
 
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import java.util.List;
+
+import static com.epam.jwd.command.ShowPersonDeletingPageCommand.DELETING_JSP_PATH;
+import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NAME;
+
 public class PersonDeleteCommand implements Command {
 
-    private static final String DELETING_PERSON_JSP_PATH = "/WEB-INF/jsp/deletingPerson.jsp";
-    private static final String ID_PARAMETER_NAME = "id";
+    protected static final String ID_PARAMETER_NAME = "id";
 
     private static volatile PersonDeleteCommand instance;
+
     private final PersonBaseService personService;
-    private final BaseCommandResponse personCommandResponse = new CommandResponse(DELETING_PERSON_JSP_PATH, false);
+    private final BaseCommandResponse personCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
 
     private PersonDeleteCommand() {
         this.personService = PersonService.getInstance();
@@ -32,6 +38,8 @@ public class PersonDeleteCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        final List<Person> persons = personService.findAll();
+        request.setAttribute(PERSON_ATTRIBUTE_NAME, persons);
         final String id = request.getParameter(ID_PARAMETER_NAME);
 
         try {

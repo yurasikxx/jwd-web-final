@@ -58,7 +58,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             throw new BusinessValidationException(UNAUTHORIZED_SAVE_MSG);
         }
 
-        AtomicLong personAmount = new AtomicLong(this.findAll().size());
+        final AtomicLong personAmount = new AtomicLong(this.findAll().size());
         final AtomicLong idCounter = new AtomicLong(1);
         final List<Person> persons = this.findAll();
 
@@ -86,11 +86,11 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     @Override
     protected void updateResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
-        long id = resultSet.getLong(1);
-
         if (Role.UNAUTHORIZED.equals(person.getRole())) {
             throw new BusinessValidationException(UNAUTHORIZED_UPDATE_MSG);
         }
+
+        long id = resultSet.getLong(1);
 
         if (id == person.getId()) {
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
