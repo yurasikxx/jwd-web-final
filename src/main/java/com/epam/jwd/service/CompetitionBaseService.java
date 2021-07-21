@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface CompetitionBaseService extends BaseService<Competition> {
 
+    boolean canSave(Competition competition);
+
+    boolean canUpdate(Competition competition);
+
     List<Competition> findBySportName(Sport sport) throws DaoException;
 
 }

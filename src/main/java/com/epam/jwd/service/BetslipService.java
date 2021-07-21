@@ -30,8 +30,8 @@ public class BetslipService implements BetslipBaseService {
     }
 
     @Override
-    public void save(Betslip betslip) {
-
+    public Betslip save(Betslip betslip) {
+        return null;
     }
 
     @Override

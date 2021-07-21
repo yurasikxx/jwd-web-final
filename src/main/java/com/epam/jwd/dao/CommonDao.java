@@ -76,7 +76,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             LOGGER.error(e.getMessage());
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
-
     }
 
     @Override
@@ -87,6 +86,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
                     long localId = resultSet.getLong(1);
+
                     if (localId == id) {
                         resultSet.deleteRow();
                     }

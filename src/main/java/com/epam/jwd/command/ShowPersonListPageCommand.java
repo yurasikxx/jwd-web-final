@@ -6,24 +6,25 @@ import com.epam.jwd.service.PersonService;
 
 import java.util.List;
 
-public class ShowPersonPageCommand implements Command {
+public class ShowPersonListPageCommand implements Command {
 
-    private static final String PERSON_ATTRIBUTE_NAME = "person";
-    private static final String PERSON_JSP_PATH = "/WEB-INF/jsp/person.jsp";
+    protected static final String PERSON_ATTRIBUTE_NAME = "person";
 
-    private static volatile ShowPersonPageCommand instance;
+    private static final String SHOWING_PERSON_LIST_JSP_PATH = "/WEB-INF/jsp/showingPersonList.jsp";
+
+    private static volatile ShowPersonListPageCommand instance;
     private final PersonBaseService personService;
-    private final BaseCommandResponse personCommandResponse = new CommandResponse(PERSON_JSP_PATH, false);
+    private final BaseCommandResponse personCommandResponse = new CommandResponse(SHOWING_PERSON_LIST_JSP_PATH, false);
 
-    private ShowPersonPageCommand() {
+    private ShowPersonListPageCommand() {
         this.personService = PersonService.getInstance();
     }
 
-    public static ShowPersonPageCommand getInstance() {
+    public static ShowPersonListPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowPersonPageCommand.class) {
+            synchronized (ShowPersonListPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowPersonPageCommand();
+                    instance = new ShowPersonListPageCommand();
                 }
             }
         }

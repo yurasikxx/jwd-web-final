@@ -32,6 +32,26 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
+    public Competition save(Competition entity) throws ServiceException, DaoException {
+        return null;
+    }
+
+    @Override
+    public boolean canSave(Competition competition) {
+        return false;
+    }
+
+    @Override
+    public void update(Competition entity) throws ServiceException, DaoException {
+
+    }
+
+    @Override
+    public boolean canUpdate(Competition competition) {
+        return false;
+    }
+
+    @Override
     public List<Competition> findAll() {
         return competitionBaseDao.findAll();
     }

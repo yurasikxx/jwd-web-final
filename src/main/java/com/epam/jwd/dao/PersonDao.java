@@ -54,20 +54,34 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
-        AtomicLong personAmount = new AtomicLong(findAll().size());
-        long id = personAmount.incrementAndGet();
-
         if (Role.UNAUTHORIZED.equals(person.getRole())) {
             throw new BusinessValidationException(UNAUTHORIZED_SAVE_MSG);
         }
 
-        resultSet.moveToInsertRow();
-        resultSet.updateLong(PERSON_ID_COLUMN, id);
+        AtomicLong personAmount = new AtomicLong(this.findAll().size());
+        final AtomicLong idCounter = new AtomicLong(1);
+        final List<Person> persons = this.findAll();
+
+        if (personAmount.get() == persons.get(persons.size() - 1).getId()) {
+            long id = personAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(PERSON_ID_COLUMN, id);
+        } else {
+            while (idCounter.get() == persons.get((int) (idCounter.get() - 1)).getId()) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+        }
+
         resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
         resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
         resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
         resultSet.insertRow();
         resultSet.moveToCurrentRow();
+
     }
 
     @Override

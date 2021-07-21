@@ -1,6 +1,7 @@
 package com.epam.jwd.command;
 
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
@@ -48,7 +49,7 @@ public class RegisterCommand implements Command {
             }
 
             personService.getNewRegisteredPersons(personService.save(person));
-        } catch (DaoException e) {
+        } catch (DaoException | ServiceException e) {
             e.printStackTrace();
         }
 

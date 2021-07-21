@@ -20,7 +20,7 @@
         <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
             See below to next moves:
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=person_page">Person page</a>
+            <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Person management</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=bet_page">Bet page</a>
             <br>

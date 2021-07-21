@@ -17,10 +17,13 @@ public enum BaseApplicationCommand {
     LOG_IN_PAGE(ShowLogInPageCommand.getInstance(), UNAUTHORIZED),
     LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
     LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, USER),
+    PERSON_MANAGEMENT_PAGE(ShowPersonManagementPageCommand.getInstance(), ADMINISTRATOR),
+    PERSON_LIST_PAGE(ShowPersonListPageCommand.getInstance(), ADMINISTRATOR),
+    PERSON_DELETE_PAGE(ShowPersonDeletingPageCommand.getInstance(), ADMINISTRATOR),
+    PERSON_DELETE(PersonDeleteCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_PAGE(ShowCompetitionPageCommand.getInstance()),
     BETSLIP_PAGE(ShowBetslipPageCommand.getInstance(), ADMINISTRATOR, USER),
     BET_PAGE(ShowBetPageCommand.getInstance(), ADMINISTRATOR),
-    PERSON_PAGE(ShowPersonPageCommand.getInstance(), ADMINISTRATOR),
     ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 

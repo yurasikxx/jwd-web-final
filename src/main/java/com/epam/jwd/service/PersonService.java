@@ -61,9 +61,9 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public Person save(Person person) throws DaoException {
+    public Person save(Person person) throws DaoException, ServiceException {
         personDao.save(person);
-        final Person savedPerson = this.findAll().get(this.findAll().size() - 1);
+        final Person savedPerson = this.findByLogin(person.getLogin());
         this.update(savedPerson);
         return savedPerson;
     }

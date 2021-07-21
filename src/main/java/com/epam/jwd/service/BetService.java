@@ -45,8 +45,8 @@ public class BetService implements BetBaseService {
     }
 
     @Override
-    public void save(Bet bet) {
-
+    public Bet save(Bet bet) {
+        return null;
     }
 
     @Override
