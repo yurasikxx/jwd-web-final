@@ -44,7 +44,7 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
-    public void update(Competition entity) throws ServiceException, DaoException {
+    public void update(Competition entity) {
 
     }
 
@@ -67,6 +67,11 @@ public class CompetitionService implements CompetitionBaseService {
     @Override
     public void delete(Long id) throws DaoException {
         competitionDao.delete(id);
+    }
+
+    @Override
+    public boolean canBeDeleted(Long id) throws ServiceException, DaoException {
+        return this.findAll().contains(this.findById(id)) && id > 0;
     }
 
     @Override

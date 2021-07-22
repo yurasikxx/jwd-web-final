@@ -10,6 +10,7 @@ import java.util.List;
 
 public class BetslipService implements BetslipBaseService {
 
+    private static final String BETSLIP_WAS_NOT_FIND_BY_GIVEN_ID_MSG = "Betslip wasn't find by given id";
     private static volatile BetslipService instance;
     private final BetslipBaseDao betslipDao;
 
@@ -56,12 +57,18 @@ public class BetslipService implements BetslipBaseService {
 
     @Override
     public Betslip findById(Long id) throws ServiceException, DaoException {
-        return null;
+        return betslipDao.findById(id).
+                orElseThrow(() -> new ServiceException(String.format(BETSLIP_WAS_NOT_FIND_BY_GIVEN_ID_MSG, id)));
     }
 
     @Override
     public void delete(Long id) throws DaoException {
         betslipDao.delete(id);
+    }
+
+    @Override
+    public boolean canBeDeleted(Long id) throws ServiceException, DaoException {
+        return this.findAll().contains(this.findById(id)) && id > 0;
     }
 
 }

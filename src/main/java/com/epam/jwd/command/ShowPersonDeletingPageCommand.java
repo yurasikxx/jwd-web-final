@@ -1,23 +1,16 @@
 package com.epam.jwd.command;
 
-import com.epam.jwd.model.Person;
-import com.epam.jwd.service.PersonBaseService;
-import com.epam.jwd.service.PersonService;
-
-import java.util.List;
-
 import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NAME;
 
 public class ShowPersonDeletingPageCommand implements Command {
 
     protected static final String DELETING_JSP_PATH = "/WEB-INF/jsp/deleting.jsp";
+    private static final String ENTER_PERSON_ID_MESSAGE = "Enter person ID which needs to be deleted";
 
     private static volatile ShowPersonDeletingPageCommand instance;
-    private final PersonBaseService personService;
     private final BaseCommandResponse personDeletingPageResponse = new CommandResponse(DELETING_JSP_PATH, false);
 
     private ShowPersonDeletingPageCommand() {
-        this.personService = PersonService.getInstance();
     }
 
     public static ShowPersonDeletingPageCommand getInstance() {
@@ -34,9 +27,7 @@ public class ShowPersonDeletingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        final List<Person> persons = personService.findAll();
-        request.setAttribute(PERSON_ATTRIBUTE_NAME, persons);
-
+        request.setAttribute(PERSON_ATTRIBUTE_NAME, ENTER_PERSON_ID_MESSAGE);
         return personDeletingPageResponse;
     }
 

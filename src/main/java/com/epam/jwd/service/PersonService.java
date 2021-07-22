@@ -12,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 
 public class PersonService implements PersonBaseService {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonService.class);
-    private static final String USER_WAS_NOT_FOUND_BY_GIVEN_ID_MSG = "User wasn't found by given id: %s";
     private static final String USER_WAS_NOT_FOUND_BY_GIVEN_LOGIN_MSG = "User wasn't found by given login: %s";
     private static final String USER_CAN_NOT_LOG_IN_MSG = "User can't log in";
 
@@ -107,14 +107,25 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public Person findById(Long id) throws DaoException, ServiceException {
-        return personDao.findById(id).
-                orElseThrow(() -> new ServiceException(String.format(USER_WAS_NOT_FOUND_BY_GIVEN_ID_MSG, id)));
+    public Person findById(Long id) throws DaoException {
+        Person person = null;
+        final Optional<Person> optionalPerson = personDao.findById(id);
+
+        if (optionalPerson.isPresent()) {
+            person = optionalPerson.get();
+        }
+
+        return person;
     }
 
     @Override
     public void delete(Long id) throws DaoException {
         personDao.delete(id);
+    }
+
+    @Override
+    public boolean canBeDeleted(Long id) throws DaoException {
+        return this.findAll().contains(this.findById(id)) && id > 0;
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class BetService implements BetBaseService {
 
+    private static final String BET_WAS_NOT_FIND_BY_GIVEN_ID_MSG = "Bet wasn't find by given ID";
     private static volatile BetService instance;
     private final BetBaseDao betDao;
 
@@ -36,12 +37,18 @@ public class BetService implements BetBaseService {
 
     @Override
     public Bet findById(Long id) throws ServiceException, DaoException {
-        return null;
+        return betDao.findById(id).
+                orElseThrow(() -> new ServiceException(String.format(BET_WAS_NOT_FIND_BY_GIVEN_ID_MSG, id)));
     }
 
     @Override
     public void delete(Long id) throws DaoException {
         betDao.delete(id);
+    }
+
+    @Override
+    public boolean canBeDeleted(Long id) throws ServiceException, DaoException {
+        return this.findAll().contains(this.findById(id)) && id > 0;
     }
 
     @Override
