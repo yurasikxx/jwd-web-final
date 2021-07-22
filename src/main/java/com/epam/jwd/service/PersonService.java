@@ -53,7 +53,7 @@ public class PersonService implements PersonBaseService {
     public void init() {
         for (int i = 0; i < this.findAll().size(); i++) {
             try {
-                this.update(this.findAll().get(i));
+                this.logIn(this.findAll().get(i));
             } catch (DaoException e) {
                 e.printStackTrace();
             }
@@ -61,7 +61,17 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public Person save(Person person) throws DaoException, ServiceException {
+    public Person save(Person entity) throws ServiceException, DaoException {
+        return null;
+    }
+
+    @Override
+    public void update(Person entity) throws ServiceException, DaoException {
+
+    }
+
+    @Override
+    public Person register(Person person) throws DaoException, ServiceException {
         personDao.save(person);
         final Person savedPerson = this.findByLogin(person.getLogin());
         this.update(savedPerson);
@@ -77,11 +87,15 @@ public class PersonService implements PersonBaseService {
             logins.add(iteratedPerson.getLogin());
         }
 
-        return !logins.contains(person.getLogin()) && person.getLogin().length() <= 40 && person.getPassword().length() <= 100;
+        return !logins.contains(person.getLogin())
+                && person.getLogin() == null
+                && person.getPassword() == null
+                && person.getLogin().length() <= 40
+                && person.getPassword().length() <= 100;
     }
 
     @Override
-    public void update(Person person) throws DaoException {
+    public void logIn(Person person) throws DaoException {
         final char[] rawPassword = person.getPassword().toCharArray();
         final String encryptedPassword = hasher.hashToString(MIN_COST, rawPassword);
         personDao.update(new Person(person.getId(), person.getLogin(), encryptedPassword, person.getRole()));
@@ -94,7 +108,9 @@ public class PersonService implements PersonBaseService {
             final Person persistedPerson = this.findByLogin(person.getLogin());
             final char[] encryptedPassword = persistedPerson.getPassword().toCharArray();
 
-            return verifyer.verify(enteredPassword, encryptedPassword).verified;
+            return persistedPerson.getLogin() != null
+                    && persistedPerson.getPassword() != null
+                    && verifyer.verify(enteredPassword, encryptedPassword).verified;
         } catch (ServiceException | DaoException e) {
             LOGGER.error(USER_CAN_NOT_LOG_IN_MSG);
             return false;

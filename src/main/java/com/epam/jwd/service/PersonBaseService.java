@@ -11,7 +11,11 @@ public interface PersonBaseService extends BaseService<Person> {
 
     void init();
 
+    Person register(Person person) throws DaoException, ServiceException;
+
     boolean canRegister(Person person);
+
+    void logIn(Person person) throws DaoException;
 
     boolean canLogIn(Person person);
 

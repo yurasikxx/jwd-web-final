@@ -19,8 +19,9 @@ public class LogInCommand implements Command {
     protected static final String LOGIN_PARAMETER_NAME = "login";
     protected static final String PASSWORD_PARAMETER_NAME = "password";
     protected static final String ERROR_ATTRIBUTE_NAME = "error";
+    protected static final String EMPTY_CREDENTIALS_MSG = "Credentials must not be empty";
 
-    private static final String INVALID_CREDENTIALS_MSG = "Wrong login or password";
+    private static final String INVALID_CREDENTIALS_MSG = "Credentials must not be empty or wrong login or password";
 
     private static volatile LogInCommand instance;
     private final PersonBaseService personService;
@@ -45,8 +46,13 @@ public class LogInCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        final String login = request.getParameter(LOGIN_PARAMETER_NAME);
-        final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
+        if (getCheckedLogin(request) == null || getCheckedPassword(request) == null) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_CREDENTIALS_MSG);
+            return loginErrorCommandResponse;
+        }
+
+        final String login = getCheckedLogin(request);
+        final String password = getCheckedPassword(request);
         final Person person = new Person(login, password);
 
         if (!personService.canLogIn(person)) {
@@ -54,6 +60,28 @@ public class LogInCommand implements Command {
         }
 
         return addPersonInfoToSession(request, login);
+    }
+
+    private String getCheckedLogin(BaseCommandRequest request) {
+        final String login;
+
+        if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
+            login = request.getParameter(LOGIN_PARAMETER_NAME);
+            return login;
+        }
+
+        return null;
+    }
+
+    private String getCheckedPassword(BaseCommandRequest request) {
+        final String password;
+
+        if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
+            password = request.getParameter(PASSWORD_PARAMETER_NAME);
+            return password;
+        }
+
+        return null;
     }
 
     private BaseCommandResponse prepareErrorPage(BaseCommandRequest request) {

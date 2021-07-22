@@ -9,6 +9,8 @@
     <c:when test="${not empty requestScope.error}">
         <p>${requestScope.error}</p>
         <a href="${pageContext.request.contextPath}/controller?command=log_in_page">Try again</a>
+        <br>
+        <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
     </c:when>
     <c:otherwise>
         <form action="${pageContext.request.contextPath}/controller?command=log_in" method="post">
