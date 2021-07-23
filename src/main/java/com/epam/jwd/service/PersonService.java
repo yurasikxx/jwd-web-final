@@ -61,8 +61,8 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public Person save(Person entity) throws ServiceException, DaoException {
-        return null;
+    public void save(Person entity) throws ServiceException, DaoException {
+
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BaseService<T extends BaseEntity> {
 
-    T save(T entity) throws ServiceException, DaoException;
+    void save(T entity) throws ServiceException, DaoException;
 
     void update(T entity) throws ServiceException, DaoException;
 

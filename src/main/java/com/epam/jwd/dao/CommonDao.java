@@ -41,7 +41,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
-            try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
+                try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 saveResultSet(resultSet, entity);
             }
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
@@ -139,9 +139,9 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 .findFirst();
     }
 
-    protected abstract void saveResultSet(ResultSet resultSet, T entity) throws SQLException, BusinessValidationException;
+    protected abstract void saveResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
 
-    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws SQLException, BusinessValidationException;
+    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
 
     protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
 

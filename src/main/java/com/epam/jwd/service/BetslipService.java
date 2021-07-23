@@ -31,8 +31,8 @@ public class BetslipService implements BetslipBaseService {
     }
 
     @Override
-    public Betslip save(Betslip betslip) {
-        return null;
+    public void save(Betslip betslip) throws DaoException {
+        betslipDao.save(betslip);
     }
 
     @Override

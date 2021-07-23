@@ -6,6 +6,7 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Sport;
+import com.epam.jwd.model.Team;
 
 import java.util.List;
 
@@ -32,10 +33,13 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
-    public Competition save(Competition competition) throws ServiceException, DaoException {
+    public void save(Competition competition) throws ServiceException, DaoException {
         competitionDao.save(competition);
+    }
 
-        return competition;
+    @Override
+    public Team findTeamById(Long id) throws DaoException {
+        return competitionDao.findTeamById(id);
     }
 
     @Override

@@ -23,6 +23,8 @@ public enum BaseApplicationCommand {
     PERSON_DELETE(PersonDeleteCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_MANAGEMENT_PAGE(ShowCompetitionManagementPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_LIST_PAGE(ShowCompetitionListPageCommand.getInstance()),
+    COMPETITION_ADDING_PAGE(ShowCompetitionAddingPageCommand.getInstance(), ADMINISTRATOR),
+    COMPETITION_ADD(CompetitionAddingCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_DELETING_PAGE(ShowCompetitionDeletingPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_DELETE(CompetitionDeleteCommand.getInstance(), ADMINISTRATOR),
     BETSLIP_MANAGEMENT_PAGE(ShowBetslipManagementPageCommand.getInstance(), ADMINISTRATOR),

@@ -15,6 +15,10 @@ public class Competition extends AbstractBaseEntity {
         this.away = away;
     }
 
+    public Competition(Sport sport, Team home, Team away) {
+        this(null, sport, home, away);
+    }
+
     public Sport getSport() {
         return sport;
     }

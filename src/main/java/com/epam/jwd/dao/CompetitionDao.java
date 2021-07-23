@@ -40,6 +40,7 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     private static final String AWAY_TEAM_NAME_COLUMN = "ta.t_name";
     private static final String AWAY_TEAM_COUNTRY_COLUMN = "ta.t_country";
     private static final String AWAY_TEAM_RATE_COLUMN = "ta.t_rate";
+    private static final String TEAM_DOES_NOT_EXIST_MSG = "Team with given id doesn't exist: %s";
 
     private static volatile CompetitionDao instance;
     private final String findBySportSql;
@@ -62,41 +63,115 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Competition competition) throws SQLException {
-        final AtomicLong competitionAmount = new AtomicLong(findAll().size());
-        final AtomicLong idCounter = new AtomicLong(1);
-        final List<Competition> competitions = this.findAll();
+    protected void saveResultSet(ResultSet resultSet, Competition competition) {
+        try {
+            final List<Competition> competitions = this.findAll();
+            if (competitions.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
+            } else {
+                final AtomicLong competitionAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(1L);
 
-        if (competitionAmount.get() == competitions.get(competitions.size() - 1).getId()) {
-            long id = competitionAmount.incrementAndGet();
+                if (competitionAmount.get() == competitions.get(competitions.size() - 1).getId()) {
+                    long id = competitionAmount.incrementAndGet();
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(COMPETITION_ID_COLUMN, id);
-        } else {
-            while (idCounter.get() == competitions.get((int) (idCounter.get() - 1)).getId()) {
-                idCounter.incrementAndGet();
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == competitions.get((int) (idCounter.get() - 1)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter.get());
+                }
             }
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter.get());
-        }
-
-        resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
-        resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
-        resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
-        resultSet.insertRow();
-        resultSet.moveToCurrentRow();
-    }
-
-    @Override
-    protected void updateResultSet(ResultSet resultSet, Competition competition) throws SQLException {
-        long id = resultSet.getLong(1);
-
-        if (id == competition.getId()) {
             resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
             resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
-            resultSet.updateRow();
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+
+            /*List<Competition> competitions = this.findAll();
+
+            if (competitions.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
+            } else {
+                final AtomicLong lastCompetition = new AtomicLong(competitions.get(competitions.size() - 1).getId());
+                final AtomicLong competitionAmount = new AtomicLong(competitions.size());
+                final AtomicLong idCounter = new AtomicLong(1);
+
+                if (competitionAmount.equals(lastCompetition)) {
+                    long id = competitionAmount.incrementAndGet();
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
+                } else {
+                    while (competitions.get((int) (idCounter.get() - 1)).getId().equals(idCounter.get())) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    long id = idCounter.get();
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
+                }
+            }
+
+            resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
+            resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
+            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();*/
+
+            /*List<Competition> competitions = this.findAll();
+
+            if (competitions.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
+            } else {
+                long lastCompetition = competitions.get(competitions.size() - 1).getId();
+                long competitionAmount = competitions.size();
+                long idCounter = 1L;
+
+                if (competitionAmount == lastCompetition) {
+                    long id = ++competitionAmount;
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
+                } else {
+                    while (competitions.get((int) (idCounter - 1)).getId() == idCounter ) {
+                        ++idCounter;
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter);
+                }
+            }
+
+            resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
+            resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
+            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();*/
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, Competition competition) {
+        try {
+            long id = resultSet.getLong(1);
+
+            if (id == competition.getId()) {
+                resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
+                resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
+                resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -118,6 +193,22 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     public List<Competition> findBySportName(Sport sport) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setString(1, sport.getName()),
                 findBySportSql);
+    }
+
+    @Override
+    public Team findTeamById(Long id) throws DaoException {
+        final List<Competition> competitions = this.findAll();
+        for (Competition competition : competitions) {
+            if (competition.getHome().getId().equals(id)) {
+                return competition.getHome();
+            }
+
+            if (competition.getAway().getId().equals(id)) {
+                return competition.getAway();
+            }
+        }
+
+        throw new DaoException(String.format(TEAM_DOES_NOT_EXIST_MSG, id));
     }
 
 }

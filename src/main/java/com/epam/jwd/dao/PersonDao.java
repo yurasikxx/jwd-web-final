@@ -53,50 +53,63 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
+    protected void saveResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
         if (Role.UNAUTHORIZED.equals(person.getRole())) {
             throw new BusinessValidationException(UNAUTHORIZED_SAVE_MSG);
         }
 
-        final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-        final AtomicLong idCounter = new AtomicLong(1);
-        final List<Person> persons = this.findAll();
+        try {
+            final List<Person> persons = this.findAll();
 
-        if (personAmount.get() == persons.get(persons.size() - 1).getId()) {
-            long id = personAmount.incrementAndGet();
+            if (persons.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(PERSON_ID_COLUMN, 1L);
+            } else {
+                final AtomicLong personAmount = new AtomicLong(this.findAll().size());
+                final AtomicLong idCounter = new AtomicLong(1);
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(PERSON_ID_COLUMN, id);
-        } else {
-            while (idCounter.get() == persons.get((int) (idCounter.get() - 1)).getId()) {
-                idCounter.incrementAndGet();
+                if (persons.get(persons.size() - 1).getId().equals(personAmount.get())) {
+                    long id = personAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(PERSON_ID_COLUMN, id);
+                } else {
+                    while (persons.get((int) (idCounter.get() - 1)).getId().equals(idCounter.get())) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+                }
             }
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+            resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
+            resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
+            resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
-        resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-        resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
-        resultSet.insertRow();
-        resultSet.moveToCurrentRow();
-
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, Person person) throws SQLException, BusinessValidationException {
+    protected void updateResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
         if (Role.UNAUTHORIZED.equals(person.getRole())) {
             throw new BusinessValidationException(UNAUTHORIZED_UPDATE_MSG);
         }
 
-        long id = resultSet.getLong(1);
+        try {
+            long id = resultSet.getLong(1);
 
-        if (id == person.getId()) {
-            resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
-            resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-            resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
-            resultSet.updateRow();
+            if (id == person.getId()) {
+                resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
+                resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
+                resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

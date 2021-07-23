@@ -52,8 +52,8 @@ public class BetService implements BetBaseService {
     }
 
     @Override
-    public Bet save(Bet bet) {
-        return null;
+    public void save(Bet bet) throws DaoException {
+        betDao.save(bet);
     }
 
     @Override

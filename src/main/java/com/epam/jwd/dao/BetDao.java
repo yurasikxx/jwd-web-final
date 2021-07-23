@@ -89,41 +89,55 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Bet bet) throws SQLException {
-        final AtomicLong betAmount = new AtomicLong(findAll().size());
-        final AtomicLong idCounter = new AtomicLong(1);
-        final List<Bet> bets = this.findAll();
+    protected void saveResultSet(ResultSet resultSet, Bet bet) {
+        try {
+            final List<Bet> bets = this.findAll();
 
-        if (betAmount.get() == bets.get(bets.size() - 1).getId()) {
-            long id = betAmount.incrementAndGet();
+            if (bets.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_ID_COLUMN, 1L);
+            } else {
+                final AtomicLong betAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(1);
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BET_ID_COLUMN, id);
-        } else {
-            while (idCounter.get() == bets.get((int) (idCounter.get() - 1)).getId()) {
-                idCounter.incrementAndGet();
+                if (betAmount.get() == bets.get(bets.size() - 1).getId()) {
+                    long id = betAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == bets.get((int) (idCounter.get() - 1)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
+                }
             }
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
-        }
-        
-        resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
-        resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
-        resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
-        resultSet.insertRow();
-        resultSet.moveToCurrentRow();
-    }
-
-    @Override
-    protected void updateResultSet(ResultSet resultSet, Bet bet) throws SQLException {
-        long id = resultSet.getLong(1);
-
-        if (id == bet.getId()) {
             resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
             resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
             resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
-            resultSet.updateRow();
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, Bet bet) {
+        try {
+            long id = resultSet.getLong(1);
+
+            if (id == bet.getId()) {
+                resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
+                resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
+                resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

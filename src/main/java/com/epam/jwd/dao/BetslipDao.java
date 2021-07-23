@@ -73,41 +73,55 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
-        final AtomicLong betslipAmount = new AtomicLong(findAll().size());
-        final AtomicLong idCounter = new AtomicLong(1);
-        final List<Betslip> betslips = this.findAll();
+    protected void saveResultSet(ResultSet resultSet, Betslip betslip) {
+        try {
+            final List<Betslip> betslips = this.findAll();
 
-        if (betslipAmount.get() == betslips.get(betslips.size() - 1).getId()) {
-            long id = betslipAmount.incrementAndGet();
+            if (betslips.size() == 0) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BETSLIP_ID_COLUMN, 1L);
+            } else {
+                final AtomicLong betslipAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(1L);
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BETSLIP_ID_COLUMN, id);
-        } else {
-            while (idCounter.get() == betslips.get((int) (idCounter.get() - 1)).getId()) {
-                idCounter.incrementAndGet();
+                if (betslipAmount.get() == betslips.get(betslips.size() - 1).getId()) {
+                    long id = betslipAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BETSLIP_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == betslips.get((int) (idCounter.get() - 1)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BETSLIP_ID_COLUMN, idCounter.get());
+                }
             }
 
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BETSLIP_ID_COLUMN, idCounter.get());
-        }
-
-        resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
-        resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
-        resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
-        resultSet.insertRow();
-        resultSet.moveToCurrentRow();
-    }
-
-    @Override
-    protected void updateResultSet(ResultSet resultSet, Betslip betslip) throws SQLException {
-        long id = resultSet.getLong(1);
-
-        if (id == betslip.getId()) {
             resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
             resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
             resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
-            resultSet.updateRow();
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, Betslip betslip) {
+        try {
+            long id = resultSet.getLong(1);
+
+            if (id == betslip.getId()) {
+                resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
+                resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
+                resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
