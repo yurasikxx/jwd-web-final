@@ -10,6 +10,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_INDEX_VALUE;
+
 public class CompetitionDao extends CommonDao<Competition> implements CompetitionBaseDao {
 
     private static final String SELECT_ALL_SQL_QUERY = "select c.id, c.s_id, t_home_id, t_away_id from %s;";
@@ -66,20 +71,20 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     protected void saveResultSet(ResultSet resultSet, Competition competition) {
         try {
             final List<Competition> competitions = this.findAll();
-            if (competitions.size() == 0) {
+            if (competitions.size() == EMPTY_LIST_SIZE_VALUE) {
                 resultSet.moveToInsertRow();
-                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
+                resultSet.updateLong(COMPETITION_ID_COLUMN, INITIAL_ID_VALUE);
             } else {
                 final AtomicLong competitionAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(1L);
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-                if (competitionAmount.get() == competitions.get(competitions.size() - 1).getId()) {
+                if (competitionAmount.get() == competitions.get(competitions.size() - INDEX_ROLLBACK_VALUE).getId()) {
                     long id = competitionAmount.incrementAndGet();
 
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(COMPETITION_ID_COLUMN, id);
                 } else {
-                    while (idCounter.get() == competitions.get((int) (idCounter.get() - 1)).getId()) {
+                    while (idCounter.get() == competitions.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
                         idCounter.incrementAndGet();
                     }
 
@@ -93,67 +98,6 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
-
-            /*List<Competition> competitions = this.findAll();
-
-            if (competitions.size() == 0) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
-            } else {
-                final AtomicLong lastCompetition = new AtomicLong(competitions.get(competitions.size() - 1).getId());
-                final AtomicLong competitionAmount = new AtomicLong(competitions.size());
-                final AtomicLong idCounter = new AtomicLong(1);
-
-                if (competitionAmount.equals(lastCompetition)) {
-                    long id = competitionAmount.incrementAndGet();
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
-                } else {
-                    while (competitions.get((int) (idCounter.get() - 1)).getId().equals(idCounter.get())) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    long id = idCounter.get();
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
-                }
-            }
-
-            resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
-            resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
-            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
-            resultSet.insertRow();
-            resultSet.moveToCurrentRow();*/
-
-            /*List<Competition> competitions = this.findAll();
-
-            if (competitions.size() == 0) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(COMPETITION_ID_COLUMN, 1L);
-            } else {
-                long lastCompetition = competitions.get(competitions.size() - 1).getId();
-                long competitionAmount = competitions.size();
-                long idCounter = 1L;
-
-                if (competitionAmount == lastCompetition) {
-                    long id = ++competitionAmount;
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
-                } else {
-                    while (competitions.get((int) (idCounter - 1)).getId() == idCounter ) {
-                        ++idCounter;
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter);
-                }
-            }
-
-            resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
-            resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
-            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
-            resultSet.insertRow();
-            resultSet.moveToCurrentRow();*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -162,7 +106,7 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     @Override
     protected void updateResultSet(ResultSet resultSet, Competition competition) {
         try {
-            long id = resultSet.getLong(1);
+            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == competition.getId()) {
                 resultSet.updateLong(SPORT_ID_COLUMN, competition.getSport().getId());
@@ -191,24 +135,8 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
 
     @Override
     public List<Competition> findBySportName(Sport sport) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setString(1, sport.getName()),
+        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, sport.getName()),
                 findBySportSql);
-    }
-
-    @Override
-    public Team findTeamById(Long id) throws DaoException {
-        final List<Competition> competitions = this.findAll();
-        for (Competition competition : competitions) {
-            if (competition.getHome().getId().equals(id)) {
-                return competition.getHome();
-            }
-
-            if (competition.getAway().getId().equals(id)) {
-                return competition.getAway();
-            }
-        }
-
-        throw new DaoException(String.format(TEAM_DOES_NOT_EXIST_MSG, id));
     }
 
 }

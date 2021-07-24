@@ -15,6 +15,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_INDEX_VALUE;
+
 public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     private final static String SELECT_ALL_SQL_QUERY = "select b.id, b.bs_id, b.bet_total, b.p_id from %s;";
@@ -93,20 +98,20 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
         try {
             final List<Bet> bets = this.findAll();
 
-            if (bets.size() == 0) {
+            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
                 resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_ID_COLUMN, 1L);
+                resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
             } else {
                 final AtomicLong betAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(1);
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-                if (betAmount.get() == bets.get(bets.size() - 1).getId()) {
+                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
                     long id = betAmount.incrementAndGet();
 
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(BET_ID_COLUMN, id);
                 } else {
-                    while (idCounter.get() == bets.get((int) (idCounter.get() - 1)).getId()) {
+                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
                         idCounter.incrementAndGet();
                     }
 
@@ -128,7 +133,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     @Override
     protected void updateResultSet(ResultSet resultSet, Bet bet) {
         try {
-            long id = resultSet.getLong(1);
+            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == bet.getId()) {
                 resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
@@ -166,7 +171,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     @Override
     public List<Bet> findByTotal(Integer betTotal) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setInt(1, betTotal), findByTotalSql);
+        return findPreparedEntities(preparedStatement -> preparedStatement.setInt(INITIAL_INDEX_VALUE, betTotal),
+                findByTotalSql);
     }
 
 }

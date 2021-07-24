@@ -5,10 +5,10 @@ import static com.epam.jwd.command.ShowCompetitionListPageCommand.COMPETITION_AT
 public class ShowCompetitionAddingPageCommand implements Command {
 
     protected static final String ADDING_JSP_PATH = "/WEB-INF/jsp/adding.jsp";
-    protected static final String SPORT_ATTRIBUTE_NAME = "sport";
-    protected static final String HOME_TEAM_ATTRIBUTE_NAME = "homeTeam";
-    protected static final String AWAY_TEAM_ATTRIBUTE_NAME = "awayTeam";
 
+    private static final String SPORT_ATTRIBUTE_NAME = "sport";
+    private static final String HOME_TEAM_ATTRIBUTE_NAME = "homeTeam";
+    private static final String AWAY_TEAM_ATTRIBUTE_NAME = "awayTeam";
     private static final String ENTER_SPORT_ID_MSG = "Enter sport ID: ";
     private static final String ENTER_HOME_TEAM_ID_MSG = "Enter home team ID: ";
     private static final String ENTER_AWAY_TEAM_ID_MSG = "Enter away team ID: ";

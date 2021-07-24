@@ -12,6 +12,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_INDEX_VALUE;
+
 public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     private static final String SELECT_ALL_SQL_QUERY = "select bs.id, bs.c_id, bs.bt_id, bs.coefficient from %s;";
@@ -76,21 +81,20 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     protected void saveResultSet(ResultSet resultSet, Betslip betslip) {
         try {
             final List<Betslip> betslips = this.findAll();
-
-            if (betslips.size() == 0) {
+            if (betslips.size() == EMPTY_LIST_SIZE_VALUE) {
                 resultSet.moveToInsertRow();
-                resultSet.updateLong(BETSLIP_ID_COLUMN, 1L);
+                resultSet.updateLong(BETSLIP_ID_COLUMN, INITIAL_ID_VALUE);
             } else {
-                final AtomicLong betslipAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(1L);
+                final AtomicLong competitionAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-                if (betslipAmount.get() == betslips.get(betslips.size() - 1).getId()) {
-                    long id = betslipAmount.incrementAndGet();
+                if (competitionAmount.get() == betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = competitionAmount.incrementAndGet();
 
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(BETSLIP_ID_COLUMN, id);
                 } else {
-                    while (idCounter.get() == betslips.get((int) (idCounter.get() - 1)).getId()) {
+                    while (idCounter.get() == betslips.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
                         idCounter.incrementAndGet();
                     }
 
@@ -112,7 +116,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     @Override
     protected void updateResultSet(ResultSet resultSet, Betslip betslip) {
         try {
-            long id = resultSet.getLong(1);
+            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == betslip.getId()) {
                 resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
@@ -144,7 +148,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     @Override
     public List<Betslip> findByCoefficient(double coefficient) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setDouble(1, coefficient), findByCoefficientSql);
+        return findPreparedEntities(preparedStatement -> preparedStatement.setDouble(INITIAL_INDEX_VALUE, coefficient),
+                findByCoefficientSql);
     }
 
 }

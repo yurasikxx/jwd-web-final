@@ -5,8 +5,9 @@ import com.epam.jwd.model.Team;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class TeamDao extends CommonDao<Team> implements BaseDao<Team> {
+public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
 
     private static final String SELECT_ALL_SQL_QUERY = "select t.id, t_name, t_country, t_rate from %s;";
     private static final String FIND_BY_FIELD_SQL_QUERY = "select t.id, t_name, t_country, t_rate from %s\n" +
@@ -51,6 +52,17 @@ public class TeamDao extends CommonDao<Team> implements BaseDao<Team> {
                 resultSet.getString(TEAM_NAME_COLUMN),
                 resultSet.getString(TEAM_COUNTRY_COLUMN),
                 resultSet.getInt(TEAM_RATE_COLUMN));
+    }
+
+
+    @Override
+    public List<Team> findByCountry(String country) {
+        return null;
+    }
+
+    @Override
+    public List<Team> findByRate(int rate) {
+        return null;
     }
 
 }

@@ -61,12 +61,12 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public void save(Person entity) throws ServiceException, DaoException {
+    public void save(Person person) throws ServiceException, DaoException {
 
     }
 
     @Override
-    public void update(Person entity) throws ServiceException, DaoException {
+    public void update(Person person) throws ServiceException, DaoException {
 
     }
 
@@ -74,7 +74,8 @@ public class PersonService implements PersonBaseService {
     public Person register(Person person) throws DaoException, ServiceException {
         personDao.save(person);
         final Person savedPerson = this.findByLogin(person.getLogin());
-        this.update(savedPerson);
+        this.logIn(savedPerson);
+
         return savedPerson;
     }
 
@@ -88,10 +89,8 @@ public class PersonService implements PersonBaseService {
         }
 
         return !logins.contains(person.getLogin())
-                && person.getLogin() == null
-                && person.getPassword() == null
-                && person.getLogin().length() <= 40
-                && person.getPassword().length() <= 100;
+                && person.getLogin().length() > 0 && person.getLogin().length() <= 40
+                && person.getPassword().length() > 0 && person.getPassword().length() <= 100;
     }
 
     @Override

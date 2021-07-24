@@ -13,6 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
+    protected static final int EMPTY_LIST_SIZE_VALUE = 0;
+    protected static final int INITIAL_ID_VALUE = 1;
+    protected static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
+    protected static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
+
     private static final String SELECT_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.pr_id from %s;";
     private static final String FIND_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.pr_id, pr.pr_name\n" +
             "from %s\n" +
@@ -61,20 +66,20 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         try {
             final List<Person> persons = this.findAll();
 
-            if (persons.size() == 0) {
+            if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
                 resultSet.moveToInsertRow();
-                resultSet.updateLong(PERSON_ID_COLUMN, 1L);
+                resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
             } else {
                 final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-                final AtomicLong idCounter = new AtomicLong(1);
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-                if (persons.get(persons.size() - 1).getId().equals(personAmount.get())) {
+                if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
                     long id = personAmount.incrementAndGet();
 
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(PERSON_ID_COLUMN, id);
                 } else {
-                    while (persons.get((int) (idCounter.get() - 1)).getId().equals(idCounter.get())) {
+                    while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
                         idCounter.incrementAndGet();
                     }
 
@@ -100,7 +105,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         }
 
         try {
-            long id = resultSet.getLong(1);
+            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == person.getId()) {
                 resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
@@ -124,13 +129,13 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     @Override
     public Optional<Person> findByLogin(String login) throws DaoException {
         return takeFirstNotNull(findPreparedEntities(
-                preparedStatement -> preparedStatement.setString(1, login), findByLoginSql)
+                preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, login), findByLoginSql)
         );
     }
 
     @Override
     public List<Person> findByRole(Role role) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setString(1, role.getName()),
+        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
                 findByRoleSql);
     }
 

@@ -8,6 +8,8 @@ Available bet operations:
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=bet_list_page">View all bets</a>
 <br>
+<a href="${pageContext.request.contextPath}/controller?command=bet_adding_page">Add bet</a>
+<br>
 <a href="${pageContext.request.contextPath}/controller?command=bet_deleting_page">Delete bet</a>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>

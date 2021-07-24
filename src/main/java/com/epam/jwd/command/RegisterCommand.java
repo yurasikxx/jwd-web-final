@@ -6,7 +6,6 @@ import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
-import static com.epam.jwd.command.LogInCommand.EMPTY_CREDENTIALS_MSG;
 import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.LogInCommand.INDEX_JSP_PATH;
 import static com.epam.jwd.command.LogInCommand.LOGIN_PARAMETER_NAME;
@@ -41,7 +40,7 @@ public class RegisterCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         if (getCheckedLogin(request) == null || getCheckedPassword(request) == null) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_CREDENTIALS_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, INVALID_CREDENTIALS_MSG);
             return registerErrorCommandResponse;
         }
 
