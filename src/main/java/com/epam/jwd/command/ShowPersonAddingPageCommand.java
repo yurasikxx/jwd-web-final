@@ -5,11 +5,12 @@ import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NA
 
 public class ShowPersonAddingPageCommand implements Command {
 
+    protected static final String LOGIN_ATTRIBUTE_NAME = "login";
+    protected static final String ENTER_PERSON_LOGIN_MSG = "Enter person login: ";
+    protected static final String PASSWORD_ATTRIBUTE_NAME = "password";
+    protected static final String ENTER_PERSON_PASSWORD_MSG = "Enter person password: ";
+
     private static final String PERSON_ADDING_OPERATION_MSG = "Person adding operation";
-    private static final String LOGIN_ATTRIBUTE_NAME = "login";
-    private static final String ENTER_PERSON_LOGIN_MSG = "Enter person login: ";
-    private static final String PASSWORD_ATTRIBUTE_NAME = "password";
-    private static final String ENTER_PERSON_PASSWORD_MSG = "Enter person password: ";
     private static volatile ShowPersonAddingPageCommand instance;
 
     private final BaseCommandResponse personCommandResponse;

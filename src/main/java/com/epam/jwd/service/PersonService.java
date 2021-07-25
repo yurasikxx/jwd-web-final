@@ -66,7 +66,7 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
-    public void update(Person person) throws ServiceException, DaoException {
+    public void update(Person person) {
 
     }
 

@@ -1,6 +1,6 @@
 package com.epam.jwd.dao;
 
-import com.epam.jwd.exception.BusinessValidationException;
+import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
 
 import java.sql.ResultSet;
@@ -9,14 +9,15 @@ import java.util.List;
 
 public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
 
-    private static final String SELECT_ALL_SQL_QUERY = "select t.id, t_name, t_country, t_rate from %s;";
-    private static final String FIND_BY_FIELD_SQL_QUERY = "select t.id, t_name, t_country, t_rate from %s\n" +
+    private static final String SELECT_ALL_SQL_QUERY = "select t.id, t.t_name, t.s_id, s.s_name from %s\n" +
+            "join sport s on t.s_id = s.id;";
+    private static final String FIND_BY_FIELD_SQL_QUERY = "select t.id, t.t_name, t.s_id, s.s_name from %s\n" +
+            "join sport s on t.s_id = s.id\n" +
             "where %s = ?;";
     private static final String TABLE_NAME = "team t";
     private static final String TEAM_ID_COLUMN = "t.id";
     private static final String TEAM_NAME_COLUMN = "t_name";
-    private static final String TEAM_COUNTRY_COLUMN = "t_country";
-    private static final String TEAM_RATE_COLUMN = "t_rate";
+    private static final String SPORT_NAME_COLUMN = "s.s_name";
 
     private static volatile TeamDao instance;
 
@@ -37,12 +38,12 @@ public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
     }
 
     @Override
-    protected void saveResultSet(ResultSet resultSet, Team entity) throws BusinessValidationException {
+    protected void saveResultSet(ResultSet resultSet, Team entity) {
 
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, Team entity) throws BusinessValidationException {
+    protected void updateResultSet(ResultSet resultSet, Team entity) {
 
     }
 
@@ -50,8 +51,7 @@ public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
     protected Team mapResultSet(ResultSet resultSet) throws SQLException {
         return new Team(resultSet.getLong(TEAM_ID_COLUMN),
                 resultSet.getString(TEAM_NAME_COLUMN),
-                resultSet.getString(TEAM_COUNTRY_COLUMN),
-                resultSet.getInt(TEAM_RATE_COLUMN));
+                Sport.resolveSportByName(resultSet.getString(SPORT_NAME_COLUMN)));
     }
 
 

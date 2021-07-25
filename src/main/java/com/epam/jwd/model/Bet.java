@@ -19,6 +19,10 @@ public class Bet extends AbstractBaseEntity {
         this(null, betslip, betTotal, person);
     }
 
+    public Bet(Betslip betslip, Person person) {
+        this(null, betslip, null, person);
+    }
+
     public Betslip getBetslip() {
         return betslip;
     }

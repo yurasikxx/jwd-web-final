@@ -5,13 +5,15 @@ import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_P
 
 public class ShowBetAddingPageCommand implements Command {
 
-    private static final String BET_TOTAL_ATTRIBUTE_NAME = "betTotal";
+    protected static final String BET_TOTAL_ATTRIBUTE_NAME = "betTotal";
+    protected static final String ENTER_BETSLIP_ID_MSG = "Enter betslip ID: ";
+    protected static final String ENTER_BET_TOTAL_MSG = "Enter bet total: ";
+    protected static final String ENTER_PERSON_ID_MSG = "Enter person ID: ";
+    protected static final String BETSLIP_ATTRIBUTE_NAME = "betBetslip";
+    protected static final String PERSON_ATTRIBUTE_NAME = "betPerson";
+
     private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation";
-    private static final String ENTER_BETSLIP_ID_MSG = "Enter betslip ID: ";
-    private static final String ENTER_BET_TOTAL_MSG = "Enter bet total: ";
-    private static final String ENTER_PERSON_ID_MSG = "Enter person ID: ";
-    private static final String BETSLIP_ATTRIBUTE_NAME = "betBetslip";
-    private static final String PERSON_ATTRIBUTE_NAME = "betPerson";
+
     private static volatile ShowBetAddingPageCommand instance;
 
     private final BaseCommandResponse betCommandResponse;

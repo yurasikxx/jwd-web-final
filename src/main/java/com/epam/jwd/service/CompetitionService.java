@@ -7,9 +7,9 @@ import com.epam.jwd.dao.TeamDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
-import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompetitionService implements CompetitionBaseService {
@@ -44,7 +44,14 @@ public class CompetitionService implements CompetitionBaseService {
 
     @Override
     public boolean canSave(Competition competition) {
-        return false;
+        final List<Competition> competitions = this.findAll();
+        final List<Competition> theseCompetitions = new ArrayList<>();
+
+        for (Competition iteratedCompetition : competitions) {
+            theseCompetitions.add(new Competition(iteratedCompetition.getHome(), iteratedCompetition.getAway()));
+        }
+
+        return !theseCompetitions.contains(competition);
     }
 
     @Override
@@ -79,12 +86,13 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
-    public List<Competition> findBySportName(Sport sport) throws DaoException {
-        return competitionDao.findBySportName(sport);
-    }
-
-    @Override
     public Team findTeamById(Long id) throws DaoException {
         return teamDao.findById(id).orElseThrow(() -> new DaoException(String.format(TEAM_WAS_NOT_FOUND_MSG, id)));
     }
+
+    @Override
+    public List<Team> findAllTeams() {
+        return teamDao.findAll();
+    }
+
 }

@@ -6,20 +6,22 @@ import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
-import static com.epam.jwd.command.CompetitionAddingCommand.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.command.CompetitionAddingCommand.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.LogInCommand.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.command.LogInCommand.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
 import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_PATH;
-import static com.epam.jwd.command.ShowCompetitionListPageCommand.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowPersonAddingPageCommand.ENTER_PERSON_LOGIN_MSG;
+import static com.epam.jwd.command.ShowPersonAddingPageCommand.ENTER_PERSON_PASSWORD_MSG;
+import static com.epam.jwd.command.ShowPersonAddingPageCommand.LOGIN_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowPersonAddingPageCommand.PASSWORD_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NAME;
 
 public class PersonAddingCommand implements Command {
 
     private static final String PERSON_SUCCESSFULLY_ADDED_MSG = "Person successfully added";
-    private static final String INVALID_CREDENTIALS_MSG = "Person with such login already exists or login or password are empty";
+    private static final String INVALID_CREDENTIALS_MSG = "Person with such login already exists or login/password are empty";
     private static volatile PersonAddingCommand instance;
 
     private final PersonBaseService personService;
@@ -49,7 +51,7 @@ public class PersonAddingCommand implements Command {
         try {
             if (getCheckedLogin(request) == null ||
                     getCheckedPassword(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, INVALID_CREDENTIALS_MSG);
                 request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
                 return personErrorCommandResponse;
@@ -73,14 +75,11 @@ public class PersonAddingCommand implements Command {
             request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return personErrorCommandResponse;
-        } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personErrorCommandResponse;
         }
 
         request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_ADDED_MSG);
+        request.setAttribute(LOGIN_ATTRIBUTE_NAME, ENTER_PERSON_LOGIN_MSG);
+        request.setAttribute(PASSWORD_ATTRIBUTE_NAME, ENTER_PERSON_PASSWORD_MSG);
 
         return personCommandResponse;
     }

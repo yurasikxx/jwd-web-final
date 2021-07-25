@@ -6,6 +6,7 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Betslip;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BetslipService implements BetslipBaseService {
@@ -37,7 +38,15 @@ public class BetslipService implements BetslipBaseService {
 
     @Override
     public boolean canSave(Betslip betslip) {
-        return false;
+        final List<Betslip> betslips = this.findAll();
+        final List<Betslip> theseWithoutCoefficientBetslips = new ArrayList<>();
+        final Betslip withoutCoefficientBetslip = new Betslip(betslip.getCompetition(), betslip.getBetType());
+
+        for (Betslip iteratedBetslip : betslips) {
+            theseWithoutCoefficientBetslips.add(new Betslip(iteratedBetslip.getCompetition(), iteratedBetslip.getBetType()));
+        }
+
+        return !theseWithoutCoefficientBetslips.contains(withoutCoefficientBetslip);
     }
 
     @Override

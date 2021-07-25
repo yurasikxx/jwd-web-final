@@ -5,13 +5,14 @@ import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_P
 
 public class ShowBetslipAddingPageCommand implements Command {
 
+    protected static final String COMPETITION_ATTRIBUTE_NAME = "betslipCompetition";
+    protected static final String ENTER_COMPETITION_ID_MSG = "Enter competition ID: ";
+    protected static final String BET_TYPE_ATTRIBUTE_NAME = "betType";
+    protected static final String ENTER_BET_TYPE_ID_MSG = "Enter bet type ID: ";
+    protected static final String COEFFICIENT_ATTRIBUTE_NAME = "coefficient";
+    protected static final String ENTER_COEFFICIENT_MSG = "Enter coefficient: ";
+
     private static final String BETSLIP_ADDING_OPERATION_MSG = "Betslip adding operation";
-    private static final String COMPETITION_ATTRIBUTE_NAME = "betslipCompetition";
-    private static final String ENTER_COMPETITION_ID_MSG = "Enter competition ID: ";
-    private static final String BET_TYPE_ATTRIBUTE_NAME = "betType";
-    private static final String ENTER_BET_TYPE_ID_MSG = "Enter bet type ID: ";
-    private static final String COEFFICIENT_ATTRIBUTE_NAME = "coefficient";
-    private static final String ENTER_COEFFICIENT_MSG = "Enter coefficient: ";
 
     private static volatile ShowBetslipAddingPageCommand instance;
 

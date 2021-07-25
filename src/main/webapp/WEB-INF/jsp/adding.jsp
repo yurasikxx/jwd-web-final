@@ -8,8 +8,17 @@
 <c:choose>
     <c:when test="${not empty requestScope.error}">
         <p>${requestScope.error}</p>
+        <c:if test="${not empty requestScope.person}">
+            <a href="${pageContext.request.contextPath}/controller?command=person_adding_page">${requestScope.person}</a>
+        </c:if>
         <c:if test="${not empty requestScope.competition}">
             <a href="${pageContext.request.contextPath}/controller?command=competition_adding_page">${requestScope.competition}</a>
+        </c:if>
+        <c:if test="${not empty requestScope.betslip}">
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_adding_page">${requestScope.betslip}</a>
+        </c:if>
+        <c:if test="${not empty requestScope.bet}">
+            <a href="${pageContext.request.contextPath}/controller?command=bet_adding_page">${requestScope.bet}</a>
         </c:if>
     </c:when>
     <c:when test="${not empty requestScope.person}">
@@ -33,10 +42,6 @@
     <c:when test="${not empty requestScope.competition}">
         <form action="${pageContext.request.contextPath}/controller?command=competition_add" method="post">
             <label>${requestScope.competition}</label>
-            <br>
-            <label for="sportIdField">${requestScope.sport}</label>
-            <br>
-            <input type="number" id="sportIdField" name="sportId">
             <br>
             <label for="homeTeamIdField">${requestScope.homeTeam}</label>
             <br>

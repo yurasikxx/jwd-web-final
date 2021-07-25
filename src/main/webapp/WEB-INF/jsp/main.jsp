@@ -46,7 +46,6 @@
         </c:if>
     </c:otherwise>
 </c:choose>
-<br>
 <jwd:time/>
 </body>
 </html>

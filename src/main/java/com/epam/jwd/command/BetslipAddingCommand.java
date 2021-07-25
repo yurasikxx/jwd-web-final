@@ -9,19 +9,34 @@ import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
+import java.util.Objects;
+
 import static com.epam.jwd.command.CompetitionAddingCommand.ALL_FIELDS_MUST_BE_FILLED_MSG;
+import static com.epam.jwd.command.CompetitionAddingCommand.MIN_ELEMENT_ID;
 import static com.epam.jwd.command.CompetitionAddingCommand.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.BET_TYPE_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.COEFFICIENT_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_BET_TYPE_ID_MSG;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COEFFICIENT_MSG;
+import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COMPETITION_ID_MSG;
 import static com.epam.jwd.command.ShowBetslipListPageCommand.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_PATH;
 
 public class BetslipAddingCommand implements Command {
 
+    protected static final String NUMBERS_MUST_BE_POSITIVE_MSG = "Numbers must be positive";
+    protected static final String INCORRECT_ENTERED_DATA = ALL_FIELDS_MUST_BE_FILLED_MSG + " and must be numbers";
+
     private static final String COMPETITION_PARAMETER_NAME = "competitionId";
     private static final String BET_TYPE_PARAMETER_NAME = "betTypeId";
     private static final String COEFFICIENT_PARAMETER_NAME = "coefficient";
     private static final String BETSLIP_SUCCESSFULLY_ADDED_MSG = "Betslip successfully added";
+    private static final String BETSLIP_ALREADY_EXISTS_MSG = "Betslip of given competition with such bet type already exists";
+    private static final String UNKNOWN_BET_TYPE_ID_MSG = "Unknown bet type ID";
+    private static final String WRONG_COMPETITION_ID_MSG = "Competition with such ID doesn't exist";
 
     private static volatile BetslipAddingCommand instance;
 
@@ -55,7 +70,30 @@ public class BetslipAddingCommand implements Command {
             if (getCheckedCompetitionId(request) == null
                     || getCheckedBetTypeId(request) == null
                     || getCheckedCoefficient(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipErrorCommandResponse;
+            }
+
+            if (Objects.requireNonNull(getCheckedCompetitionId(request)) < MIN_ELEMENT_ID
+                    || Objects.requireNonNull(getCheckedBetTypeId(request)) < MIN_ELEMENT_ID
+                    || Objects.requireNonNull(getCheckedCoefficient(request)) < MIN_ELEMENT_ID) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipErrorCommandResponse;
+            }
+
+            if (Objects.requireNonNull(getCheckedBetTypeId(request)) > BetType.values().length) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, UNKNOWN_BET_TYPE_ID_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipErrorCommandResponse;
+            }
+
+            if (Objects.requireNonNull(getCheckedCompetitionId(request)) > competitionService.findAll().size()) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_COMPETITION_ID_MSG);
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
                 return betslipErrorCommandResponse;
@@ -68,6 +106,13 @@ public class BetslipAddingCommand implements Command {
             final Betslip betslip = new Betslip(competitionService.findById(competitionId),
                     BetType.resolveBetTypeById(betTypeId), coefficient);
 
+            if (!betslipService.canSave(betslip)) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_ALREADY_EXISTS_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipErrorCommandResponse;
+            }
+
             betslipService.save(betslip);
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
@@ -75,13 +120,16 @@ public class BetslipAddingCommand implements Command {
 
             return betslipErrorCommandResponse;
         } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, INCORRECT_ENTERED_DATA);
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return betslipErrorCommandResponse;
         }
 
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_SUCCESSFULLY_ADDED_MSG);
+        request.setAttribute(COMPETITION_ATTRIBUTE_NAME, ENTER_COMPETITION_ID_MSG);
+        request.setAttribute(BET_TYPE_ATTRIBUTE_NAME, ENTER_BET_TYPE_ID_MSG);
+        request.setAttribute(COEFFICIENT_ATTRIBUTE_NAME, ENTER_COEFFICIENT_MSG);
 
         return betslipCommandResponse;
     }

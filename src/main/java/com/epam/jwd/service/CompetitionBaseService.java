@@ -15,6 +15,6 @@ public interface CompetitionBaseService extends BaseService<Competition> {
 
     Team findTeamById(Long id) throws DaoException;
 
-    List<Competition> findBySportName(Sport sport) throws DaoException;
+    List<Team> findAllTeams();
 
 }

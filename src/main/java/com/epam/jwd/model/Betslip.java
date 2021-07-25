@@ -18,6 +18,9 @@ public class Betslip extends AbstractBaseEntity {
     public Betslip(Competition competition, BetType betType, Double coefficient) {
         this(null, competition, betType, coefficient);
     }
+    public Betslip(Competition competition, BetType betType) {
+        this(null, competition, betType, null);
+    }
 
     public Competition getCompetition() {
         return competition;

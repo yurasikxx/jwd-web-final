@@ -6,6 +6,7 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BetService implements BetBaseService {
@@ -58,7 +59,15 @@ public class BetService implements BetBaseService {
 
     @Override
     public boolean canSave(Bet bet) {
-        return false;
+        final List<Bet> bets = this.findAll();
+        final List<Bet> theseWithoutBetTotalBets = new ArrayList<>();
+        final Bet withoutBetTotalBet = new Bet(bet.getBetslip(), bet.getPerson());
+
+        for (Bet iteratedBetslip : bets) {
+            theseWithoutBetTotalBets.add(new Bet(iteratedBetslip.getBetslip(), iteratedBetslip.getPerson()));
+        }
+
+        return !theseWithoutBetTotalBets.contains(withoutBetTotalBet);
     }
 
     @Override

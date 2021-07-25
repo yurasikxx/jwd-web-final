@@ -2,8 +2,8 @@ package com.epam.jwd.model;
 
 public enum Sport implements BaseEntity {
 
-    FOOTBALL(1L, "Football"),
-    BASKETBALL(2L, "Basketball"),
+    BASKETBALL(1L, "Basketball"),
+    FOOTBALL(2L, "Football"),
     HOCKEY(3L, "Hockey");
 
     private final Long id;

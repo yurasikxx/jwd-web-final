@@ -5,26 +5,20 @@ import java.util.Objects;
 public class Team extends AbstractBaseEntity {
 
     private final String name;
-    private final String country;
-    private final Integer rate;
+    private final Sport sport;
 
-    public Team(Long id, String name, String country, Integer rate) {
+    public Team(Long id, String name, Sport sport) {
         super(id);
         this.name = name;
-        this.country = country;
-        this.rate = rate;
+        this.sport = sport;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public Integer getRate() {
-        return rate;
+    public Sport getSport() {
+        return sport;
     }
 
     @Override
@@ -33,20 +27,19 @@ public class Team extends AbstractBaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Team team = (Team) o;
-        return Objects.equals(name, team.name) && Objects.equals(country, team.country) && Objects.equals(rate, team.rate);
+        return Objects.equals(name, team.name) && sport == team.sport;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, country, rate);
+        return Objects.hash(super.hashCode(), name, sport);
     }
 
     @Override
     public String toString() {
         return "Team{" +
                 "name='" + name + '\'' +
-                ", country='" + country + '\'' +
-                ", rate=" + rate +
+                ", sport=" + sport +
                 '}';
     }
 
