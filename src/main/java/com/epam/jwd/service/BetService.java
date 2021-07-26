@@ -71,13 +71,8 @@ public class BetService implements BetBaseService {
     }
 
     @Override
-    public void update(Bet bet) {
-
-    }
-
-    @Override
-    public boolean canUpdate(Bet bet) {
-        return false;
+    public void update(Bet bet) throws DaoException {
+        betDao.update(bet);
     }
 
 }

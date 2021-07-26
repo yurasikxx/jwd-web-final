@@ -10,6 +10,8 @@ Available betslip operations:
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=betslip_adding_page">Add betslip</a>
 <br>
+<a href="${pageContext.request.contextPath}/controller?command=betslip_changing_page">Change betslip</a>
+<br>
 <a href="${pageContext.request.contextPath}/controller?command=betslip_deleting_page">Delete betslip</a>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>

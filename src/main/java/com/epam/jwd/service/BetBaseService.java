@@ -6,6 +6,4 @@ public interface BetBaseService extends BaseService<Bet> {
 
     boolean canSave(Bet bet);
 
-    boolean canUpdate(Bet bet);
-
 }

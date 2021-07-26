@@ -10,6 +10,8 @@ Available person operations:
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=person_adding_page">Add person</a>
 <br>
+<a href="${pageContext.request.contextPath}/controller?command=person_changing_page">Change person</a>
+<br>
 <a href="${pageContext.request.contextPath}/controller?command=person_deleting_page">Delete person</a>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>

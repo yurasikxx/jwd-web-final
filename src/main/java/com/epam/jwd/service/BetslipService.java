@@ -50,13 +50,8 @@ public class BetslipService implements BetslipBaseService {
     }
 
     @Override
-    public void update(Betslip betslip) {
-
-    }
-
-    @Override
-    public boolean canUpdate(Betslip betslip) {
-        return false;
+    public void update(Betslip betslip) throws DaoException {
+        betslipDao.update(betslip);
     }
 
     @Override

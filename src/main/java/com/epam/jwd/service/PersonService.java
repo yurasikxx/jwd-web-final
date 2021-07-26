@@ -62,12 +62,18 @@ public class PersonService implements PersonBaseService {
 
     @Override
     public void save(Person person) throws ServiceException, DaoException {
-
+        personDao.save(person);
+        final Person savedPerson = this.findByLogin(person.getLogin());
+        this.logIn(savedPerson);
     }
 
     @Override
-    public void update(Person person) {
-
+    public void update(Person person) throws DaoException, ServiceException {
+        personDao.update(person);
+        final Person foundPerson = this.findByLogin(person.getLogin());
+        persons.remove(foundPerson.getId().intValue() - 1);
+        persons.add(foundPerson.getId().intValue() - 1, foundPerson);
+        this.logIn(foundPerson);
     }
 
     @Override

@@ -55,13 +55,8 @@ public class CompetitionService implements CompetitionBaseService {
     }
 
     @Override
-    public void update(Competition entity) {
-
-    }
-
-    @Override
-    public boolean canUpdate(Competition competition) {
-        return false;
+    public void update(Competition competition) throws DaoException {
+        competitionDao.update(competition);
     }
 
     @Override

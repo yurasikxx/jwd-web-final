@@ -23,9 +23,11 @@
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Person management</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=competition_management_page">Competition management</a>
+            <a href="${pageContext.request.contextPath}/controller?command=competition_management_page">Competition
+                management</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip management</a>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip
+                management</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Bet management</a>
             <br>
@@ -42,10 +44,10 @@
             <br>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
-            <br>
         </c:if>
     </c:otherwise>
 </c:choose>
+<br>
 <jwd:time/>
 </body>
 </html>

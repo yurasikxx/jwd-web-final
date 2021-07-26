@@ -6,6 +6,4 @@ public interface BetslipBaseService extends BaseService<Betslip> {
 
     boolean canSave(Betslip betslip);
 
-    boolean canUpdate(Betslip betslip);
-
 }

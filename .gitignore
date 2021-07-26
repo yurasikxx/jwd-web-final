@@ -1,5 +1,4 @@
 *.idea
 logs
-src/main/java/com/epam/jwd/Main.java
 target
 *.iml
