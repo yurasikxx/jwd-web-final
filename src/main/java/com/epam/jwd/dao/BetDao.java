@@ -114,6 +114,12 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                         idCounter.incrementAndGet();
                     }
 
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (bets.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(betAmount.incrementAndGet());
+                        }
+                    }
+
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
                 }
@@ -124,7 +130,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             e.printStackTrace();
         }
     }

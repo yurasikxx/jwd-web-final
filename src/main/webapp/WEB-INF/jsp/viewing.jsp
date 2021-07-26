@@ -54,6 +54,14 @@
         <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet management</a>
     </c:if>
 </c:if>
+<c:if test="${not empty requestScope.personBet}">
+    Person bets:
+    <br>
+    <c:forEach var="personBet" items="${requestScope.personBet}">
+        ${personBet}
+        <br>
+    </c:forEach>
+</c:if>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
 </body>

@@ -57,6 +57,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private static final String SPORT_AWAY_ID_COLUMN = "sa.id";
 
     private static volatile BetslipDao instance;
+
     private final String findByCoefficientSql;
 
     public static BetslipDao getInstance() {
@@ -84,17 +85,23 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
                 resultSet.moveToInsertRow();
                 resultSet.updateLong(BETSLIP_ID_COLUMN, INITIAL_ID_VALUE);
             } else {
-                final AtomicLong competitionAmount = new AtomicLong(findAll().size());
+                final AtomicLong betslipAmount = new AtomicLong(findAll().size());
                 final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-                if (competitionAmount.get() == betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                    long id = competitionAmount.incrementAndGet();
+                if (betslipAmount.get() == betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = betslipAmount.incrementAndGet();
 
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(BETSLIP_ID_COLUMN, id);
                 } else {
                     while (idCounter.get() == betslips.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
                         idCounter.incrementAndGet();
+                    }
+
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (betslips.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(betslipAmount.incrementAndGet());
+                        }
                     }
 
                     resultSet.moveToInsertRow();
@@ -107,7 +114,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
             resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             e.printStackTrace();
         }
     }

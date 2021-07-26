@@ -86,6 +86,12 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
                         idCounter.incrementAndGet();
                     }
 
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (competitions.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(competitionAmount.incrementAndGet());
+                        }
+                    }
+
                     resultSet.moveToInsertRow();
                     resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter.get());
                 }
@@ -95,7 +101,7 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             e.printStackTrace();
         }
     }

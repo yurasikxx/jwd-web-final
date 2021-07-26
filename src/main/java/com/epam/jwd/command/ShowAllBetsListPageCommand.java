@@ -8,24 +8,24 @@ import java.util.List;
 
 import static com.epam.jwd.command.ShowPersonListPageCommand.LIST_JSP_PATH;
 
-public class ShowBetListPageCommand implements Command {
+public class ShowAllBetsListPageCommand implements Command {
 
     protected static final String BET_ATTRIBUTE_NAME = "bet";
 
-    private static volatile ShowBetListPageCommand instance;
+    private static volatile ShowAllBetsListPageCommand instance;
 
     private final BetBaseService betService;
     private final BaseCommandResponse betslipCommandResponse = new CommandResponse(LIST_JSP_PATH, false);
 
-    private ShowBetListPageCommand() {
+    private ShowAllBetsListPageCommand() {
         this.betService = BetService.getInstance();
     }
 
-    public static ShowBetListPageCommand getInstance() {
+    public static ShowAllBetsListPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowBetListPageCommand.class) {
+            synchronized (ShowAllBetsListPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowBetListPageCommand();
+                    instance = new ShowAllBetsListPageCommand();
                 }
             }
         }

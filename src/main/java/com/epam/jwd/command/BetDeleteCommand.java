@@ -9,7 +9,7 @@ import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.command.PersonDeleteCommand.ID_PARAMETER_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
-import static com.epam.jwd.command.ShowBetListPageCommand.BET_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowAllBetsListPageCommand.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonDeletingPageCommand.DELETING_JSP_PATH;
 
 public class BetDeleteCommand implements Command {

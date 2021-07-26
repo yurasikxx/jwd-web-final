@@ -24,6 +24,8 @@ import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COEFFICIEN
 import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COMPETITION_ID_MSG;
 import static com.epam.jwd.command.ShowBetslipListPageCommand.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_PATH;
+import static java.lang.Math.ceil;
+import static java.lang.Math.pow;
 
 public class BetslipAddingCommand implements Command {
 
@@ -37,6 +39,11 @@ public class BetslipAddingCommand implements Command {
     protected static final String BETSLIP_ALREADY_EXISTS_MSG = "Betslip of given competition with such bet type already exists";
 
     private static final String BETSLIP_SUCCESSFULLY_ADDED_MSG = "Betslip successfully added";
+    private static final int ZERO_ELEMENT_ID = 0;
+    private static final int INITIAL_RANDOM_NUMBER_VALUE = MIN_ELEMENT_ID.intValue();
+    private static final int RANDOM_NUMBER_RANGE = 10;
+    private static final int BASE = 10;
+    private static final int EXPONENT = 2;
 
     private static volatile BetslipAddingCommand instance;
 
@@ -78,7 +85,7 @@ public class BetslipAddingCommand implements Command {
 
             if (Objects.requireNonNull(getCheckedCompetitionId(request)) < MIN_ELEMENT_ID
                     || Objects.requireNonNull(getCheckedBetTypeId(request)) < MIN_ELEMENT_ID
-                    || Objects.requireNonNull(getCheckedCoefficient(request)) < MIN_ELEMENT_ID) {
+                    || Objects.requireNonNull(getCheckedCoefficient(request)) < ZERO_ELEMENT_ID) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
@@ -101,7 +108,15 @@ public class BetslipAddingCommand implements Command {
 
             final Long competitionId = getCheckedCompetitionId(request);
             final Long betTypeId = getCheckedBetTypeId(request);
-            final Double coefficient = getCheckedCoefficient(request);
+            final Double coefficient;
+
+            if (Objects.requireNonNull(getCheckedCoefficient(request)) == ZERO_ELEMENT_ID) {
+                final double number = INITIAL_RANDOM_NUMBER_VALUE + Math.random() * RANDOM_NUMBER_RANGE;
+                final double scale = pow(BASE, EXPONENT);
+                coefficient = ceil(number * scale) / scale;
+            } else {
+                coefficient = getCheckedCoefficient(request);
+            }
 
             final Betslip betslip = new Betslip(competitionService.findById(competitionId),
                     BetType.resolveBetTypeById(betTypeId), coefficient);

@@ -34,7 +34,8 @@
         <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
             <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip management</a>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip
+                management</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
@@ -43,6 +44,8 @@
             <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=person_bets_list_page">My bets</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=bet_adding_page">Place bet</a>
             <br>

@@ -28,8 +28,8 @@ import static com.epam.jwd.command.ShowBetslipAddingPageCommand.BET_TYPE_ATTRIBU
 import static com.epam.jwd.command.ShowBetslipAddingPageCommand.COEFFICIENT_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetslipAddingPageCommand.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_BET_TYPE_ID_MSG;
-import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COEFFICIENT_MSG;
 import static com.epam.jwd.command.ShowBetslipAddingPageCommand.ENTER_COMPETITION_ID_MSG;
+import static com.epam.jwd.command.ShowBetslipChangingPageCommand.ENTER_COEFFICIENT_MSG;
 import static com.epam.jwd.command.ShowBetslipChangingPageCommand.ENTER_ID_OF_CHANGEABLE_BETSLIP_MSG;
 import static com.epam.jwd.command.ShowBetslipListPageCommand.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonChangingPageCommand.CHANGING_JSP_PATH;

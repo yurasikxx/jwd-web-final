@@ -19,13 +19,13 @@ import static com.epam.jwd.command.CompetitionAddingCommand.MIN_ELEMENT_ID;
 import static com.epam.jwd.command.CompetitionAddingCommand.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
+import static com.epam.jwd.command.ShowAllBetsListPageCommand.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.BET_TOTAL_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BETSLIP_ID_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BET_TOTAL_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_PERSON_ID_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.command.ShowBetListPageCommand.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_PATH;
 
 public class BetAddingCommand implements Command {

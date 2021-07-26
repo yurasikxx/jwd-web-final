@@ -1,6 +1,6 @@
 package com.epam.jwd.command;
 
-import static com.epam.jwd.command.ShowBetListPageCommand.BET_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowAllBetsListPageCommand.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonDeletingPageCommand.DELETING_JSP_PATH;
 
 public class ShowBetDeletingPageCommand implements Command {

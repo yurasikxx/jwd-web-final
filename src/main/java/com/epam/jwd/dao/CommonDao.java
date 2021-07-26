@@ -38,18 +38,31 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     @Override
     public T save(T entity) throws DaoException {
-        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
-             final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_UPDATABLE)) {
-                try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
-                saveResultSet(resultSet, entity);
+        try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection()) {
+            connection.setAutoCommit(false);
+
+            try (final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE)) {
+                saveResultSet(entity, statement);
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                LOGGER.error(e.getMessage());
+            } finally {
+                connection.setAutoCommit(true);
             }
+
+            return entity;
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
             LOGGER.error(e.getMessage());
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
+    }
 
-        return entity;
+    private void saveResultSet(T entity, Statement statement) throws SQLException, BusinessValidationException {
+        try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
+            saveResultSet(resultSet, entity);
+        }
     }
 
     @Override

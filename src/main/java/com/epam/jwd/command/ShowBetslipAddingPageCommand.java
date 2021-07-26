@@ -10,7 +10,8 @@ public class ShowBetslipAddingPageCommand implements Command {
     protected static final String BET_TYPE_ATTRIBUTE_NAME = "betType";
     protected static final String ENTER_BET_TYPE_ID_MSG = "Enter bet type ID: ";
     protected static final String COEFFICIENT_ATTRIBUTE_NAME = "coefficient";
-    protected static final String ENTER_COEFFICIENT_MSG = "Enter coefficient: ";
+    protected static final String ENTER_COEFFICIENT_MSG = "Enter coefficient: \n" +
+            "(You may enter \"0\" value if you want to calculate coefficient at random)";
 
     private static final String BETSLIP_ADDING_OPERATION_MSG = "Betslip adding operation";
 
