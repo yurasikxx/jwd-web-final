@@ -1,5 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.epam.jwd.model.Role" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Changing</title>
@@ -120,5 +121,7 @@
         Oops! Something went wrong...
     </c:otherwise>
 </c:choose>
+<br>
+<a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main page</a>
 </body>
 </html>

@@ -6,8 +6,9 @@ import java.util.List;
 public enum Role implements BaseEntity {
 
     ADMINISTRATOR(1L, "Administrator"),
-    USER(2L, "User"),
-    UNAUTHORIZED(3L, "Unauthorized");
+    BOOKMAKER(2L, "Bookmaker"),
+    USER(3L, "User"),
+    UNAUTHORIZED(4L, "Unauthorized");
 
     private static final List<Role> ALL_AVAILABLE_ROLES = Arrays.asList(Role.values());
 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -12,12 +13,8 @@
         ${person}
         <br>
     </c:forEach>
-    <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
-        <br>
-        <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Back to person
-            management</a>
-        <br>
-    </c:if>
+    <br>
+    <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Back to person management</a>
 </c:if>
 <c:if test="${not empty requestScope.competition}">
     Competitions
@@ -30,7 +27,6 @@
         <br>
         <a href="${pageContext.request.contextPath}/controller?command=competition_management_page">Back to competition
             management</a>
-        <br>
     </c:if>
 </c:if>
 <c:if test="${not empty requestScope.betslip}">
@@ -40,11 +36,10 @@
         ${betslip}
         <br>
     </c:forEach>
-    <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
+    <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
         <br>
         <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Back to betslip
             management</a>
-        <br>
     </c:if>
 </c:if>
 <c:if test="${not empty requestScope.bet}">
@@ -57,7 +52,6 @@
     <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
         <br>
         <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet management</a>
-        <br>
     </c:if>
 </c:if>
 <br>

@@ -1,7 +1,7 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="jwd" uri="custom" %>
-<%@ page import="com.epam.jwd.model.Role" %>
-<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Totalizator</title>
@@ -19,31 +19,35 @@
     </c:when>
     <c:otherwise>
         <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
-            See below to next moves:
-            <br>
             <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Person management</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=competition_management_page">Competition
                 management</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip
-                management</a>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Bet management</a>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_list_page">Bet list</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
+        </c:if>
+        <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
+            <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">Betslip management</a>
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
         </c:if>
         <c:if test="${sessionScope.personRole eq Role.USER}">
-            See below to next moves:
-            <br>
             <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
             <br>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_adding_page">Place bet</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
+            <br>
         </c:if>
     </c:otherwise>
 </c:choose>

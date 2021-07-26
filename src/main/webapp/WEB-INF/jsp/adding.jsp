@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -97,8 +98,11 @@
             <br>
             <input type="submit" value="Add">
         </form>
-        <br>
-        <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet management</a>
+        <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
+            <br>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet
+                management</a>
+        </c:if>
     </c:when>
     <c:otherwise>
         Oops! Something went wrong...
