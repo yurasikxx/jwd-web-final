@@ -27,14 +27,12 @@ public class PersonService implements PersonBaseService {
     private final BCrypt.Hasher hasher;
     private final BCrypt.Verifyer verifyer;
     private final List<Person> persons;
-    private final List<Person> newRegisteredPersons;
 
     private PersonService() {
         this.personDao = PersonDao.getInstance();
         this.hasher = BCrypt.withDefaults();
         this.verifyer = BCrypt.verifyer();
         this.persons = this.findAll();
-        this.newRegisteredPersons = new ArrayList<>();
     }
 
     public static PersonService getInstance() {
@@ -103,7 +101,7 @@ public class PersonService implements PersonBaseService {
     public void logIn(Person person) throws DaoException {
         final char[] rawPassword = person.getPassword().toCharArray();
         final String encryptedPassword = hasher.hashToString(MIN_COST, rawPassword);
-        personDao.update(new Person(person.getId(), person.getLogin(), encryptedPassword, person.getRole()));
+        personDao.update(new Person(person.getId(), person.getLogin(), encryptedPassword, person.getBalance(), person.getRole()));
     }
 
     @Override
@@ -162,13 +160,11 @@ public class PersonService implements PersonBaseService {
 
     @Override
     public void getNewRegisteredPersons(Person person) {
-        newRegisteredPersons.add(person);
+        persons.add(person);
     }
 
     @Override
     public void destroy() {
-        persons.addAll(newRegisteredPersons);
-
         for (Person person : persons) {
             try {
                 personDao.update(person);

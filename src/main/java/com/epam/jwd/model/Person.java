@@ -6,18 +6,21 @@ public class Person extends AbstractBaseEntity {
 
     private final String login;
     private final String password;
+    private final Integer balance;
     private final Role role;
 
-    public Person(Long id, String login, String password, Role role) {
+    public Person(Long id, String login, String password, Integer balance, Role role) {
         super(id);
         this.login = login;
         this.password = password;
+        this.balance = balance;
         this.role = role;
     }
 
-    public Person(String login, String password) {
-        this(null, login, password, Role.USER);
+    public Person(String login, String password, Integer balance) {
+        this(null, login, password, balance, Role.USER);
     }
+
 
     public String getLogin() {
         return login;
@@ -25,6 +28,10 @@ public class Person extends AbstractBaseEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public Integer getBalance() {
+        return balance;
     }
 
     public Role getRole() {
@@ -37,12 +44,12 @@ public class Person extends AbstractBaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Person person = (Person) o;
-        return Objects.equals(login, person.login) && Objects.equals(password, person.password) && role == person.role;
+        return Objects.equals(login, person.login) && Objects.equals(password, person.password) && Objects.equals(balance, person.balance) && role == person.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), login, password, role);
+        return Objects.hash(super.hashCode(), login, password, balance, role);
     }
 
     @Override

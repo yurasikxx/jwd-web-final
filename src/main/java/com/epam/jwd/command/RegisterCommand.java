@@ -10,6 +10,7 @@ import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.LogInCommand.INDEX_JSP_PATH;
 import static com.epam.jwd.command.LogInCommand.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.command.LogInCommand.PASSWORD_PARAMETER_NAME;
+import static com.epam.jwd.command.PersonAddingCommand.INITIAL_BALANCE_VALUE;
 import static com.epam.jwd.command.ShowRegisterPageCommand.REGISTER_JSP_PATH;
 
 public class RegisterCommand implements Command {
@@ -46,7 +47,7 @@ public class RegisterCommand implements Command {
 
         final String login = getCheckedLogin(request);
         final String password = getCheckedPassword(request);
-        final Person person = new Person(login, password);
+        final Person person = new Person(login, password, INITIAL_BALANCE_VALUE);
 
         try {
             if (!personService.canRegister(person)) {

@@ -18,14 +18,17 @@ import static com.epam.jwd.command.ShowPersonAddingPageCommand.ENTER_PERSON_LOGI
 import static com.epam.jwd.command.ShowPersonAddingPageCommand.ENTER_PERSON_PASSWORD_MSG;
 import static com.epam.jwd.command.ShowPersonAddingPageCommand.LOGIN_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonAddingPageCommand.PASSWORD_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.ShowPersonChangingPageCommand.BALANCE_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonChangingPageCommand.CHANGING_JSP_PATH;
 import static com.epam.jwd.command.ShowPersonChangingPageCommand.ENTER_ID_OF_CHANGEABLE_PERSON_MSG;
+import static com.epam.jwd.command.ShowPersonChangingPageCommand.ENTER_PERSON_BALANCE_MSG;
 import static com.epam.jwd.command.ShowPersonChangingPageCommand.ID_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NAME;
 
 public class PersonChangingCommand implements Command {
 
     private static final String PERSON_SUCCESSFULLY_CHANGED_MSG = "Person successfully changed";
+    private static final String BALANCE_PARAMETER_NAME = "balance";
 
     private static volatile PersonChangingCommand instance;
 
@@ -57,7 +60,8 @@ public class PersonChangingCommand implements Command {
         try {
             if (getCheckedId(request) == null
                     || getCheckedLogin(request) == null
-                    || getCheckedPassword(request) == null) {
+                    || getCheckedPassword(request) == null
+                    || getCheckedBalance(request) == null) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
                 request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
@@ -67,8 +71,9 @@ public class PersonChangingCommand implements Command {
             final Long id = getCheckedId(request);
             final String login = getCheckedLogin(request);
             final String password = getCheckedPassword(request);
+            final Integer balance = getCheckedBalance(request);
 
-            final Person person = new Person(id, login, password, Role.USER);
+            final Person person = new Person(id, login, password, balance, Role.USER);
 
             personService.update(person);
         } catch (DaoException | ServiceException e) {
@@ -82,6 +87,7 @@ public class PersonChangingCommand implements Command {
         request.setAttribute(ID_ATTRIBUTE_NAME, ENTER_ID_OF_CHANGEABLE_PERSON_MSG);
         request.setAttribute(LOGIN_ATTRIBUTE_NAME, ENTER_PERSON_LOGIN_MSG);
         request.setAttribute(PASSWORD_ATTRIBUTE_NAME, ENTER_PERSON_PASSWORD_MSG);
+        request.setAttribute(BALANCE_ATTRIBUTE_NAME, ENTER_PERSON_BALANCE_MSG);
 
         return personCommandResponse;
     }
@@ -114,6 +120,17 @@ public class PersonChangingCommand implements Command {
         if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
             password = request.getParameter(PASSWORD_PARAMETER_NAME);
             return password;
+        }
+
+        return null;
+    }
+
+    private Integer getCheckedBalance(BaseCommandRequest request) {
+        final int balance;
+
+        if (request.getParameter(BALANCE_PARAMETER_NAME) != null) {
+            balance = Integer.parseInt(request.getParameter(BALANCE_PARAMETER_NAME));
+            return balance;
         }
 
         return null;

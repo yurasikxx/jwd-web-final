@@ -22,6 +22,8 @@ import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NA
 
 public class PersonAddingCommand implements Command {
 
+    protected static final int INITIAL_BALANCE_VALUE = 1000;
+
     private static final String PERSON_SUCCESSFULLY_ADDED_MSG = "Person successfully added";
     private static final String INVALID_CREDENTIALS_MSG = "Person with such login already exists or login/password are empty";
 
@@ -63,7 +65,7 @@ public class PersonAddingCommand implements Command {
             final String login = getCheckedLogin(request);
             final String password = getCheckedPassword(request);
 
-            final Person person = new Person(login, password);
+            final Person person = new Person(login, password, INITIAL_BALANCE_VALUE);
 
             if (!personService.canRegister(person)) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, INVALID_CREDENTIALS_MSG);

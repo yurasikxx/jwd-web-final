@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -38,7 +37,11 @@
             <br>
             <input type="password" id="passwordField" name="password">
             <br>
-            <input type="submit" value="Add">
+            <label for="balanceField">${requestScope.balance}</label>
+            <br>
+            <input type="number" id="balanceField" name="balance">
+            <br>
+            <input type="submit" value="Change">
         </form>
         <br>
         <a href="${pageContext.request.contextPath}/controller?command=person_management_page">Back to person

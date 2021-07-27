@@ -18,18 +18,20 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     protected static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
     protected static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
 
-    private static final String SELECT_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.pr_id from %s;";
-    private static final String FIND_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.pr_id, pr.pr_name\n" +
-            "from %s\n" +
+    private static final String SELECT_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.p_balance, p.pr_id\n" +
+            "from %s;";
+    private static final String FIND_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.p_balance, p.pr_id,\n" +
+            "pr.pr_name from %s\n" +
             "join person_role pr on p.pr_id = pr.id;";
-    private static final String FIND_BY_FIELD_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.pr_id, pr.pr_name\n" +
-            "from %s\n" +
+    private static final String FIND_BY_FIELD_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.p_balance,\n" +
+            "p.pr_id, pr.pr_name from %s\n" +
             "join person_role pr on p.pr_id = pr.id\n" +
             "where %s = ?;";
     private static final String TABLE_NAME = "person p";
     private static final String PERSON_ID_COLUMN = "p.id";
     private static final String PERSON_LOGIN_COLUMN = "p_login";
     private static final String PERSON_PASSWORD_COLUMN = "p_password";
+    private static final String PERSON_BALANCE_COLUMN = "p.p_balance";
     private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
     private static final String PERSON_ROLE_NAME_COLUMN = "pr_name";
     private static final String UNAUTHORIZED_UPDATE_MSG = "Unauthorized person can not be updated into database";
@@ -90,6 +92,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
             resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
+            resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
             resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
@@ -110,6 +113,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             if (id == person.getId()) {
                 resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
                 resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
+                resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
                 resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
                 resultSet.updateRow();
             }
@@ -123,6 +127,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         return new Person(resultSet.getLong(PERSON_ID_COLUMN),
                 resultSet.getString(PERSON_LOGIN_COLUMN),
                 resultSet.getString(PERSON_PASSWORD_COLUMN),
+                resultSet.getInt(PERSON_BALANCE_COLUMN),
                 Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN)));
     }
 

@@ -11,6 +11,8 @@ public class ShowPersonChangingPageCommand implements Command {
     protected static final String ENTER_ID_OF_CHANGEABLE_PERSON_MSG = "Enter ID of changeable person: ";
     protected static final String ID_ATTRIBUTE_NAME = "id";
     protected static final String CHANGING_JSP_PATH = "/WEB-INF/jsp/changing.jsp";
+    protected static final String BALANCE_ATTRIBUTE_NAME = "balance";
+    protected static final String ENTER_PERSON_BALANCE_MSG = "Enter person balance: ";
 
     private static final String PERSON_CHANGING_OPERATION_MSG = "Person changing operation";
     private static volatile ShowPersonChangingPageCommand instance;
@@ -39,6 +41,7 @@ public class ShowPersonChangingPageCommand implements Command {
         request.setAttribute(ID_ATTRIBUTE_NAME, ENTER_ID_OF_CHANGEABLE_PERSON_MSG);
         request.setAttribute(LOGIN_ATTRIBUTE_NAME, ENTER_PERSON_LOGIN_MSG);
         request.setAttribute(PASSWORD_ATTRIBUTE_NAME, ENTER_PERSON_PASSWORD_MSG);
+        request.setAttribute(BALANCE_ATTRIBUTE_NAME, ENTER_PERSON_BALANCE_MSG);
 
         return personCommandResponse;
     }

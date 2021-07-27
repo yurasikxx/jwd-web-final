@@ -8,7 +8,10 @@ import com.epam.jwd.service.PersonService;
 
 import javax.servlet.http.HttpSession;
 
+import static com.epam.jwd.command.CompetitionAddingCommand.SOMETHING_WENT_WRONG_MSG;
+import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
 import static com.epam.jwd.command.ShowLogInPageCommand.LOGIN_JSP_PATH;
+import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NAME;
 
 public class LogInCommand implements Command {
 
@@ -53,7 +56,18 @@ public class LogInCommand implements Command {
 
         final String login = getCheckedLogin(request);
         final String password = getCheckedPassword(request);
-        final Person person = new Person(login, password);
+        final Integer balance;
+
+        try {
+            balance = personService.findByLogin(login).getBalance();
+        } catch (ServiceException | DaoException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return loginErrorCommandResponse;
+        }
+
+        final Person person = new Person(login, password, balance);
 
         if (!personService.canLogIn(person)) {
             return prepareErrorPage(request);

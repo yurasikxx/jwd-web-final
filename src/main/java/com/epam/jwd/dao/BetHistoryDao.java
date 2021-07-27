@@ -1,0 +1,154 @@
+package com.epam.jwd.dao;
+
+import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.model.BetHistory;
+import com.epam.jwd.model.BetResult;
+import com.epam.jwd.model.BetType;
+import com.epam.jwd.model.CompetitionResult;
+import com.epam.jwd.model.Sport;
+import com.epam.jwd.model.Team;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
+
+public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBaseDao {
+
+    private static final String SELECT_ALL_SQL_QUERY = "select bh.id, bh.t_home_id, bh.t_away_id, bh.bt_id,\n" +
+            "bh.bh_coefficient, bh.bh_bet_total, bh.bh_p_login,\n" +
+            "bh.cr_id, bh.br_id \n" +
+            "from %s;";
+    private static final String FIND_ALL_BET_HISTORY_SQL_QUERY = "select bh.id, bh.t_home_id, th.t_name, sh.id, sh.s_name, \n" +
+            "bh.t_away_id, ta.t_name, sa.id, sh.s_name, bh.bt_id,\n" +
+            "bh.bh_coefficient, bh.bh_bet_total, bh.bh_p_login,\n" +
+            "bh.cr_id, cr.cr_name, bh.br_id, br.br_name \n" +
+            "from %s\n" +
+            "join team th on bh.t_home_id = th.id\n" +
+            "join sport sh on th.s_id = sh.id\n" +
+            "join team ta on bh.t_away_id = ta.id\n" +
+            "join sport sa on ta.s_id = sa.id\n" +
+            "join bet_type bt on bh.bt_id = bt.id\n" +
+            "join competition_result cr on bh.cr_id = cr.id\n" +
+            "join bet_result br on bh.br_id = br.id;";
+    private static final String FIND_BY_FIELD_SQL_QUERY = "select bh.id, bh.t_home_id, th.t_name, sh.id, sh.s_name, \n" +
+            "bh.t_away_id, ta.t_name, sa.id, sh.s_name, bh.bt_id,\n" +
+            "bh.bh_coefficient, bh.bh_bet_total, bh.bh_p_login,\n" +
+            "bh.cr_id, cr.cr_name, bh.br_id, br.br_name \n" +
+            "from %s\n" +
+            "join team th on bh.t_home_id = th.id\n" +
+            "join sport sh on th.s_id = sh.id\n" +
+            "join team ta on bh.t_away_id = ta.id\n" +
+            "join sport sa on ta.s_id = sa.id\n" +
+            "join bet_type bt on bh.bt_id = bt.id\n" +
+            "join competition_result cr on bh.cr_id = cr.id\n" +
+            "join bet_result br on bh.br_id = br.id\n" +
+            "where %s = ?;";
+    private static final String TABLE_NAME = "bet_history bh";
+    private static final String BET_HISTORY_ID_COLUMN = "bh.id";
+    private static final String HOME_TEAM_ID_COLUMN = "t_home_id";
+    private static final String HOME_TEAM_NAME_COLUMN = "th.t_name";
+    private static final String AWAY_TEAM_ID_COLUMN = "t_away_id";
+    private static final String AWAY_TEAM_NAME_COLUMN = "ta.t_name";
+    private static final String SPORT_HOME_ID_COLUMN = "sh.id";
+    private static final String SPORT_AWAY_ID_COLUMN = "sa.id";
+    private static final String BET_TYPE_ID_COLUMN = "bh.bt_id";
+    private static final String COEFFICIENT_COLUMN = "bh.bh_coefficient";
+    private static final String BET_TOTAL_COLUMN = "bh.bh_bet_total";
+    private static final String PERSON_LOGIN_COLUMN = "bh.bh_p_login";
+    private static final String COMPETITION_RESULT_ID_COLUMN = "bh.cr_id";
+    private static final String BET_RESULT_ID_COLUMN = "bh.br_id";
+
+    private static volatile BetHistoryDao instance;
+
+    public static BetHistoryDao getInstance() {
+        if (instance == null) {
+            synchronized (BetHistoryDao.class) {
+                if (instance == null) {
+                    instance = new BetHistoryDao();
+                }
+            }
+        }
+
+        return instance;
+    }
+
+    public BetHistoryDao() {
+        super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_BET_HISTORY_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_HISTORY_ID_COLUMN);
+    }
+
+    @Override
+    protected void saveResultSet(ResultSet resultSet, BetHistory betHistory) {
+        try {
+            final List<BetHistory> bets = this.findAll();
+
+            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
+            } else {
+                final AtomicLong betAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = betAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (bets.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(betAmount.incrementAndGet());
+                        }
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
+                }
+            }
+
+            resultSet.updateLong(HOME_TEAM_ID_COLUMN, betHistory.getHome().getId());
+            resultSet.updateLong(AWAY_TEAM_ID_COLUMN, betHistory.getAway().getId());
+            resultSet.updateLong(BET_TYPE_ID_COLUMN, betHistory.getBetType().getId());
+            resultSet.updateDouble(COEFFICIENT_COLUMN, betHistory.getCoefficient());
+            resultSet.updateInt(BET_TOTAL_COLUMN, betHistory.getBetTotal());
+            resultSet.updateString(PERSON_LOGIN_COLUMN, betHistory.getPersonLogin());
+            resultSet.updateLong(COMPETITION_RESULT_ID_COLUMN, betHistory.getCompetitionResult().getId());
+            resultSet.updateLong(BET_RESULT_ID_COLUMN, betHistory.getBetResult().getId());
+            resultSet.insertRow();
+            resultSet.moveToCurrentRow();
+        } catch (SQLException | DaoException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void updateResultSet(ResultSet resultSet, BetHistory entity) {
+
+    }
+
+    @Override
+    protected BetHistory mapResultSet(ResultSet resultSet) throws SQLException {
+        return new BetHistory(resultSet.getLong(BET_HISTORY_ID_COLUMN),
+                new Team(resultSet.getLong(HOME_TEAM_ID_COLUMN),
+                        resultSet.getString(HOME_TEAM_NAME_COLUMN),
+                        Sport.resolveSportById(resultSet.getLong(SPORT_HOME_ID_COLUMN))),
+                new Team(resultSet.getLong(AWAY_TEAM_ID_COLUMN),
+                        resultSet.getString(AWAY_TEAM_NAME_COLUMN),
+                        Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN))),
+                BetType.resolveBetTypeById(resultSet.getLong(BET_TYPE_ID_COLUMN)),
+                resultSet.getDouble(COEFFICIENT_COLUMN),
+                resultSet.getInt(BET_TOTAL_COLUMN),
+                resultSet.getString(PERSON_LOGIN_COLUMN),
+                CompetitionResult.resolveCompetitionResultById(resultSet.getLong(COMPETITION_RESULT_ID_COLUMN)),
+                BetResult.resolveBetResultById(resultSet.getLong(BET_RESULT_ID_COLUMN)));
+    }
+
+}

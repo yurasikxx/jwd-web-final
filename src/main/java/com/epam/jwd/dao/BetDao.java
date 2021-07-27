@@ -27,7 +27,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
             "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.pr_id, pr.pr_name \n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -42,7 +42,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
             "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.pr_id, pr.pr_name \n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -71,6 +71,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
     private static final String SPORT_HOME_ID_COLUMN = "sh.id";
     private static final String SPORT_AWAY_ID_COLUMN = "sa.id";
+    private static final String PERSON_BALANCE_COLUMN = "p.p_balance";
 
     private static volatile BetDao instance;
     private final String findByTotalSql;
@@ -168,6 +169,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                 new Person(resultSet.getLong(PERSON_ID_COLUMN),
                         resultSet.getString(PERSON_LOGIN_COLUMN),
                         resultSet.getString(PERSON_PASSWORD_COLUMN),
+                        resultSet.getInt(PERSON_BALANCE_COLUMN),
                         Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN))));
     }
 
