@@ -31,10 +31,10 @@ import static com.epam.jwd.command.ShowBetAddingPageCommand.BET_TOTAL_ATTRIBUTE_
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BETSLIP_ID_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BET_TOTAL_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_PERSON_ID_MSG;
-import static com.epam.jwd.command.ShowBetAddingPageCommand.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetChangingPageCommand.BET_CHANGE_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetChangingPageCommand.BET_ID_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowBetChangingPageCommand.ENTER_ID_OF_CHANGEABLE_BET_MSG;
+import static com.epam.jwd.command.ShowBetChangingPageCommand.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowCompetitionAddingPageCommand.ADDING_JSP_PATH;
 
 public class BetChangingCommand implements Command {

@@ -10,7 +10,6 @@ public class ShowBetAddingPageCommand implements Command {
     protected static final String ENTER_BET_TOTAL_MSG = "Enter bet total: ";
     protected static final String ENTER_PERSON_ID_MSG = "Enter person ID: ";
     protected static final String BETSLIP_ATTRIBUTE_NAME = "betBetslip";
-    protected static final String PERSON_ATTRIBUTE_NAME = "betPerson";
 
     private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation";
 
@@ -39,7 +38,6 @@ public class ShowBetAddingPageCommand implements Command {
         request.setAttribute(BET_ATTRIBUTE_NAME, BET_ADDING_OPERATION_MSG);
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, ENTER_BETSLIP_ID_MSG);
         request.setAttribute(BET_TOTAL_ATTRIBUTE_NAME, ENTER_BET_TOTAL_MSG);
-        request.setAttribute(PERSON_ATTRIBUTE_NAME, ENTER_PERSON_ID_MSG);
 
         return betCommandResponse;
     }

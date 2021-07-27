@@ -5,7 +5,6 @@ import static com.epam.jwd.command.ShowBetAddingPageCommand.BET_TOTAL_ATTRIBUTE_
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BETSLIP_ID_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_BET_TOTAL_MSG;
 import static com.epam.jwd.command.ShowBetAddingPageCommand.ENTER_PERSON_ID_MSG;
-import static com.epam.jwd.command.ShowBetAddingPageCommand.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.ShowPersonChangingPageCommand.CHANGING_JSP_PATH;
 
 public class ShowBetChangingPageCommand implements Command {
@@ -13,6 +12,7 @@ public class ShowBetChangingPageCommand implements Command {
     protected static final String ENTER_ID_OF_CHANGEABLE_BET_MSG = "Enter ID of changeable bet: ";
     protected static final String BET_ID_ATTRIBUTE_NAME = "id";
     protected static final String BET_CHANGE_ATTRIBUTE_NAME = "bet";
+    protected static final String PERSON_ATTRIBUTE_NAME = "betPerson";
 
     private static final String BET_CHANGING_OPERATION_MSG = "Bet changing operation";
 

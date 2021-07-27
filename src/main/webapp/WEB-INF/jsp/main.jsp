@@ -6,7 +6,17 @@
 <head>
     <title>Totalizator</title>
 </head>
-<body>
+<script>
+    function time() {
+        let date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        document.getElementById("time").innerHTML = hours + ":" + minutes + ":" + seconds;
+        setTimeout("time();", 1000);
+    }
+</script>
+<body onload="time()">
 <jwd:welcome/>
 <br>
 <br>
@@ -55,6 +65,8 @@
     </c:otherwise>
 </c:choose>
 <br>
-<jwd:time/>
+<label id="time"></label>
+<br>
+<jwd:date/>
 </body>
 </html>

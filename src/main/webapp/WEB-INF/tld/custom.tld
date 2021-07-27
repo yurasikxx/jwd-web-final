@@ -10,8 +10,8 @@
     <uri>custom</uri>
     
     <tag>
-        <name>time</name>
-        <tag-class>com.epam.jwd.tag.CurrentTimeTag</tag-class>
+        <name>date</name>
+        <tag-class>com.epam.jwd.tag.CurrentDateTag</tag-class>
         <body-content>empty</body-content>
     </tag>
 

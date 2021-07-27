@@ -92,10 +92,6 @@
             <br>
             <input type="number" id="betTotalField" name="betTotal">
             <br>
-            <label for="personIdField">${requestScope.betPerson}</label>
-            <br>
-            <input type="text" id="personIdField" name="personId">
-            <br>
             <input type="submit" value="Add">
         </form>
         <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
