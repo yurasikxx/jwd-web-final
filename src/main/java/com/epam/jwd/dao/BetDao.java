@@ -171,7 +171,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                 new Person(resultSet.getLong(PERSON_ID_COLUMN),
                         resultSet.getString(PERSON_LOGIN_COLUMN),
                         resultSet.getString(PERSON_PASSWORD_COLUMN),
-                        resultSet.getInt(PERSON_BALANCE_COLUMN),
+                        resultSet.getDouble(PERSON_BALANCE_COLUMN),
                         Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN))));
     }
 

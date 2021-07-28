@@ -75,6 +75,16 @@ public class PersonService implements PersonBaseService {
     }
 
     @Override
+    public void updateBalance(Person person) throws DaoException {
+        personDao.update(person);
+        final Person foundPerson = persons.get((int) (person.getId() - 1));
+        final Person placedBetPerson = new Person(person.getId(), person.getLogin(),
+                foundPerson.getPassword(), person.getBalance(), person.getRole());
+        persons.remove(foundPerson.getId().intValue() - 1);
+        persons.add(foundPerson.getId().intValue() - 1, placedBetPerson);
+    }
+
+    @Override
     public Person register(Person person) throws DaoException, ServiceException {
         personDao.save(person);
         final Person savedPerson = this.findByLogin(person.getLogin());

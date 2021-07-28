@@ -92,7 +92,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
             resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-            resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
+            resultSet.updateDouble(PERSON_BALANCE_COLUMN, person.getBalance());
             resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
@@ -113,7 +113,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             if (id == person.getId()) {
                 resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
                 resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-                resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
+                resultSet.updateDouble(PERSON_BALANCE_COLUMN, person.getBalance());
                 resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
                 resultSet.updateRow();
             }
@@ -127,7 +127,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         return new Person(resultSet.getLong(PERSON_ID_COLUMN),
                 resultSet.getString(PERSON_LOGIN_COLUMN),
                 resultSet.getString(PERSON_PASSWORD_COLUMN),
-                resultSet.getInt(PERSON_BALANCE_COLUMN),
+                resultSet.getDouble(PERSON_BALANCE_COLUMN),
                 Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN)));
     }
 

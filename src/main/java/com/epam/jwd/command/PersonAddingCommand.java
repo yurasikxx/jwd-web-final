@@ -22,7 +22,7 @@ import static com.epam.jwd.command.ShowPersonListPageCommand.PERSON_ATTRIBUTE_NA
 
 public class PersonAddingCommand implements Command {
 
-    protected static final int INITIAL_BALANCE_VALUE = 1000;
+    protected static final double INITIAL_BALANCE_VALUE = 1000;
 
     private static final String PERSON_SUCCESSFULLY_ADDED_MSG = "Person successfully added";
     private static final String INVALID_CREDENTIALS_MSG = "Person with such login already exists or login/password are empty";

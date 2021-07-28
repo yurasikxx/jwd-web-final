@@ -8,6 +8,7 @@ import com.epam.jwd.model.BetResult;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.CompetitionResult;
+import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Team;
 import com.epam.jwd.service.BetBaseService;
 import com.epam.jwd.service.BetHistoryBaseService;
@@ -17,6 +18,8 @@ import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
+import com.epam.jwd.service.PersonBaseService;
+import com.epam.jwd.service.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,7 @@ import static com.epam.jwd.command.ShowCompetitionResultsCommittingPageCommand.C
 import static com.epam.jwd.command.ShowCompetitionResultsCommittingPageCommand.ENTER_COMPETITION_ID_MSG;
 import static com.epam.jwd.model.BetResult.LOSS;
 import static com.epam.jwd.model.BetResult.WIN;
+import static com.epam.jwd.model.BetType.*;
 
 public class CompetitionResultsCommitCommand implements Command {
 
@@ -48,6 +52,7 @@ public class CompetitionResultsCommitCommand implements Command {
 
     private static volatile CompetitionResultsCommitCommand instance;
 
+    private final PersonBaseService personService;
     private final CompetitionBaseService competitionService;
     private final BetslipBaseService betslipService;
     private final BetBaseService betService;
@@ -56,6 +61,7 @@ public class CompetitionResultsCommitCommand implements Command {
     private final BaseCommandResponse betHistoryErrorCommandResponse;
 
     private CompetitionResultsCommitCommand() {
+        this.personService = PersonService.getInstance();
         this.competitionService = CompetitionService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
@@ -105,6 +111,7 @@ public class CompetitionResultsCommitCommand implements Command {
             final List<Betslip> betslips = betslipService.findByCompetitionId(competitionId);
             final List<Bet> bets = betService.findByCompetitionId(competitionId);
             final List<BetHistory> historyBets = new ArrayList<>();
+            final List<Person> winBetPersons = new ArrayList<>();
 
             for (Bet bet : bets) {
                 final Team home = bet.getBetslip().getCompetition().getHome();
@@ -122,6 +129,19 @@ public class CompetitionResultsCommitCommand implements Command {
 
             for (BetHistory historyBet : historyBets) {
                 betHistoryService.save(historyBet);
+            }
+
+            for (BetHistory historyBet : historyBets) {
+                if (historyBet.getBetResult().equals(WIN)) {
+                    final Person person = personService.findByLogin(historyBet.getPersonLogin());
+                    winBetPersons.add(new Person(person.getId(), person.getLogin(), person.getPassword(),
+                            person.getBalance() + historyBet.getBetTotal() * historyBet.getCoefficient(),
+                            person.getRole()));
+                }
+            }
+
+            for (Person winBetPerson : winBetPersons) {
+                personService.updateBalance(winBetPerson);
             }
 
             for (Bet bet : bets) {
@@ -161,27 +181,27 @@ public class CompetitionResultsCommitCommand implements Command {
         final BetResult betResult;
         switch (competitionResult) {
             case HOME_WIN:
-                if (betType.getId().equals(BetType.HOME_TEAM_WIN.getId())
-                        || betType.getId().equals(BetType.HOME_TEAM_WILL_NOT_LOSE.getId())
-                        || betType.getId().equals(BetType.NO_DRAW.getId())) {
+                if (betType.getId().equals(HOME_TEAM_WIN.getId())
+                        || betType.getId().equals(HOME_TEAM_WILL_NOT_LOSE.getId())
+                        || betType.getId().equals(NO_DRAW.getId())) {
                     betResult = WIN;
                 } else {
                     betResult = LOSS;
                 }
                 break;
             case AWAY_TEAM:
-                if (betType.getId().equals(BetType.AWAY_TEAM_WIN.getId())
-                        || betType.getId().equals(BetType.AWAY_TEAM_WILL_NOT_LOSE.getId())
-                        || betType.getId().equals(BetType.NO_DRAW.getId())) {
+                if (betType.getId().equals(AWAY_TEAM_WIN.getId())
+                        || betType.getId().equals(AWAY_TEAM_WILL_NOT_LOSE.getId())
+                        || betType.getId().equals(NO_DRAW.getId())) {
                     betResult = WIN;
                 } else {
                     betResult = LOSS;
                 }
                 break;
             case DRAW:
-                if (betType.getId().equals(BetType.DRAW.getId())
-                        || betType.getId().equals(BetType.HOME_TEAM_WILL_NOT_LOSE.getId())
-                        || betType.getId().equals(BetType.AWAY_TEAM_WILL_NOT_LOSE.getId())) {
+                if (betType.getId().equals(DRAW.getId())
+                        || betType.getId().equals(HOME_TEAM_WILL_NOT_LOSE.getId())
+                        || betType.getId().equals(AWAY_TEAM_WILL_NOT_LOSE.getId())) {
                     betResult = WIN;
                 } else {
                     betResult = LOSS;

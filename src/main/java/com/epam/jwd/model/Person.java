@@ -6,10 +6,10 @@ public class Person extends AbstractBaseEntity {
 
     private final String login;
     private final String password;
-    private final Integer balance;
+    private final Double balance;
     private final Role role;
 
-    public Person(Long id, String login, String password, Integer balance, Role role) {
+    public Person(Long id, String login, String password, Double balance, Role role) {
         super(id);
         this.login = login;
         this.password = password;
@@ -17,10 +17,9 @@ public class Person extends AbstractBaseEntity {
         this.role = role;
     }
 
-    public Person(String login, String password, Integer balance) {
+    public Person(String login, String password, Double balance) {
         this(null, login, password, balance, Role.USER);
     }
-
 
     public String getLogin() {
         return login;
@@ -30,7 +29,7 @@ public class Person extends AbstractBaseEntity {
         return password;
     }
 
-    public Integer getBalance() {
+    public Double getBalance() {
         return balance;
     }
 

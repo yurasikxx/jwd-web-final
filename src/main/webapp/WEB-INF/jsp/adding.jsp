@@ -84,6 +84,8 @@
         <form action="${pageContext.request.contextPath}/controller?command=bet_add" method="post">
             <label>${requestScope.bet}</label>
             <br>
+            <label>Balance: ${sessionScope.personBalance}</label>
+            <br>
             <label for="betslipIdField">${requestScope.betBetslip}</label>
             <br>
             <input type="number" id="betslipIdField" name="betslipId">

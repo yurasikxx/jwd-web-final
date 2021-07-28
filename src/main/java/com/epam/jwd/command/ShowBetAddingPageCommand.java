@@ -11,7 +11,7 @@ public class ShowBetAddingPageCommand implements Command {
     protected static final String ENTER_PERSON_ID_MSG = "Enter person ID: ";
     protected static final String BETSLIP_ATTRIBUTE_NAME = "betBetslip";
 
-    private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation";
+    private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation\n";
 
     private static volatile ShowBetAddingPageCommand instance;
 

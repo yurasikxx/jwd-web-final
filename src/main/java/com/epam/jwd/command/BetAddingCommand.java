@@ -3,6 +3,8 @@ package com.epam.jwd.command;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
+import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
 import com.epam.jwd.service.BetBaseService;
 import com.epam.jwd.service.BetService;
@@ -21,6 +23,7 @@ import static com.epam.jwd.command.CompetitionAddingCommand.ALL_FIELDS_MUST_BE_F
 import static com.epam.jwd.command.CompetitionAddingCommand.MIN_ELEMENT_ID;
 import static com.epam.jwd.command.CompetitionAddingCommand.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.command.LogInCommand.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.command.LogInCommand.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.LogInCommand.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.command.PersonDeleteCommand.TRY_AGAIN_MSG;
 import static com.epam.jwd.command.ShowAllBetsListPageCommand.BET_ATTRIBUTE_NAME;
@@ -39,6 +42,8 @@ public class BetAddingCommand implements Command {
     protected static final String BETSLIP_DOES_NOT_EXIST_MSG = "Betslip with such ID doesn't exist";
     protected static final String PERSON_DOES_NOT_EXIST_MSG = "Person with such ID doesn't exist";
     protected static final String PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG = "Person already has bet with such betslip";
+    private static final int ZERO_ELEMENT_VALUE = 0;
+    private static final String INSUFFICIENT_FUNDS_MSG = "Insufficient funds on the balance";
 
     private static volatile BetAddingCommand instance;
 
@@ -87,7 +92,8 @@ public class BetAddingCommand implements Command {
                 return betErrorCommandResponse;
             }
 
-            if (Objects.requireNonNull(getCheckedBetslipId(request)) > betslipService.findAll().size()) {
+            if (!betslipService.findAll()
+                    .contains(betslipService.findById(Objects.requireNonNull(getCheckedBetslipId(request))))) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_DOES_NOT_EXIST_MSG);
                 request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
@@ -102,8 +108,18 @@ public class BetAddingCommand implements Command {
             final String currentPersonLogin = extractPersonNameFromSession(currentSession);
             final Long betslipId = getCheckedBetslipId(request);
             final Integer betTotal = getCheckedBetTotal(request);
+            final Betslip betslip = betslipService.findById(betslipId);
+            final Person person = personService.findByLogin(currentPersonLogin);
+            final Bet bet = new Bet(betslip, betTotal, person);
+            final Person placedBetPerson = new Person(person.getId(), person.getLogin(), person.getPassword(),
+                    person.getBalance() - Objects.requireNonNull(betTotal), person.getRole());
 
-            final Bet bet = new Bet(betslipService.findById(betslipId), betTotal, personService.findByLogin(currentPersonLogin));
+            if (person.getBalance() - betTotal < ZERO_ELEMENT_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, INSUFFICIENT_FUNDS_MSG);
+                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betErrorCommandResponse;
+            }
 
             if (!betService.canSave(bet)) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG);
@@ -113,6 +129,10 @@ public class BetAddingCommand implements Command {
             }
 
             betService.save(bet);
+            personService.updateBalance(placedBetPerson);
+
+            Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
+                    placedBetPerson.getBalance());
         } catch (DaoException | ServiceException e) {
             e.printStackTrace();
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);

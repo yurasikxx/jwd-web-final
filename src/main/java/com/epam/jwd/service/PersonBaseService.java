@@ -23,6 +23,8 @@ public interface PersonBaseService extends BaseService<Person> {
 
     Person findByLogin(String login) throws ServiceException, DaoException;
 
+    void updateBalance(Person person) throws DaoException, ServiceException;
+
     void getNewRegisteredPersons(Person person);
 
     void destroy();

@@ -71,7 +71,7 @@ public class PersonChangingCommand implements Command {
             final Long id = getCheckedId(request);
             final String login = getCheckedLogin(request);
             final String password = getCheckedPassword(request);
-            final Integer balance = getCheckedBalance(request);
+            final Double balance = getCheckedBalance(request);
 
             final Person person = new Person(id, login, password, balance, Role.USER);
 
@@ -125,8 +125,8 @@ public class PersonChangingCommand implements Command {
         return null;
     }
 
-    private Integer getCheckedBalance(BaseCommandRequest request) {
-        final int balance;
+    private Double getCheckedBalance(BaseCommandRequest request) {
+        final double balance;
 
         if (request.getParameter(BALANCE_PARAMETER_NAME) != null) {
             balance = Integer.parseInt(request.getParameter(BALANCE_PARAMETER_NAME));

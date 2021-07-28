@@ -51,8 +51,7 @@
             <br>
         </c:if>
         <c:if test="${sessionScope.personRole eq Role.USER}">
-            Balance:
-            <label>${sessionScope.personBalance}</label>
+            <label>Balance: ${sessionScope.personBalance}</label>
             <br>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
