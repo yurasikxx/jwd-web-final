@@ -2,23 +2,23 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>Calculating</title>
+    <title>Competition results committing</title>
 </head>
 <body>
 <c:choose>
     <c:when test="${not empty requestScope.error}">
         <p>${requestScope.error}</p>
-        <a href="${pageContext.request.contextPath}/controller?command=bet_calculating_page">Try again</a>
+        <a href="${pageContext.request.contextPath}/controller?command=competition_results_committing_page">Try again</a>
     </c:when>
     <c:when test="${not empty requestScope.betHistory}">
-        <form action="${pageContext.request.contextPath}/controller?command=bet_calculate" method="post">
+        <form action="${pageContext.request.contextPath}/controller?command=commit_competition_results" method="post">
             <label>${requestScope.betHistory}</label>
             <br>
-            <label for="betId">${requestScope.bet}</label>
+            <label for="competitionId">${requestScope.competition}</label>
             <br>
-            <input type="number" id="betId" name="id">
+            <input type="number" id="competitionId" name="id">
             <br>
-            <input type="submit" value="Calculate">
+            <input type="submit" value="Commit">
         </form>
     </c:when>
     <c:otherwise>

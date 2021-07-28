@@ -59,6 +59,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private static volatile BetslipDao instance;
 
     private final String findByCoefficientSql;
+    private final String findByCompetitionIdSql;
 
     public static BetslipDao getInstance() {
         if (instance == null) {
@@ -75,6 +76,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private BetslipDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BETSLIP_ID_COLUMN);
         this.findByCoefficientSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BETSLIP_COEFFICIENT_COLUMN);
+        this.findByCompetitionIdSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, COMPETITION_ID_COLUMN);
     }
 
     @Override
@@ -153,6 +155,12 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     public List<Betslip> findByCoefficient(double coefficient) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setDouble(INITIAL_INDEX_VALUE, coefficient),
                 findByCoefficientSql);
+    }
+
+    @Override
+    public List<Betslip> findByCompetitionId(Long id) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
+                findByCompetitionIdSql);
     }
 
 }

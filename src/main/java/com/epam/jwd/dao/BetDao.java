@@ -75,6 +75,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     private static volatile BetDao instance;
     private final String findByTotalSql;
+    private final String findByCompetitionIdSql;
 
     public static BetDao getInstance() {
         if (instance == null) {
@@ -91,6 +92,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private BetDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_BET_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_ID_COLUMN);
         this.findByTotalSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BET_TOTAL_COLUMN);
+        this.findByCompetitionIdSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, COMPETITION_ID_COLUMN);
     }
 
     @Override
@@ -177,6 +179,12 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     public List<Bet> findByTotal(Integer betTotal) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setInt(INITIAL_INDEX_VALUE, betTotal),
                 findByTotalSql);
+    }
+
+    @Override
+    public List<Bet> findByCompetitionId(Long id) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
+                findByCompetitionIdSql);
     }
 
 }

@@ -9,4 +9,6 @@ public interface BetBaseDao extends BaseDao<Bet> {
 
     List<Bet> findByTotal(Integer betTotal) throws DaoException;
 
+    List<Bet> findByCompetitionId(Long id) throws DaoException;
+
 }

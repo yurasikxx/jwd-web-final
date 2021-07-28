@@ -66,6 +66,11 @@ public class BetslipService implements BetslipBaseService {
     }
 
     @Override
+    public List<Betslip> findByCompetitionId(Long id) throws DaoException {
+        return betslipDao.findByCompetitionId(id);
+    }
+
+    @Override
     public void delete(Long id) throws DaoException {
         betslipDao.delete(id);
     }

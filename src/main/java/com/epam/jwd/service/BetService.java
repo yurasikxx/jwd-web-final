@@ -43,6 +43,11 @@ public class BetService implements BetBaseService {
     }
 
     @Override
+    public List<Bet> findByCompetitionId(Long id) throws DaoException {
+        return betDao.findByCompetitionId(id);
+    }
+
+    @Override
     public void delete(Long id) throws DaoException {
         betDao.delete(id);
     }
