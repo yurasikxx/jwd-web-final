@@ -51,6 +51,8 @@ public enum BaseApplicationCommand {
     BET_CHANGE(BetChangingCommand.getInstance(), ADMINISTRATOR),
     BET_DELETING_PAGE(ShowBetDeletingPageCommand.getInstance(), ADMINISTRATOR, USER),
     BET_DELETE(BetDeleteCommand.getInstance(), ADMINISTRATOR, USER),
+    BET_CALCULATING_PAGE(ShowBetCalculatingPageCommand.getInstance(), ADMINISTRATOR),
+    BET_CALCULATE(BetCalculateCommand.getInstance(), ADMINISTRATOR),
     ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 

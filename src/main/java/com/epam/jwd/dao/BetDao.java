@@ -27,7 +27,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
             "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name \n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -42,7 +42,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
             "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name \n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -52,7 +52,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "join sport sa on th.s_id = sa.id\n" +
             "join bet_type bt on bs.bt_id = bt.id\n" +
             "join person p on b.p_id = p.id\n" +
-            "join person_role pr on p.pr_id = pr.id;\n" +
+            "join person_role pr on p.pr_id = pr.id\n" +
             "where %s = ?;";
     private final static String TABLE_NAME = "bet b";
     private static final String BET_ID_COLUMN = "b.id";

@@ -26,6 +26,10 @@ public class BetHistory extends AbstractBaseEntity {
         this.betResult = betResult;
     }
 
+    public BetHistory(Team home, Team away, BetType betType, Double coefficient, Integer betTotal,
+                      String personLogin, CompetitionResult competitionResult, BetResult betResult) {
+        this(null, home, away, betType, coefficient, betTotal, personLogin, competitionResult, betResult);
+    }
 
     public Team getHome() {
         return home;

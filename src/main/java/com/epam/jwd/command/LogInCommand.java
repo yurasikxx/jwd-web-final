@@ -25,6 +25,7 @@ public class LogInCommand implements Command {
     protected static final String EMPTY_CREDENTIALS_MSG = "Credentials must not be empty";
 
     private static final String INVALID_CREDENTIALS_MSG = "Credentials must not be empty or wrong login or password";
+    private static final String PERSON_BALANCE_SESSION_ATTRIBUTE_NAME = "personBalance";
 
     private static volatile LogInCommand instance;
     private final PersonBaseService personService;
@@ -112,6 +113,7 @@ public class LogInCommand implements Command {
 
             session.setAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME, loggedInPerson.getLogin());
             session.setAttribute(PERSON_ROLE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getRole());
+            session.setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getBalance());
         } catch (ServiceException | DaoException e) {
             e.printStackTrace();
         }

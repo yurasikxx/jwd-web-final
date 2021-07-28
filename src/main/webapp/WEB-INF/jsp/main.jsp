@@ -36,7 +36,7 @@
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
             <br>
-            <a href="${pageContext.request.contextPath}/controller?command=bet_list_page">Bet list</a>
+            <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Bet management</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
@@ -51,6 +51,10 @@
             <br>
         </c:if>
         <c:if test="${sessionScope.personRole eq Role.USER}">
+            Balance:
+            <label>${sessionScope.personBalance}</label>
+            <br>
+            <br>
             <a href="${pageContext.request.contextPath}/controller?command=competition_list_page">Competition list</a>
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=betslip_list_page">Betslip list</a>
