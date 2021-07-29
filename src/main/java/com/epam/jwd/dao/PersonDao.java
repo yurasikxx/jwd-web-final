@@ -2,8 +2,11 @@ package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.BusinessValidationException;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,12 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
+
 public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
-    protected static final int EMPTY_LIST_SIZE_VALUE = 0;
-    protected static final int INITIAL_ID_VALUE = 1;
-    protected static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
-    protected static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
+    private static final Logger LOGGER = LogManager.getLogger(PersonDao.class);
 
     private static final String SELECT_ALL_SQL_QUERY = "select p.id, p.p_login, p.p_password, p.p_balance, p.pr_id\n" +
             "from %s;";
@@ -34,10 +39,14 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     private static final String PERSON_BALANCE_COLUMN = "p.p_balance";
     private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
     private static final String PERSON_ROLE_NAME_COLUMN = "pr_name";
-    private static final String UNAUTHORIZED_UPDATE_MSG = "Unauthorized person can not be updated into database";
-    private static final String UNAUTHORIZED_SAVE_MSG = "Unauthorized person can not be saved into database";
+    private static final String UNAUTHORIZED_CHANGING_MSG = "Unauthorized person can not be changed";
+    private static final String PERSON_WAS_SAVED_MSG = "Person was saved";
+    private static final String PERSON_WAS_NOT_SAVED_MSG = "Person wasn't saved";
+    private static final String PERSON_WAS_UPDATED_MSG = "Person was updated";
+    private static final String PERSON_WAS_NOT_UPDATED_MSG = "Person wasn't updated";
 
     private static volatile PersonDao instance;
+
     private final String findByLoginSql;
     private final String findByRoleSql;
 
@@ -61,34 +70,12 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     @Override
     protected void saveResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
-        if (Role.UNAUTHORIZED.equals(person.getRole())) {
-            throw new BusinessValidationException(UNAUTHORIZED_SAVE_MSG);
-        }
+        personRoleValidate(person);
 
         try {
             final List<Person> persons = this.findAll();
 
-            if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
-                    long id = personAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(PERSON_ID_COLUMN, id);
-                } else {
-                    while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
-                }
-            }
+            personIdValidate(resultSet, persons);
 
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
             resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
@@ -96,16 +83,16 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
+
+            LOGGER.info(PERSON_WAS_SAVED_MSG);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(PERSON_WAS_NOT_SAVED_MSG);
         }
     }
 
     @Override
     protected void updateResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
-        if (Role.UNAUTHORIZED.equals(person.getRole())) {
-            throw new BusinessValidationException(UNAUTHORIZED_UPDATE_MSG);
-        }
+        personRoleValidate(person);
 
         try {
             long id = resultSet.getLong(INITIAL_INDEX_VALUE);
@@ -117,13 +104,15 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
                 resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
                 resultSet.updateRow();
             }
+
+            LOGGER.info(PERSON_WAS_UPDATED_MSG);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(PERSON_WAS_NOT_UPDATED_MSG);
         }
     }
 
     @Override
-    protected Person mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Person mapResultSet(ResultSet resultSet) throws SQLException, UnknownEnumAttributeException {
         return new Person(resultSet.getLong(PERSON_ID_COLUMN),
                 resultSet.getString(PERSON_LOGIN_COLUMN),
                 resultSet.getString(PERSON_PASSWORD_COLUMN),
@@ -142,6 +131,36 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     public List<Person> findByRole(Role role) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
                 findByRoleSql);
+    }
+
+    private void personIdValidate(ResultSet resultSet, List<Person> persons) throws SQLException {
+        if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
+        } else {
+            final AtomicLong personAmount = new AtomicLong(this.findAll().size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+            if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
+                long id = personAmount.incrementAndGet();
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(PERSON_ID_COLUMN, id);
+            } else {
+                while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
+                    idCounter.incrementAndGet();
+                }
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+            }
+        }
+    }
+
+    private void personRoleValidate(Person person) throws BusinessValidationException {
+        if (Role.UNAUTHORIZED.equals(person.getRole())) {
+            throw new BusinessValidationException(UNAUTHORIZED_CHANGING_MSG);
+        }
     }
 
 }

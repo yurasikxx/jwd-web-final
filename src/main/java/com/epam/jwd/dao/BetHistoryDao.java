@@ -1,23 +1,29 @@
 package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.BetHistory;
 import com.epam.jwd.model.BetResult;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.CompetitionResult;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
-import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
-import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
+import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
 public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBaseDao {
+
+    private static final Logger LOGGER = LogManager.getLogger(BetHistoryDao.class);
 
     private static final String SELECT_ALL_SQL_QUERY = "select bh.id, bh.t_home_id, bh.t_away_id, bh.bt_id,\n" +
             "bh.bh_coefficient, bh.bh_bet_total, bh.bh_p_login,\n" +
@@ -60,8 +66,10 @@ public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBa
     private static final String COEFFICIENT_COLUMN = "bh.bh_coefficient";
     private static final String BET_TOTAL_COLUMN = "bh.bh_bet_total";
     private static final String PERSON_LOGIN_COLUMN = "bh.bh_p_login";
-    private static final String COMPETITION_RESULT_ID_COLUMN = "bh.cr_id";
+    private static final String COMPETITION_RESULT_NAME_COLUMN = "br.br_name";
     private static final String BET_RESULT_ID_COLUMN = "bh.br_id";
+    private static final String BET_WAS_SAVED_IN_BET_HISTORY_MSG = "Bet was saved in bet history";
+    private static final String BET_WAS_NOT_SAVED_IN_BET_HISTORY_MSG = "Bet wasn't saved in bet history";
 
     private static volatile BetHistoryDao instance;
 
@@ -84,35 +92,7 @@ public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBa
     @Override
     protected void saveResultSet(ResultSet resultSet, BetHistory betHistory) {
         try {
-            final List<BetHistory> bets = this.findAll();
-
-            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong betAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                    long id = betAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, id);
-                } else {
-                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    if (this.findById(idCounter.get()).isPresent()) {
-                        if (bets.contains(this.findById(idCounter.get()).get())) {
-                            idCounter.set(betAmount.incrementAndGet());
-                        }
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
-                }
-            }
+            betHistoryIdValidate(resultSet);
 
             resultSet.updateLong(HOME_TEAM_ID_COLUMN, betHistory.getHome().getId());
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, betHistory.getAway().getId());
@@ -120,22 +100,40 @@ public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBa
             resultSet.updateDouble(COEFFICIENT_COLUMN, betHistory.getCoefficient());
             resultSet.updateInt(BET_TOTAL_COLUMN, betHistory.getBetTotal());
             resultSet.updateString(PERSON_LOGIN_COLUMN, betHistory.getPersonLogin());
-            resultSet.updateLong(COMPETITION_RESULT_ID_COLUMN, betHistory.getCompetitionResult().getId());
+            resultSet.updateLong(COMPETITION_RESULT_NAME_COLUMN, betHistory.getCompetitionResult().getId());
             resultSet.updateLong(BET_RESULT_ID_COLUMN, betHistory.getBetResult().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
+
+            LOGGER.info(BET_WAS_SAVED_IN_BET_HISTORY_MSG);
         } catch (SQLException | DaoException e) {
-            e.printStackTrace();
+            LOGGER.error(BET_WAS_NOT_SAVED_IN_BET_HISTORY_MSG);
         }
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, BetHistory entity) {
+    protected void updateResultSet(ResultSet resultSet, BetHistory betHistory) {
+        try {
+            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
+            if (id == betHistory.getId()) {
+                resultSet.updateLong(HOME_TEAM_ID_COLUMN, betHistory.getHome().getId());
+                resultSet.updateLong(AWAY_TEAM_ID_COLUMN, betHistory.getAway().getId());
+                resultSet.updateLong(BET_TYPE_ID_COLUMN, betHistory.getBetType().getId());
+                resultSet.updateDouble(COEFFICIENT_COLUMN, betHistory.getCoefficient());
+                resultSet.updateInt(BET_TOTAL_COLUMN, betHistory.getBetTotal());
+                resultSet.updateString(PERSON_LOGIN_COLUMN, betHistory.getPersonLogin());
+                resultSet.updateLong(COMPETITION_RESULT_NAME_COLUMN, betHistory.getCompetitionResult().getId());
+                resultSet.updateLong(BET_RESULT_ID_COLUMN, betHistory.getBetResult().getId());
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @Override
-    protected BetHistory mapResultSet(ResultSet resultSet) throws SQLException {
+    protected BetHistory mapResultSet(ResultSet resultSet) throws SQLException, UnknownEnumAttributeException {
         return new BetHistory(resultSet.getLong(BET_HISTORY_ID_COLUMN),
                 new Team(resultSet.getLong(HOME_TEAM_ID_COLUMN),
                         resultSet.getString(HOME_TEAM_NAME_COLUMN),
@@ -147,8 +145,40 @@ public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBa
                 resultSet.getDouble(COEFFICIENT_COLUMN),
                 resultSet.getInt(BET_TOTAL_COLUMN),
                 resultSet.getString(PERSON_LOGIN_COLUMN),
-                CompetitionResult.resolveCompetitionResultById(resultSet.getLong(COMPETITION_RESULT_ID_COLUMN)),
+                CompetitionResult.resolveCompetitionResultByName(resultSet.getString(COMPETITION_RESULT_NAME_COLUMN)),
                 BetResult.resolveBetResultById(resultSet.getLong(BET_RESULT_ID_COLUMN)));
+    }
+
+    private void betHistoryIdValidate(ResultSet resultSet) throws SQLException, DaoException {
+        final List<BetHistory> bets = this.findAll();
+
+        if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
+        } else {
+            final AtomicLong betAmount = new AtomicLong(findAll().size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+            if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                long id = betAmount.incrementAndGet();
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_HISTORY_ID_COLUMN, id);
+            } else {
+                while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                    idCounter.incrementAndGet();
+                }
+
+                if (this.findById(idCounter.get()).isPresent()) {
+                    if (bets.contains(this.findById(idCounter.get()).get())) {
+                        idCounter.set(betAmount.incrementAndGet());
+                    }
+                }
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
+            }
+        }
     }
 
 }

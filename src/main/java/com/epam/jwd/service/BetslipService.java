@@ -9,10 +9,14 @@ import com.epam.jwd.model.Betslip;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
+
 public class BetslipService implements BetslipBaseService {
 
     private static final String BETSLIP_WAS_NOT_FIND_BY_GIVEN_ID_MSG = "Betslip wasn't find by given id";
+
     private static volatile BetslipService instance;
+
     private final BetslipBaseDao betslipDao;
 
     private BetslipService() {
@@ -77,7 +81,7 @@ public class BetslipService implements BetslipBaseService {
 
     @Override
     public boolean canBeDeleted(Long id) throws ServiceException, DaoException {
-        return this.findAll().contains(this.findById(id)) && id > 0;
+        return this.findAll().contains(this.findById(id)) && id > MIN_INDEX_VALUE;
     }
 
 }

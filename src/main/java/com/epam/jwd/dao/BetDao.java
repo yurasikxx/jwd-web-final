@@ -1,6 +1,7 @@
 package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
@@ -9,18 +10,22 @@ import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.epam.jwd.dao.PersonDao.EMPTY_LIST_SIZE_VALUE;
-import static com.epam.jwd.dao.PersonDao.INDEX_ROLLBACK_VALUE;
-import static com.epam.jwd.dao.PersonDao.INITIAL_ID_VALUE;
-import static com.epam.jwd.dao.PersonDao.INITIAL_INDEX_VALUE;
+import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
+import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
+import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
 public class BetDao extends CommonDao<Bet> implements BetBaseDao {
+
+    private static final Logger LOGGER = LogManager.getLogger(BetDao.class);
 
     private final static String SELECT_ALL_SQL_QUERY = "select b.id, b.bs_id, b.bet_total, b.p_id from %s;";
     private final static String FIND_ALL_BET_SQL_QUERY = "select b.id, bs.c_id,\n" +
@@ -68,12 +73,17 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private static final String PERSON_ID_COLUMN = "p_id";
     private static final String PERSON_LOGIN_COLUMN = "p_login";
     private static final String PERSON_PASSWORD_COLUMN = "p_password";
-    private static final String PERSON_ROLE_ID_COLUMN = "pr_id";
+    private static final String PERSON_ROLE_NAME_COLUMN = "pr.pr_name";
     private static final String SPORT_HOME_ID_COLUMN = "sh.id";
     private static final String SPORT_AWAY_ID_COLUMN = "sa.id";
     private static final String PERSON_BALANCE_COLUMN = "p.p_balance";
+    private static final String BET_WAS_SAVED_MSG = "Bet was saved";
+    private static final String BET_WAS_NOT_SAVED_MSG = "Bet wasn't saved";
+    private static final String BET_WAS_UPDATED_MSG = "Bet was updated";
+    private static final String BET_WAS_NOT_UPDATED_MSG = "Bet wasn't updated";
 
     private static volatile BetDao instance;
+
     private final String findByTotalSql;
     private final String findByCompetitionIdSql;
 
@@ -98,43 +108,17 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     @Override
     protected void saveResultSet(ResultSet resultSet, Bet bet) {
         try {
-            final List<Bet> bets = this.findAll();
-
-            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong betAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                    long id = betAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_ID_COLUMN, id);
-                } else {
-                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    if (this.findById(idCounter.get()).isPresent()) {
-                        if (bets.contains(this.findById(idCounter.get()).get())) {
-                            idCounter.set(betAmount.incrementAndGet());
-                        }
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
-                }
-            }
+            betIdValidate(resultSet);
 
             resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
             resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
             resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
+
+            LOGGER.info(BET_WAS_SAVED_MSG);
         } catch (SQLException | DaoException e) {
-            e.printStackTrace();
+            LOGGER.error(BET_WAS_NOT_SAVED_MSG);
         }
     }
 
@@ -149,13 +133,15 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                 resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
                 resultSet.updateRow();
             }
+
+            LOGGER.info(BET_WAS_UPDATED_MSG);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(BET_WAS_NOT_UPDATED_MSG);
         }
     }
 
     @Override
-    protected Bet mapResultSet(ResultSet resultSet) throws SQLException {
+    protected Bet mapResultSet(ResultSet resultSet) throws SQLException, UnknownEnumAttributeException {
         return new Bet(resultSet.getLong(BET_ID_COLUMN),
                 new Betslip(resultSet.getLong(BETSLIP_ID_COLUMN),
                         new Competition(resultSet.getLong(COMPETITION_ID_COLUMN),
@@ -172,7 +158,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                         resultSet.getString(PERSON_LOGIN_COLUMN),
                         resultSet.getString(PERSON_PASSWORD_COLUMN),
                         resultSet.getDouble(PERSON_BALANCE_COLUMN),
-                        Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN))));
+                        Role.resolveRoleByName(resultSet.getString(PERSON_ROLE_NAME_COLUMN))));
     }
 
     @Override
@@ -185,6 +171,38 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     public List<Bet> findByCompetitionId(Long id) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
                 findByCompetitionIdSql);
+    }
+
+    private void betIdValidate(ResultSet resultSet) throws SQLException, DaoException {
+        final List<Bet> bets = this.findAll();
+
+        if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
+        } else {
+            final AtomicLong betAmount = new AtomicLong(findAll().size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+            if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                long id = betAmount.incrementAndGet();
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_ID_COLUMN, id);
+            } else {
+                while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                    idCounter.incrementAndGet();
+                }
+
+                if (this.findById(idCounter.get()).isPresent()) {
+                    if (bets.contains(this.findById(idCounter.get()).get())) {
+                        idCounter.set(betAmount.incrementAndGet());
+                    }
+                }
+
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
+            }
+        }
     }
 
 }

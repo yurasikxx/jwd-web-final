@@ -6,11 +6,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
+
 public class UserWelcomeTag extends TagSupport {
 
     private static final String PERSON_WELCOME_MSG = "Hello, %s! See below to next moves:";
     private static final String DEFAULT_WELCOME_MSG = "Hello! Click below to sign up or sign in :)";
-    private static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
 
     @Override
     public int doStartTag() throws JspException {

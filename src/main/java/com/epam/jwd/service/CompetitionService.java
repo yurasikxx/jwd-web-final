@@ -16,7 +16,9 @@ public class CompetitionService implements CompetitionBaseService {
 
     private static final String COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG = "Competition wasn't found by given id: %s";
     private static final String TEAM_WAS_NOT_FOUND_MSG = "Team with such id was not found: %s";
+
     private static volatile CompetitionService instance;
+
     private final CompetitionBaseDao competitionDao;
     private final TeamBaseDao teamDao;
 

@@ -2,6 +2,7 @@ package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.BusinessValidationException;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.BaseEntity;
 import com.epam.jwd.pool.ConnectionPoolManager;
 import org.apache.logging.log4j.LogManager;
@@ -18,13 +19,26 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
+
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     private static final Logger LOGGER = LogManager.getLogger(CommonDao.class);
+
     private static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";
     private static final String FAILED_TO_FIND_PREPARED_ENTITIES_MSG = "Failed to find prepared entities";
     private static final String FAILED_TO_UPDATE_ENTITY_MSG = "Failed to update entity";
     private static final String FAILED_TO_DELETE_ENTITY_MSG = "Failed to delete entity";
+    private static final String ENTITY_WAS_SAVED_MSG = "Entity was saved";
+    private static final String ENTITY_WAS_NOT_SAVED_MSG = "Entity wasn't saved";
+    private static final String ENTITY_WAS_UPDATED_MSG = "Entity was updated";
+    private static final String ENTITY_WAS_NOT_UPDATED_MSG = "Entity wasn't updated";
+    private static final String ENTITY_WAS_DELETED_MSG = "Entity was deleted";
+    private static final String ENTITY_WAS_NOT_DELETED_MSG = "Entity wasn't deleted";
+    private static final String PREPARED_ENTITIES_WERE_FOUND = "Prepared entities were found";
+    private static final String PREPARED_ENTITIES_WERE_NOT_FOUND_MSG = "Prepared entities weren't found";
+    private static final String ENTITIES_WERE_FOUND_MSG = "Entities were found";
+    private static final String ENTITIES_WERE_NOT_FOUND_MSG = "Entities weren't found";
 
     private final String selectAllSql;
     private final String findAllSql;
@@ -38,6 +52,31 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     @Override
     public T save(T entity) throws DaoException {
+        return saveEntities(entity);
+    }
+
+    @Override
+    public List<T> findAll() {
+        return findEntities(findAllSql);
+    }
+
+    @Override
+    public Optional<T> findById(Long id) throws DaoException {
+        return takeFirstNotNull(findPreparedEntities
+                (preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id), findByIdSql));
+    }
+
+    @Override
+    public void update(T entity) throws DaoException {
+        updateEntities(entity);
+    }
+
+    @Override
+    public void delete(Long id) throws DaoException {
+        deleteEntities(id);
+    }
+
+    private T saveEntities(T entity) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection()) {
             connection.setAutoCommit(false);
 
@@ -45,16 +84,17 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                     ResultSet.CONCUR_UPDATABLE)) {
                 saveResultSet(entity, statement);
                 connection.commit();
+                LOGGER.info(ENTITY_WAS_SAVED_MSG);
             } catch (SQLException e) {
                 connection.rollback();
-                LOGGER.error(e.getMessage());
+                LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
             } finally {
                 connection.setAutoCommit(true);
             }
 
             return entity;
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
     }
@@ -65,18 +105,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         }
     }
 
-    @Override
-    public List<T> findAll() {
-        return findEntities(findAllSql);
-    }
-
-    @Override
-    public Optional<T> findById(Long id) throws DaoException {
-        return takeFirstNotNull(findPreparedEntities(preparedStatement -> preparedStatement.setLong(1, id), findByIdSql));
-    }
-
-    @Override
-    public void update(T entity) throws DaoException {
+    private void updateEntities(T entity) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
@@ -85,29 +114,36 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                     updateResultSet(resultSet, entity);
                 }
             }
+
+            LOGGER.info(ENTITY_WAS_UPDATED_MSG);
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(ENTITY_WAS_NOT_UPDATED_MSG);
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
     }
 
-    @Override
-    public void delete(Long id) throws DaoException {
+    private void deleteEntities(Long id) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
-                    long localId = resultSet.getLong(1);
-
-                    if (localId == id) {
-                        resultSet.deleteRow();
-                    }
+                    deleteResultSet(id, resultSet);
                 }
             }
+
+            LOGGER.info(ENTITY_WAS_DELETED_MSG);
         } catch (SQLException | InterruptedException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(ENTITY_WAS_NOT_DELETED_MSG);
             throw new DaoException(FAILED_TO_DELETE_ENTITY_MSG);
+        }
+    }
+
+    private void deleteResultSet(Long id, ResultSet resultSet) throws SQLException {
+        long localId = resultSet.getLong(INITIAL_INDEX_VALUE);
+
+        if (localId == id) {
+            resultSet.deleteRow();
         }
     }
 
@@ -117,14 +153,18 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             preparationConsumer.accept(statement);
             try (final ResultSet resultSet = statement.executeQuery()) {
                 List<T> entities = new ArrayList<>();
+
                 while (resultSet.next()) {
                     final T entity = mapResultSet(resultSet);
                     entities.add(entity);
                 }
+
+                LOGGER.info(PREPARED_ENTITIES_WERE_FOUND);
+
                 return entities;
             }
-        } catch (SQLException | InterruptedException e) {
-            LOGGER.error(e.getMessage());
+        } catch (SQLException | InterruptedException | UnknownEnumAttributeException e) {
+            LOGGER.error(PREPARED_ENTITIES_WERE_NOT_FOUND_MSG);
             throw new DaoException(FAILED_TO_FIND_PREPARED_ENTITIES_MSG);
         }
     }
@@ -138,10 +178,13 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                     final T entity = mapResultSet(resultSet);
                     entities.add(entity);
                 }
+
+                LOGGER.info(ENTITIES_WERE_FOUND_MSG);
+
                 return entities;
             }
-        } catch (SQLException | InterruptedException e) {
-            LOGGER.error(e.getMessage());
+        } catch (SQLException | InterruptedException | UnknownEnumAttributeException e) {
+            LOGGER.error(ENTITIES_WERE_NOT_FOUND_MSG);
             return Collections.emptyList();
         }
     }
@@ -156,6 +199,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     protected abstract void updateResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
 
-    protected abstract T mapResultSet(ResultSet resultSet) throws SQLException;
+    protected abstract T mapResultSet(ResultSet resultSet) throws SQLException, UnknownEnumAttributeException;
 
 }

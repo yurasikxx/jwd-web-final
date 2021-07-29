@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.epam.jwd.command.ApplicationCommand.COMMAND_PARAMETER_NAME;
-import static com.epam.jwd.command.LogInCommand.PERSON_ROLE_SESSION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.PERSON_ROLE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.model.Role.UNAUTHORIZED;
 
 @WebFilter(urlPatterns = "/*")

@@ -15,14 +15,21 @@ import java.util.List;
 import java.util.Optional;
 
 import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
+import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
 public class PersonService implements PersonBaseService {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonService.class);
+
     private static final String USER_WAS_NOT_FOUND_BY_GIVEN_LOGIN_MSG = "User wasn't found by given login: %s";
     private static final String USER_CAN_NOT_LOG_IN_MSG = "User can't log in";
+    private static final String PERSONS_WERE_NOT_INITIALIZED = "Persons weren't initialized";
+    private static final String PERSONS_WERE_NOT_DESTROYED_MSG = "Persons weren't destroyed";
+    private static final int MAX_LOGIN_LENGTH = 40;
+    private static final int MAX_PASSWORD_LENGTH = 100;
 
     private static volatile PersonService instance;
+
     private final PersonBaseDao personDao;
     private final BCrypt.Hasher hasher;
     private final BCrypt.Verifyer verifyer;
@@ -53,7 +60,7 @@ public class PersonService implements PersonBaseService {
             try {
                 this.logIn(this.findAll().get(i));
             } catch (DaoException e) {
-                e.printStackTrace();
+                LOGGER.error(PERSONS_WERE_NOT_INITIALIZED);
             }
         }
     }
@@ -103,8 +110,8 @@ public class PersonService implements PersonBaseService {
         }
 
         return !logins.contains(person.getLogin())
-                && person.getLogin().length() > 0 && person.getLogin().length() <= 40
-                && person.getPassword().length() > 0 && person.getPassword().length() <= 100;
+                && person.getLogin().length() > MIN_INDEX_VALUE && person.getLogin().length() <= MAX_LOGIN_LENGTH
+                && person.getPassword().length() > MIN_INDEX_VALUE && person.getPassword().length() <= MAX_PASSWORD_LENGTH;
     }
 
     @Override
@@ -179,7 +186,7 @@ public class PersonService implements PersonBaseService {
             try {
                 personDao.update(person);
             } catch (DaoException e) {
-                e.printStackTrace();
+                LOGGER.error(PERSONS_WERE_NOT_DESTROYED_MSG);
             }
         }
     }

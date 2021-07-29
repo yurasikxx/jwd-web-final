@@ -1,5 +1,7 @@
 package com.epam.jwd.model;
 
+import com.epam.jwd.exception.UnknownEnumAttributeException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +12,8 @@ public enum Role implements BaseEntity {
     USER(3L, "User"),
     UNAUTHORIZED(4L, "Unauthorized");
 
+    private static final String UNKNOWN_ROLE_ID_MSG = "Unknown role ID: %s";
+    private static final String UNKNOWN_ROLE_NAME_MSG = "Unknown role name: %s";
     private static final List<Role> ALL_AVAILABLE_ROLES = Arrays.asList(Role.values());
 
     private final Long id;
@@ -33,14 +37,14 @@ public enum Role implements BaseEntity {
         return ALL_AVAILABLE_ROLES;
     }
 
-    public static Role resolveRoleById(Long id) {
+    public static Role resolveRoleById(Long id) throws UnknownEnumAttributeException {
         for (Role role : values()) {
             if (role.getId().equals(id)) {
                 return role;
             }
         }
 
-        throw new IllegalArgumentException("Unknown role ID");
+        throw new UnknownEnumAttributeException(String.format(UNKNOWN_ROLE_ID_MSG, id));
     }
 
     public static Role resolveRoleByName(String name) {
@@ -50,7 +54,7 @@ public enum Role implements BaseEntity {
             }
         }
 
-        throw new IllegalArgumentException("Unknown role name");
+        throw new IllegalArgumentException(String.format(UNKNOWN_ROLE_NAME_MSG, name));
     }
 
 }
