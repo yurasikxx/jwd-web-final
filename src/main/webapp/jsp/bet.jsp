@@ -10,6 +10,8 @@ Available bet operations:
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=bet_deleting_page">Delete bet</a>
 <br>
+<a href="${pageContext.request.contextPath}/controller?command=bet_history_page">View bet history</a>
+<br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
 <br>
 </body>

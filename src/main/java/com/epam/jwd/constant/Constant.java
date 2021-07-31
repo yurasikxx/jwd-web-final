@@ -34,7 +34,7 @@ public class Constant {
 
     public static final String SOMETHING_WENT_WRONG_MSG = "Something went wrong...";
     public static final String ALL_FIELDS_MUST_BE_FILLED_MSG = "All fields must be filled";
-    public static final String TEAM_ID_DOES_NOT_EXIST_MSG = "Team with such ID doesn't exist";
+    public static final String TEAM_DOES_NOT_EXIST_MSG = "Team with such ID doesn't exist";
     public static final String TEAMS_MUST_BE_DIFFERENT_MSG = "Teams must be different";
     public static final String TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG = "Teams must be from the same sport";
     public static final String TRY_AGAIN_MSG = "Try again";
@@ -55,8 +55,8 @@ public class Constant {
     public static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
     public static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
     public static final int MIN_INDEX_VALUE = EMPTY_LIST_SIZE_VALUE;
+    public static final int INITIAL_BALANCE_VALUE = 1000;
     public static final Long MIN_LONG_ID_VALUE = 1L;
-    public static final double INITIAL_BALANCE_VALUE = 1000;
 
     private Constant() {
     }

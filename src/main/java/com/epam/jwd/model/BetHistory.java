@@ -7,13 +7,13 @@ public class BetHistory extends AbstractBaseEntity {
     private final Team home;
     private final Team away;
     private final BetType betType;
-    private final Double coefficient;
+    private final Integer coefficient;
     private final Integer betTotal;
     private final String personLogin;
     private final CompetitionResult competitionResult;
     private final BetResult betResult;
 
-    public BetHistory(Long id, Team home, Team away, BetType betType, Double coefficient, Integer betTotal,
+    public BetHistory(Long id, Team home, Team away, BetType betType, Integer coefficient, Integer betTotal,
                       String personLogin, CompetitionResult competitionResult, BetResult betResult) {
         super(id);
         this.home = home;
@@ -26,7 +26,7 @@ public class BetHistory extends AbstractBaseEntity {
         this.betResult = betResult;
     }
 
-    public BetHistory(Team home, Team away, BetType betType, Double coefficient, Integer betTotal,
+    public BetHistory(Team home, Team away, BetType betType, Integer coefficient, Integer betTotal,
                       String personLogin, CompetitionResult competitionResult, BetResult betResult) {
         this(null, home, away, betType, coefficient, betTotal, personLogin, competitionResult, betResult);
     }
@@ -43,7 +43,7 @@ public class BetHistory extends AbstractBaseEntity {
         return betType;
     }
 
-    public Double getCoefficient() {
+    public Integer getCoefficient() {
         return coefficient;
     }
 

@@ -10,9 +10,11 @@ import static com.epam.jwd.constant.Constant.LOGIN_JSP_PATH;
 public class ShowLogInPageCommand implements Command {
 
     private static volatile ShowLogInPageCommand instance;
-    private final BaseCommandResponse loginPageResponse = new CommandResponse(LOGIN_JSP_PATH, false);
+
+    private final BaseCommandResponse loginPageResponse;
 
     private ShowLogInPageCommand() {
+        this.loginPageResponse = new CommandResponse(LOGIN_JSP_PATH, false);
     }
 
     public static ShowLogInPageCommand getInstance() {

@@ -78,7 +78,35 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     @Override
     protected void saveResultSet(ResultSet resultSet, Competition competition) {
         try {
-            competitionIdValidate(resultSet);
+            final List<Competition> competitions = this.findAll();
+
+            if (competitions.size() == EMPTY_LIST_SIZE_VALUE) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(COMPETITION_ID_COLUMN, INITIAL_ID_VALUE);
+            } else {
+                final AtomicLong competitionAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+                if (competitionAmount.get() == competitions.get(competitions.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = competitionAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == competitions.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (competitions.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(competitionAmount.incrementAndGet());
+                        }
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter.get());
+                }
+            }
 
             resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
@@ -123,37 +151,6 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
     public List<Competition> findBySportName(Sport sport) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, sport.getName()),
                 findBySportSql);
-    }
-
-    private void competitionIdValidate(ResultSet resultSet) throws SQLException, DaoException {
-        final List<Competition> competitions = this.findAll();
-        if (competitions.size() == EMPTY_LIST_SIZE_VALUE) {
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(COMPETITION_ID_COLUMN, INITIAL_ID_VALUE);
-        } else {
-            final AtomicLong competitionAmount = new AtomicLong(findAll().size());
-            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-            if (competitionAmount.get() == competitions.get(competitions.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                long id = competitionAmount.incrementAndGet();
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(COMPETITION_ID_COLUMN, id);
-            } else {
-                while (idCounter.get() == competitions.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                    idCounter.incrementAndGet();
-                }
-
-                if (this.findById(idCounter.get()).isPresent()) {
-                    if (competitions.contains(this.findById(idCounter.get()).get())) {
-                        idCounter.set(competitionAmount.incrementAndGet());
-                    }
-                }
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(COMPETITION_ID_COLUMN, idCounter.get());
-            }
-        }
     }
 
 }

@@ -10,9 +10,11 @@ import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 public class LogOutCommand implements Command {
 
     private static volatile LogOutCommand instance;
-    private final BaseCommandResponse logoutCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+
+    private final BaseCommandResponse logoutCommandResponse;
 
     private LogOutCommand() {
+        this.logoutCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
     }
 
     public static LogOutCommand getInstance() {

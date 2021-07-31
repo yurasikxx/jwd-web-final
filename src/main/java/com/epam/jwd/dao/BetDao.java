@@ -108,7 +108,35 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     @Override
     protected void saveResultSet(ResultSet resultSet, Bet bet) {
         try {
-            betIdValidate(resultSet);
+            final List<Bet> bets = this.findAll();
+
+            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
+            } else {
+                final AtomicLong betAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = betAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (bets.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(betAmount.incrementAndGet());
+                        }
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
+                }
+            }
 
             resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
             resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
@@ -152,12 +180,12 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                                         resultSet.getString(AWAY_TEAM_NAME_COLUMN),
                                         Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN)))),
                         BetType.resolveBetTypeByName(resultSet.getString(BET_TYPE_NAME_COLUMN)),
-                        resultSet.getDouble(BETSLIP_COEFFICIENT_COLUMN)),
+                        resultSet.getInt(BETSLIP_COEFFICIENT_COLUMN)),
                 resultSet.getInt(BET_TOTAL_COLUMN),
                 new Person(resultSet.getLong(PERSON_ID_COLUMN),
                         resultSet.getString(PERSON_LOGIN_COLUMN),
                         resultSet.getString(PERSON_PASSWORD_COLUMN),
-                        resultSet.getDouble(PERSON_BALANCE_COLUMN),
+                        resultSet.getInt(PERSON_BALANCE_COLUMN),
                         Role.resolveRoleByName(resultSet.getString(PERSON_ROLE_NAME_COLUMN))));
     }
 
@@ -171,38 +199,6 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     public List<Bet> findByCompetitionId(Long id) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
                 findByCompetitionIdSql);
-    }
-
-    private void betIdValidate(ResultSet resultSet) throws SQLException, DaoException {
-        final List<Bet> bets = this.findAll();
-
-        if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
-        } else {
-            final AtomicLong betAmount = new AtomicLong(findAll().size());
-            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-            if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                long id = betAmount.incrementAndGet();
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_ID_COLUMN, id);
-            } else {
-                while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                    idCounter.incrementAndGet();
-                }
-
-                if (this.findById(idCounter.get()).isPresent()) {
-                    if (bets.contains(this.findById(idCounter.get()).get())) {
-                        idCounter.set(betAmount.incrementAndGet());
-                    }
-                }
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
-            }
-        }
     }
 
 }

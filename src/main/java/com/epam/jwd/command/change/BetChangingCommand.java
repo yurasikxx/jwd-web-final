@@ -5,6 +5,7 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.service.BetBaseService;
@@ -14,27 +15,21 @@ import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
-import java.util.Objects;
-
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
-import static com.epam.jwd.constant.Constant.BETSLIP_DOES_NOT_EXIST_MSG;
 import static com.epam.jwd.constant.Constant.BETSLIP_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.BET_TOTAL_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.INCORRECT_ENTERED_DATA;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
-import static com.epam.jwd.constant.Constant.PERSON_DOES_NOT_EXIST_MSG;
 import static com.epam.jwd.constant.Constant.PERSON_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class BetChangingCommand implements Command {
 
-    private static final String WRONG_BET_ID_MSG = "Wrong bet ID";
     private static final String BET_SUCCESSFULLY_CHANGED_MSG = "Bet successfully changed";
 
     private static volatile BetChangingCommand instance;
@@ -43,14 +38,12 @@ public class BetChangingCommand implements Command {
     private final BetslipBaseService betslipService;
     private final BetBaseService betService;
     private final BaseCommandResponse betCommandResponse;
-    private final BaseCommandResponse betErrorCommandResponse;
 
     private BetChangingCommand() {
         this.personService = PersonService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
         this.betCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
-        this.betErrorCommandResponse = betCommandResponse;
     }
 
     public static BetChangingCommand getInstance() {
@@ -67,75 +60,44 @@ public class BetChangingCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            if (getCheckedId(request) == null
-                    || getCheckedBetslipId(request) == null
-                    || getCheckedBetTotal(request) == null
-                    || getCheckedPersonId(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedId(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedBetslipId(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedBetTotal(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedPersonId(request)) < MIN_LONG_ID_VALUE) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
-                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedBetslipId(request)) > betslipService.findAll().size()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_DOES_NOT_EXIST_MSG);
-                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedId(request)) > betService.findAll().size()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_BET_ID_MSG);
-                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedPersonId(request)) > personService.findAll().size()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_DOES_NOT_EXIST_MSG);
-                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betErrorCommandResponse;
-            }
-
             final Long id = getCheckedId(request);
             final Long betslipId = getCheckedBetslipId(request);
             final Integer betTotal = getCheckedBetTotal(request);
             final Long personId = getCheckedPersonId(request);
 
+            if (id < MIN_LONG_ID_VALUE || betslipId < MIN_LONG_ID_VALUE
+                    || betTotal < MIN_LONG_ID_VALUE || personId < MIN_LONG_ID_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+                request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betCommandResponse;
+            }
+
             final Bet bet = new Bet(id, betslipService.findById(betslipId), betTotal, personService.findById(personId));
 
             betService.update(bet);
+            request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_CHANGED_MSG);
+
+            return betCommandResponse;
+        } catch (IncorrectEnteredDataException | NumberFormatException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return betCommandResponse;
         } catch (DaoException | ServiceException e) {
-            e.printStackTrace();
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
-            return betErrorCommandResponse;
-        } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, INCORRECT_ENTERED_DATA);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betErrorCommandResponse;
+            return betCommandResponse;
         }
-
-        request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_CHANGED_MSG);
-
-        return betCommandResponse;
     }
 
-    private Long getCheckedId(BaseCommandRequest request) {
+    private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(ID_PARAMETER_NAME) != null) {
@@ -143,10 +105,10 @@ public class BetChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Long getCheckedBetslipId(BaseCommandRequest request) {
+    private Long getCheckedBetslipId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(BETSLIP_PARAMETER_NAME) != null) {
@@ -154,10 +116,10 @@ public class BetChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Integer getCheckedBetTotal(BaseCommandRequest request) {
+    private Integer getCheckedBetTotal(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final int betTotal;
 
         if (request.getParameter(BET_TOTAL_PARAMETER_NAME) != null) {
@@ -165,10 +127,10 @@ public class BetChangingCommand implements Command {
             return betTotal;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Long getCheckedPersonId(BaseCommandRequest request) {
+    private Long getCheckedPersonId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(PERSON_PARAMETER_NAME) != null) {
@@ -176,7 +138,7 @@ public class BetChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

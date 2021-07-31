@@ -14,9 +14,10 @@ public class ShowPersonDeletingPageCommand implements Command {
 
     private static volatile ShowPersonDeletingPageCommand instance;
 
-    private final BaseCommandResponse personDeletingPageResponse = new CommandResponse(DELETING_JSP_PATH, false);
+    private final BaseCommandResponse personDeletingPageResponse;
 
     private ShowPersonDeletingPageCommand() {
+        this.personDeletingPageResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
     public static ShowPersonDeletingPageCommand getInstance() {
@@ -34,7 +35,6 @@ public class ShowPersonDeletingPageCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_DELETING_OPERATION_MSG);
-
         return personDeletingPageResponse;
     }
 

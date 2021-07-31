@@ -35,7 +35,6 @@ public class ShowBetslipAddingPageCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_ADDING_OPERATION_MSG);
-
         return betslipCommandResponse;
     }
 

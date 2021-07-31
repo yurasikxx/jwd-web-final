@@ -35,7 +35,6 @@ public class ShowPersonChangingPageCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_CHANGING_OPERATION_MSG);
-
         return personCommandResponse;
     }
 

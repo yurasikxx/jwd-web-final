@@ -5,6 +5,7 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.Bet;
@@ -28,9 +29,8 @@ import com.epam.jwd.service.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
@@ -53,9 +53,7 @@ public class CompetitionResultsCommitCommand implements Command {
             "all related bets added to bet history";
     private static final String FIELD_MUST_BE_FILLED_MSG = "Competition ID field must be filled";
     private static final String NUMBER_MUST_BE_POSITIVE_MSG = "Entered number must be positive";
-    private static final String COMPETITION_DOES_NOT_EXIST_MSG = "Competition with such ID doesn't exist";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
-    private static final String FIELD_MUST_BE_NUMBER_MSG = "Field must be number";
     private static final long RANDOM_COMPETITION_RESULT_ID = 1 + (long) (Math.random() * 3);
 
     private static volatile CompetitionResultsCommitCommand instance;
@@ -92,40 +90,29 @@ public class CompetitionResultsCommitCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            if (getCheckedCompetitionId(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, FIELD_MUST_BE_FILLED_MSG);
-                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betHistoryErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedCompetitionId(request)) < MIN_LONG_ID_VALUE) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBER_MUST_BE_POSITIVE_MSG);
-                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betHistoryErrorCommandResponse;
-            }
-
-            if (!competitionService.findAll()
-                    .contains(competitionService.findById(Objects.requireNonNull(getCheckedCompetitionId(request))))) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_DOES_NOT_EXIST_MSG);
-                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betHistoryErrorCommandResponse;
-            }
-
             final Long competitionId = getCheckedCompetitionId(request);
             final List<Betslip> betslips = betslipService.findByCompetitionId(competitionId);
             final List<Bet> bets = betService.findByCompetitionId(competitionId);
             final List<BetHistory> historyBets = new ArrayList<>();
             final List<Person> winBetPersons = new ArrayList<>();
 
+            if (competitionId < MIN_LONG_ID_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBER_MUST_BE_POSITIVE_MSG);
+                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betHistoryErrorCommandResponse;
+            }
+
             for (Bet bet : bets) {
                 final Team home = bet.getBetslip().getCompetition().getHome();
                 final Team away = bet.getBetslip().getCompetition().getAway();
                 final BetType betType = bet.getBetslip().getBetType();
-                final Double coefficient = bet.getBetslip().getCoefficient();
+                final Integer coefficient = bet.getBetslip().getCoefficient();
                 final Integer betTotal = bet.getBetTotal();
                 final String personLogin = bet.getPerson().getLogin();
                 final CompetitionResult competitionResult = CompetitionResult
@@ -139,18 +126,7 @@ public class CompetitionResultsCommitCommand implements Command {
                 betHistoryService.save(historyBet);
             }
 
-            for (BetHistory historyBet : historyBets) {
-                if (historyBet.getBetResult().equals(WIN)) {
-                    final Person person = personService.findByLogin(historyBet.getPersonLogin());
-                    winBetPersons.add(new Person(person.getId(), person.getLogin(), person.getPassword(),
-                            person.getBalance() + historyBet.getBetTotal() * historyBet.getCoefficient(),
-                            person.getRole()));
-                }
-            }
-
-            for (Person winBetPerson : winBetPersons) {
-                personService.updateBalance(winBetPerson);
-            }
+            updatePersonBalance(historyBets, winBetPersons);
 
             for (Bet bet : bets) {
                 betService.delete(bet.getId());
@@ -161,31 +137,43 @@ public class CompetitionResultsCommitCommand implements Command {
             }
 
             competitionService.delete(competitionId);
+
+            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, SUCCESSFUL_OPERATION_MESSAGE);
+
+            return betHistoryCommandResponse;
+        } catch (IncorrectEnteredDataException | NumberFormatException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, FIELD_MUST_BE_FILLED_MSG);
+            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return betHistoryErrorCommandResponse;
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
             e.printStackTrace();
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return betHistoryErrorCommandResponse;
-        } catch (IllegalAccessException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, RESULT_WAS_NOT_FOUND_MSG);
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betHistoryErrorCommandResponse;
-        } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, FIELD_MUST_BE_NUMBER_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betHistoryErrorCommandResponse;
         }
-
-        request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, SUCCESSFUL_OPERATION_MESSAGE);
-
-        return betHistoryCommandResponse;
     }
 
-    private BetResult getBetResult(BetType betType, CompetitionResult competitionResult) throws IllegalAccessException {
+    private void updatePersonBalance(List<BetHistory> historyBets, List<Person> winBetPersons) throws ServiceException, DaoException {
+        for (BetHistory historyBet : historyBets) {
+            if (historyBet.getBetResult().equals(WIN)) {
+                final Person person = personService.findByLogin(historyBet.getPersonLogin());
+                winBetPersons.add(new Person(person.getId(), person.getLogin(), person.getPassword(),
+                        person.getBalance() + historyBet.getBetTotal() * historyBet.getCoefficient(),
+                        person.getRole()));
+            }
+        }
+
+        for (Person winBetPerson : winBetPersons) {
+            personService.updateBalance(winBetPerson);
+        }
+    }
+
+    private BetResult getBetResult(BetType betType, CompetitionResult competitionResult) throws
+            UnknownEnumAttributeException {
         final BetResult betResult;
+
         switch (competitionResult) {
             case HOME_WIN:
                 if (betType.getId().equals(HOME_TEAM_WIN.getId())
@@ -215,12 +203,13 @@ public class CompetitionResultsCommitCommand implements Command {
                 }
                 break;
             default:
-                throw new IllegalAccessException(String.format(RESULT_WAS_NOT_FOUND_MSG, competitionResult.getName()));
+                throw new UnknownEnumAttributeException(String.format(RESULT_WAS_NOT_FOUND_MSG, competitionResult.getName()));
         }
+
         return betResult;
     }
 
-    private Long getCheckedCompetitionId(BaseCommandRequest request) {
+    private Long getCheckedCompetitionId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(ID_PARAMETER_NAME) != null) {
@@ -228,7 +217,7 @@ public class CompetitionResultsCommitCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

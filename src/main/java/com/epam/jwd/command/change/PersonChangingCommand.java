@@ -5,6 +5,7 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
@@ -15,7 +16,9 @@ import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
@@ -30,13 +33,10 @@ public class PersonChangingCommand implements Command {
 
     private final PersonBaseService personService;
     private final BaseCommandResponse personCommandResponse;
-    private final BaseCommandResponse personErrorCommandResponse;
-
 
     private PersonChangingCommand() {
         this.personService = PersonService.getInstance();
         this.personCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
-        this.personErrorCommandResponse = personCommandResponse;
     }
 
     public static PersonChangingCommand getInstance() {
@@ -53,38 +53,43 @@ public class PersonChangingCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            if (getCheckedId(request) == null
-                    || getCheckedLogin(request) == null
-                    || getCheckedPassword(request) == null
-                    || getCheckedBalance(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-                request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return personErrorCommandResponse;
-            }
-
             final Long id = getCheckedId(request);
             final String login = getCheckedLogin(request);
             final String password = getCheckedPassword(request);
-            final Double balance = getCheckedBalance(request);
+            final Integer balance = getCheckedBalance(request);
+
+            if (id < INITIAL_INDEX_VALUE || balance < INITIAL_INDEX_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+                request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return personCommandResponse;
+            }
 
             final Person person = new Person(id, login, password, balance, Role.USER);
 
             personService.update(person);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_CHANGED_MSG);
+
+            return personCommandResponse;
+        } catch (IncorrectEnteredDataException | NumberFormatException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return personCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
-            return personErrorCommandResponse;
+            return personCommandResponse;
         }
-
-        request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_CHANGED_MSG);
-
-        return personCommandResponse;
     }
 
-    private Long getCheckedId(BaseCommandRequest request) {
+    private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(ID_PARAMETER_NAME) != null) {
@@ -92,10 +97,10 @@ public class PersonChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private String getCheckedLogin(BaseCommandRequest request) {
+    private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String login;
 
         if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
@@ -103,10 +108,10 @@ public class PersonChangingCommand implements Command {
             return login;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private String getCheckedPassword(BaseCommandRequest request) {
+    private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String password;
 
         if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
@@ -114,18 +119,18 @@ public class PersonChangingCommand implements Command {
             return password;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Double getCheckedBalance(BaseCommandRequest request) {
-        final double balance;
+    private Integer getCheckedBalance(BaseCommandRequest request) throws IncorrectEnteredDataException {
+        final int balance;
 
         if (request.getParameter(BALANCE_PARAMETER_NAME) != null) {
             balance = Integer.parseInt(request.getParameter(BALANCE_PARAMETER_NAME));
             return balance;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

@@ -5,15 +5,18 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.service.BetBaseService;
 import com.epam.jwd.service.BetService;
 
+import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class BetDeletingCommand implements Command {
@@ -45,8 +48,12 @@ public class BetDeletingCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            final Long id = Long.valueOf(request.getParameter(ID_PARAMETER_NAME));
+            final Long id = getCheckedId(request);
 
             if (!betService.canBeDeleted(id)) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_ENTERED_PERSON_DATA_MSG);
@@ -55,17 +62,36 @@ public class BetDeletingCommand implements Command {
             }
 
             betService.delete(id);
-        } catch (ServiceException | DaoException e) {
-            e.printStackTrace();
+            request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_DELETED_MSG);
+
+            return betCommandResponse;
+        } catch (IncorrectEnteredDataException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return betErrorCommandResponse;
         } catch (NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_ID_SENT_MSG);
             request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return betErrorCommandResponse;
+        } catch (ServiceException | DaoException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
+            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
             return betErrorCommandResponse;
         }
+    }
 
-        request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_DELETED_MSG);
+    private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
+        final long id;
 
-        return betCommandResponse;
+        if (request.getParameter(ID_PARAMETER_NAME) != null) {
+            id = Long.parseLong(request.getParameter(ID_PARAMETER_NAME));
+            return id;
+        }
+
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

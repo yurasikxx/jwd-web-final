@@ -35,7 +35,6 @@ public class ShowCompetitionAddingPageCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         request.setAttribute(COMPETITION_ATTRIBUTE_NAME, COMPETITION_ADDING_OPERATION_MSG);
-
         return competitionCommandResponse;
     }
 

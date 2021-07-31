@@ -5,6 +5,7 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
@@ -32,11 +33,13 @@ public class LogInCommand implements Command {
     private static volatile LogInCommand instance;
 
     private final PersonBaseService personService;
-    private final BaseCommandResponse loginSuccessCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
-    private final BaseCommandResponse loginErrorCommandResponse = new CommandResponse(LOGIN_JSP_PATH, false);
+    private final BaseCommandResponse loginSuccessCommandResponse;
+    private final BaseCommandResponse loginErrorCommandResponse;
 
     private LogInCommand() {
         this.personService = PersonService.getInstance();
+        this.loginSuccessCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+        this.loginErrorCommandResponse = new CommandResponse(LOGIN_JSP_PATH, false);
     }
 
     public static LogInCommand getInstance() {
@@ -53,34 +56,36 @@ public class LogInCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        if (getCheckedLogin(request) == null || getCheckedPassword(request) == null) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_CREDENTIALS_MSG);
-            return loginErrorCommandResponse;
-        }
+        return getCommandResponse(request);
+    }
 
-        final String login = getCheckedLogin(request);
-        final String password = getCheckedPassword(request);
-        final Double balance;
-
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            balance = personService.findByLogin(login).getBalance();
+            final String login = getCheckedLogin(request);
+            final String password = getCheckedPassword(request);
+            final Integer balance = personService.findByLogin(login).getBalance();
+
+            final Person person = new Person(login, password, balance);
+
+            if (!personService.canLogIn(person)) {
+                return prepareErrorPage(request);
+            }
+
+            return addPersonInfoToSession(request, login);
+        } catch (IncorrectEnteredDataException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_CREDENTIALS_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return loginErrorCommandResponse;
         } catch (ServiceException | DaoException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return loginErrorCommandResponse;
         }
-
-        final Person person = new Person(login, password, balance);
-
-        if (!personService.canLogIn(person)) {
-            return prepareErrorPage(request);
-        }
-
-        return addPersonInfoToSession(request, login);
     }
 
-    private String getCheckedLogin(BaseCommandRequest request) {
+    private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String login;
 
         if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
@@ -88,10 +93,10 @@ public class LogInCommand implements Command {
             return login;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(EMPTY_CREDENTIALS_MSG);
     }
 
-    private String getCheckedPassword(BaseCommandRequest request) {
+    private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String password;
 
         if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
@@ -99,11 +104,13 @@ public class LogInCommand implements Command {
             return password;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(EMPTY_CREDENTIALS_MSG);
     }
 
     private BaseCommandResponse prepareErrorPage(BaseCommandRequest request) {
         request.setAttribute(ERROR_ATTRIBUTE_NAME, INVALID_CREDENTIALS_MSG);
+        request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
         return loginErrorCommandResponse;
     }
 
@@ -118,7 +125,10 @@ public class LogInCommand implements Command {
             session.setAttribute(PERSON_ROLE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getRole());
             session.setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getBalance());
         } catch (ServiceException | DaoException e) {
-            e.printStackTrace();
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return loginErrorCommandResponse;
         }
 
         return loginSuccessCommandResponse;

@@ -5,12 +5,11 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
-
-import java.util.Objects;
 
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
@@ -20,10 +19,10 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
+import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_DIFFERENT_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG;
-import static com.epam.jwd.constant.Constant.TEAM_ID_DOES_NOT_EXIST_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class CompetitionChangingCommand implements Command {
@@ -35,12 +34,10 @@ public class CompetitionChangingCommand implements Command {
 
     private final CompetitionBaseService competitionService;
     private final BaseCommandResponse competitionCommandResponse;
-    private final BaseCommandResponse competitionErrorCommandResponse;
 
     private CompetitionChangingCommand() {
         this.competitionService = CompetitionService.getInstance();
         this.competitionCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
-        this.competitionErrorCommandResponse = competitionCommandResponse;
     }
 
     public static CompetitionChangingCommand getInstance() {
@@ -57,75 +54,71 @@ public class CompetitionChangingCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
+        return getBaseCommandResponse(request);
+    }
+
+    private BaseCommandResponse getBaseCommandResponse(BaseCommandRequest request) {
         try {
-            if (getCheckedId(request) == null
-                    || getCheckedHomeTeamId(request) == null
-                    || getCheckedAwayTeamId(request) == null) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-                request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return competitionErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedHomeTeamId(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedHomeTeamId(request)) > competitionService.findAllTeams().size()
-                    || Objects.requireNonNull(getCheckedAwayTeamId(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedAwayTeamId(request)) > competitionService.findAllTeams().size()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAM_ID_DOES_NOT_EXIST_MSG);
-                request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return competitionErrorCommandResponse;
-            }
-
-            if (Objects.requireNonNull(getCheckedId(request)) < MIN_LONG_ID_VALUE
-                    || Objects.requireNonNull(getCheckedId(request)) > competitionService.findAll().size()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_DOES_NOT_EXIST_MSG);
-                request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return competitionErrorCommandResponse;
-            }
-
-            if (Objects.equals(getCheckedHomeTeamId(request), getCheckedAwayTeamId(request))) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAMS_MUST_BE_DIFFERENT_MSG);
-                request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return competitionErrorCommandResponse;
-            }
-
-            if (competitionService.findTeamById(getCheckedHomeTeamId(request)).getSport()
-                    != competitionService.findTeamById(getCheckedAwayTeamId(request)).getSport()) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG);
-                request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return competitionErrorCommandResponse;
-            }
-
             final Long id = getCheckedId(request);
             final Long homeTeamId = getCheckedHomeTeamId(request);
             final Long awayTeamId = getCheckedAwayTeamId(request);
 
+            if (cannotBeChanged(request, id, homeTeamId, awayTeamId)) {
+                return competitionCommandResponse;
+            }
+
             final Competition competition = new Competition(id,
                     competitionService.findTeamById(homeTeamId),
-                    competitionService.findTeamById(awayTeamId)
-            );
+                    competitionService.findTeamById(awayTeamId));
 
             competitionService.update(competition);
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, COMPETITION_SUCCESSFULLY_CHANGED_MSG);
+
+            return competitionCommandResponse;
+        } catch (IncorrectEnteredDataException | NumberFormatException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return competitionCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-            return competitionErrorCommandResponse;
-        } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-            return competitionErrorCommandResponse;
+
+            return competitionCommandResponse;
         }
-
-        request.setAttribute(COMPETITION_ATTRIBUTE_NAME, COMPETITION_SUCCESSFULLY_CHANGED_MSG);
-
-        return competitionCommandResponse;
     }
 
-    private Long getCheckedId(BaseCommandRequest request) {
+    private boolean cannotBeChanged(BaseCommandRequest request, Long id, Long homeTeamId, Long awayTeamId) throws ServiceException, DaoException {
+        if (id < MIN_LONG_ID_VALUE || homeTeamId < MIN_LONG_ID_VALUE || awayTeamId < MIN_LONG_ID_VALUE) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return true;
+        }
+
+        if (homeTeamId.equals(awayTeamId)) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAMS_MUST_BE_DIFFERENT_MSG);
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return true;
+        }
+
+        if (competitionService.findTeamById(homeTeamId).getSport()
+                != competitionService.findTeamById(awayTeamId).getSport()) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG);
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(ID_PARAMETER_NAME) != null) {
@@ -133,10 +126,10 @@ public class CompetitionChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Long getCheckedHomeTeamId(BaseCommandRequest request) {
+    private Long getCheckedHomeTeamId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(HOME_TEAM_PARAMETER_NAME) != null) {
@@ -144,10 +137,10 @@ public class CompetitionChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
-    private Long getCheckedAwayTeamId(BaseCommandRequest request) {
+    private Long getCheckedAwayTeamId(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final long id;
 
         if (request.getParameter(AWAY_TEAM_PARAMETER_NAME) != null) {
@@ -155,7 +148,7 @@ public class CompetitionChangingCommand implements Command {
             return id;
         }
 
-        return null;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.epam.jwd.service;
 
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Team;
 
@@ -10,7 +11,7 @@ public interface CompetitionBaseService extends BaseService<Competition> {
 
     boolean canSave(Competition competition);
 
-    Team findTeamById(Long id) throws DaoException;
+    Team findTeamById(Long id) throws DaoException, ServiceException;
 
     List<Team> findAllTeams();
 

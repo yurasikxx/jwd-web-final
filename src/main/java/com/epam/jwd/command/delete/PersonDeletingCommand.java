@@ -5,10 +5,12 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
+import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
@@ -26,7 +28,6 @@ public class PersonDeletingCommand implements Command {
 
     private final PersonBaseService personService;
     private final BaseCommandResponse personCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
-    private final BaseCommandResponse personErrorCommandResponse = personCommandResponse;
 
     private PersonDeletingCommand() {
         this.personService = PersonService.getInstance();
@@ -46,30 +47,51 @@ public class PersonDeletingCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        return getCommandResponse(request);
+    }
+
+    private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
-            final Long id = Long.valueOf(request.getParameter(ID_PARAMETER_NAME));
+            final Long id = getCheckedId(request);
 
             if (!personService.canBeDeleted(id)) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_ENTERED_PERSON_DATA_MSG);
                 request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-                return personErrorCommandResponse;
+
+                return personCommandResponse;
             }
 
             personService.delete(id);
-        } catch (ServiceException | DaoException e) {
-            e.printStackTrace();
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_CANNOT_BE_DELETED_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_DELETED_MSG);
+
+            return personCommandResponse;
+        } catch (IncorrectEnteredDataException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-            return personErrorCommandResponse;
+
+            return personCommandResponse;
         } catch (NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_ID_SENT_MSG);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-            return personErrorCommandResponse;
+
+            return personCommandResponse;
+        } catch (ServiceException | DaoException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_CANNOT_BE_DELETED_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return personCommandResponse;
+        }
+    }
+
+    private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
+        final long id;
+
+        if (request.getParameter(ID_PARAMETER_NAME) != null) {
+            id = Long.parseLong(request.getParameter(ID_PARAMETER_NAME));
+            return id;
         }
 
-        request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_DELETED_MSG);
-
-        return personCommandResponse;
+        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
     }
 
 }

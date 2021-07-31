@@ -73,7 +73,7 @@
             <br>
             <label for="coefficientField">Coefficient: </label>
             <br>
-            <input type="text" id="coefficientField" name="coefficient">
+            <input type="number" id="coefficientField" name="coefficient">
             <br>
             <input type="submit" value="Add">
         </form>

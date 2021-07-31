@@ -53,6 +53,8 @@
             <br>
             <a href="${pageContext.request.contextPath}/controller?command=bet_adding_page">Place bet</a>
             <br>
+            <a href="${pageContext.request.contextPath}/controller?command=person_bet_history_page">My bet history</a>
+            <br>
             <a href="${pageContext.request.contextPath}/controller?command=log_out">Log out</a>
             <br>
         </c:if>

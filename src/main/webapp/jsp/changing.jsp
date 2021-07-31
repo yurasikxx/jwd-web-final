@@ -92,7 +92,7 @@
             <br>
             <label for="coefficientField">Coefficient: </label>
             <br>
-            <input type="text" id="coefficientField" name="coefficient">
+            <input type="number" id="coefficientField" name="coefficient">
             <br>
             <input type="submit" value="Change">
         </form>
@@ -118,7 +118,7 @@
             <br>
             <label for="betPersonIdField">Person ID: </label>
             <br>
-            <input type="text" id="betPersonIdField" name="personId">
+            <input type="number" id="betPersonIdField" name="personId">
             <br>
             <input type="submit" value="Change">
         </form>

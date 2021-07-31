@@ -14,9 +14,10 @@ public class ShowCompetitionDeletingPageCommand implements Command {
 
     private static volatile ShowCompetitionDeletingPageCommand instance;
 
-    private final BaseCommandResponse competitionDeletingPageResponse = new CommandResponse(DELETING_JSP_PATH, false);
+    private final BaseCommandResponse competitionDeletingPageResponse;
 
     private ShowCompetitionDeletingPageCommand() {
+        this.competitionDeletingPageResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
     public static ShowCompetitionDeletingPageCommand getInstance() {

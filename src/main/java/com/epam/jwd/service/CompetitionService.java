@@ -12,6 +12,8 @@ import com.epam.jwd.model.Team;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
+
 public class CompetitionService implements CompetitionBaseService {
 
     private static final String COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG = "Competition wasn't found by given id: %s";
@@ -79,12 +81,12 @@ public class CompetitionService implements CompetitionBaseService {
 
     @Override
     public boolean canBeDeleted(Long id) throws ServiceException, DaoException {
-        return this.findAll().contains(this.findById(id)) && id > 0;
+        return this.findAll().contains(this.findById(id)) && id > MIN_INDEX_VALUE;
     }
 
     @Override
-    public Team findTeamById(Long id) throws DaoException {
-        return teamDao.findById(id).orElseThrow(() -> new DaoException(String.format(TEAM_WAS_NOT_FOUND_MSG, id)));
+    public Team findTeamById(Long id) throws DaoException, ServiceException {
+        return teamDao.findById(id).orElseThrow(() -> new ServiceException(String.format(TEAM_WAS_NOT_FOUND_MSG, id)));
     }
 
     @Override

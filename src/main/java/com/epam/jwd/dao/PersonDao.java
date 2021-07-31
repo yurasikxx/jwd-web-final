@@ -75,11 +75,31 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         try {
             final List<Person> persons = this.findAll();
 
-            personIdValidate(resultSet, persons);
+            if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
+            } else {
+                final AtomicLong personAmount = new AtomicLong(this.findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+                if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
+                    long id = personAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(PERSON_ID_COLUMN, id);
+                } else {
+                    while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+                }
+            }
 
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
             resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-            resultSet.updateDouble(PERSON_BALANCE_COLUMN, person.getBalance());
+            resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
             resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
@@ -100,7 +120,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             if (id == person.getId()) {
                 resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
                 resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
-                resultSet.updateDouble(PERSON_BALANCE_COLUMN, person.getBalance());
+                resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
                 resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
                 resultSet.updateRow();
             }
@@ -116,7 +136,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         return new Person(resultSet.getLong(PERSON_ID_COLUMN),
                 resultSet.getString(PERSON_LOGIN_COLUMN),
                 resultSet.getString(PERSON_PASSWORD_COLUMN),
-                resultSet.getDouble(PERSON_BALANCE_COLUMN),
+                resultSet.getInt(PERSON_BALANCE_COLUMN),
                 Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN)));
     }
 
@@ -131,30 +151,6 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     public List<Person> findByRole(Role role) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
                 findByRoleSql);
-    }
-
-    private void personIdValidate(ResultSet resultSet, List<Person> persons) throws SQLException {
-        if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
-        } else {
-            final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-            if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
-                long id = personAmount.incrementAndGet();
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(PERSON_ID_COLUMN, id);
-            } else {
-                while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
-                    idCounter.incrementAndGet();
-                }
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
-            }
-        }
     }
 
     private void personRoleValidate(Person person) throws BusinessValidationException {

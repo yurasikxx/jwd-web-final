@@ -38,8 +38,10 @@ import com.epam.jwd.command.management.ShowPersonManagementPageCommand;
 import com.epam.jwd.command.page.ShowErrorPageCommand;
 import com.epam.jwd.command.page.ShowMainPageCommand;
 import com.epam.jwd.command.view.ShowAllBetsViewingPageCommand;
+import com.epam.jwd.command.view.ShowBetHistoryPageCommand;
 import com.epam.jwd.command.view.ShowBetslipViewingPageCommand;
 import com.epam.jwd.command.view.ShowCompetitionViewingPageCommand;
+import com.epam.jwd.command.view.ShowPersonBetHistoryPageCommand;
 import com.epam.jwd.command.view.ShowPersonBetsViewingPageCommand;
 import com.epam.jwd.command.view.ShowPersonViewingPageCommand;
 import com.epam.jwd.model.Role;
@@ -69,6 +71,7 @@ public enum BaseApplicationCommand {
     PERSON_DELETING_PAGE(ShowPersonDeletingPageCommand.getInstance(), ADMINISTRATOR),
     PERSON_DELETE(PersonDeletingCommand.getInstance(), ADMINISTRATOR),
     PERSON_BETS_LIST_PAGE(ShowPersonBetsViewingPageCommand.getInstance(), USER),
+    PERSON_BET_HISTORY_PAGE(ShowPersonBetHistoryPageCommand.getInstance(), USER),
     COMPETITION_MANAGEMENT_PAGE(ShowCompetitionManagementPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_LIST_PAGE(ShowCompetitionViewingPageCommand.getInstance(), ADMINISTRATOR, BOOKMAKER, USER, UNAUTHORIZED),
     COMPETITION_ADDING_PAGE(ShowCompetitionAddingPageCommand.getInstance(), ADMINISTRATOR),
@@ -93,6 +96,7 @@ public enum BaseApplicationCommand {
     BET_CHANGE(BetChangingCommand.getInstance(), ADMINISTRATOR),
     BET_DELETING_PAGE(ShowBetDeletingPageCommand.getInstance(), ADMINISTRATOR, USER),
     BET_DELETE(BetDeletingCommand.getInstance(), ADMINISTRATOR, USER),
+    BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR, BOOKMAKER),
     COMPETITION_RESULTS_COMMITTING_PAGE(ShowCompetitionResultsCommittingPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),
     ERROR(ShowErrorPageCommand.getInstance()),

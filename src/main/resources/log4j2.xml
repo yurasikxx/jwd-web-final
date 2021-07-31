@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Appenders>
-        <File name="FileAppender" fileName="logs/application.log" append="false">
+        <File name="PoolFileAppender" fileName="logs/pool.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+        </File>
+        <File name="DaoFileAppender" fileName="logs/dao.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+        </File>
+        <File name="ServiceFileAppender" fileName="service/dao.log" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="com.epam.jwd" level="all" additivity="false">
-            <AppenderRef ref="FileAppender"/>
+        <Logger name="com.epam.jwd.pool" level="All" additivity="false">
+            <AppenderRef ref="PoolFileAppender"/>
+        </Logger>
+        <Logger name="com.epam.jwd.dao" level="All" additivity="false">
+            <AppenderRef ref="DaoFileAppender"/>
+        </Logger>
+        <Logger name="com.epam.jwd.service" level="All" additivity="false">
+            <AppenderRef ref="ServiceFileAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

@@ -14,9 +14,10 @@ public class ShowBetDeletingPageCommand implements Command {
 
     private static volatile ShowBetDeletingPageCommand instance;
 
-    private final BaseCommandResponse betDeletingCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
+    private final BaseCommandResponse betDeletingCommandResponse;
 
     private ShowBetDeletingPageCommand() {
+        this.betDeletingCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
     public static ShowBetDeletingPageCommand getInstance() {

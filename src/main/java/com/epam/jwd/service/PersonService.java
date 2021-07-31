@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
+import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
 public class PersonService implements PersonBaseService {
@@ -76,19 +77,19 @@ public class PersonService implements PersonBaseService {
     public void update(Person person) throws DaoException, ServiceException {
         personDao.update(person);
         final Person foundPerson = this.findByLogin(person.getLogin());
-        persons.remove(foundPerson.getId().intValue() - 1);
-        persons.add(foundPerson.getId().intValue() - 1, foundPerson);
+        persons.remove(foundPerson.getId().intValue() - INDEX_ROLLBACK_VALUE);
+        persons.add(foundPerson.getId().intValue() - INDEX_ROLLBACK_VALUE, foundPerson);
         this.logIn(foundPerson);
     }
 
     @Override
     public void updateBalance(Person person) throws DaoException {
         personDao.update(person);
-        final Person foundPerson = persons.get((int) (person.getId() - 1));
+        final Person foundPerson = persons.get((int) (person.getId() - INDEX_ROLLBACK_VALUE));
         final Person placedBetPerson = new Person(person.getId(), person.getLogin(),
                 foundPerson.getPassword(), person.getBalance(), person.getRole());
-        persons.remove(foundPerson.getId().intValue() - 1);
-        persons.add(foundPerson.getId().intValue() - 1, placedBetPerson);
+        persons.remove(foundPerson.getId().intValue() - INDEX_ROLLBACK_VALUE);
+        persons.add(foundPerson.getId().intValue() - INDEX_ROLLBACK_VALUE, placedBetPerson);
     }
 
     @Override
@@ -161,7 +162,7 @@ public class PersonService implements PersonBaseService {
 
     @Override
     public boolean canBeDeleted(Long id) throws DaoException {
-        return this.findAll().contains(this.findById(id)) && id > 0;
+        return this.findAll().contains(this.findById(id)) && id > MIN_INDEX_VALUE;
     }
 
     @Override

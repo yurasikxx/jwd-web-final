@@ -91,11 +91,39 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     @Override
     protected void saveResultSet(ResultSet resultSet, Betslip betslip) {
         try {
-            betslipIdValidate(resultSet);
+            final List<Betslip> betslips = this.findAll();
+
+            if (betslips.size() == EMPTY_LIST_SIZE_VALUE) {
+                resultSet.moveToInsertRow();
+                resultSet.updateLong(BETSLIP_ID_COLUMN, INITIAL_ID_VALUE);
+            } else {
+                final AtomicLong betslipAmount = new AtomicLong(findAll().size());
+                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
+
+                if (betslipAmount.get() == betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId()) {
+                    long id = betslipAmount.incrementAndGet();
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BETSLIP_ID_COLUMN, id);
+                } else {
+                    while (idCounter.get() == betslips.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
+                        idCounter.incrementAndGet();
+                    }
+
+                    if (this.findById(idCounter.get()).isPresent()) {
+                        if (betslips.contains(this.findById(idCounter.get()).get())) {
+                            idCounter.set(betslipAmount.incrementAndGet());
+                        }
+                    }
+
+                    resultSet.moveToInsertRow();
+                    resultSet.updateLong(BETSLIP_ID_COLUMN, idCounter.get());
+                }
+            }
 
             resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
             resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
-            resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
+            resultSet.updateInt(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
 
@@ -113,7 +141,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
             if (id == betslip.getId()) {
                 resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
                 resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
-                resultSet.updateDouble(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
+                resultSet.updateInt(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
                 resultSet.updateRow();
             }
 
@@ -134,7 +162,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
                                 resultSet.getString(AWAY_TEAM_NAME_COLUMN),
                                 Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN)))),
                 BetType.resolveBetTypeByName(resultSet.getString(BET_TYPE_NAME_COLUMN)),
-                resultSet.getDouble(BETSLIP_COEFFICIENT_COLUMN));
+                resultSet.getInt(BETSLIP_COEFFICIENT_COLUMN));
     }
 
     @Override
@@ -147,38 +175,6 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     public List<Betslip> findByCompetitionId(Long id) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
                 findByCompetitionIdSql);
-    }
-
-    private void betslipIdValidate(ResultSet resultSet) throws SQLException, DaoException {
-        final List<Betslip> betslips = this.findAll();
-
-        if (betslips.size() == EMPTY_LIST_SIZE_VALUE) {
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(BETSLIP_ID_COLUMN, INITIAL_ID_VALUE);
-        } else {
-            final AtomicLong betslipAmount = new AtomicLong(findAll().size());
-            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-            if (betslipAmount.get() == betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                long id = betslipAmount.incrementAndGet();
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BETSLIP_ID_COLUMN, id);
-            } else {
-                while (idCounter.get() == betslips.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                    idCounter.incrementAndGet();
-                }
-
-                if (this.findById(idCounter.get()).isPresent()) {
-                    if (betslips.contains(this.findById(idCounter.get()).get())) {
-                        idCounter.set(betslipAmount.incrementAndGet());
-                    }
-                }
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BETSLIP_ID_COLUMN, idCounter.get());
-            }
-        }
     }
 
 }

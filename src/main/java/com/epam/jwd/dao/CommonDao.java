@@ -94,6 +94,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
             return entity;
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
+            e.printStackTrace();
             LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }

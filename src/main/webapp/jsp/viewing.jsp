@@ -54,11 +54,27 @@
         <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet management</a>
     </c:if>
 </c:if>
+<c:if test="${not empty requestScope.betHistory}">
+    Bet history:
+    <br>
+    <c:forEach var="betHistory" items="${requestScope.betHistory}">
+        ${betHistory}
+        <br>
+    </c:forEach>
+</c:if>
 <c:if test="${not empty requestScope.personBet}">
-    Person bets:
+    My current bets:
     <br>
     <c:forEach var="personBet" items="${requestScope.personBet}">
         ${personBet}
+        <br>
+    </c:forEach>
+</c:if>
+<c:if test="${not empty requestScope.personBetHistory}">
+    My bet history:
+    <br>
+    <c:forEach var="personBetHistory" items="${requestScope.personBetHistory}">
+        ${personBetHistory}
         <br>
     </c:forEach>
 </c:if>

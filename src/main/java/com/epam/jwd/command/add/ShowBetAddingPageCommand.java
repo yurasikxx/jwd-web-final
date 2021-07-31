@@ -35,7 +35,6 @@ public class ShowBetAddingPageCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         request.setAttribute(BET_ATTRIBUTE_NAME, BET_ADDING_OPERATION_MSG);
-
         return betCommandResponse;
     }
 

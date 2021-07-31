@@ -6,16 +6,16 @@ public class Betslip extends AbstractBaseEntity {
 
     private final Competition competition;
     private final BetType betType;
-    private final Double coefficient;
+    private final Integer coefficient;
 
-    public Betslip(Long id, Competition competition, BetType betType, Double coefficient) {
+    public Betslip(Long id, Competition competition, BetType betType, Integer coefficient) {
         super(id);
         this.competition = competition;
         this.betType = betType;
         this.coefficient = coefficient;
     }
 
-    public Betslip(Competition competition, BetType betType, Double coefficient) {
+    public Betslip(Competition competition, BetType betType, Integer coefficient) {
         this(null, competition, betType, coefficient);
     }
     public Betslip(Competition competition, BetType betType) {
@@ -30,7 +30,7 @@ public class Betslip extends AbstractBaseEntity {
         return betType;
     }
 
-    public Double getCoefficient() {
+    public Integer getCoefficient() {
         return coefficient;
     }
 

@@ -11,6 +11,7 @@ import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 public class ShowPersonAddingPageCommand implements Command {
 
     private static final String PERSON_ADDING_OPERATION_MSG = "Person adding operation";
+
     private static volatile ShowPersonAddingPageCommand instance;
 
     private final BaseCommandResponse personCommandResponse;

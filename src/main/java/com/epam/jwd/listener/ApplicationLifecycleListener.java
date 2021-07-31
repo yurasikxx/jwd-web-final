@@ -15,6 +15,11 @@ public class ApplicationLifecycleListener implements ServletContextListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationLifecycleListener.class);
 
+    private static final String CONNECTION_POOL_WAS_NOT_INITIALIZED_MSG = "Connection pool wasn't initialized";
+    private static final String CONNECTION_POOL_WAS_INITIALIZED_MSG = "Connection pool was initialized";
+    private static final String CONNECTION_POOL_WAS_DESTROYED_MSG = "Connection pool was destroyed";
+    private static final String CONNECTION_POOL_WAS_NOT_DESTROYED_MSG = "Connection pool wasn't destroyed";
+
     private final ConnectionPoolManager pool;
 
     public ApplicationLifecycleListener() {
@@ -25,8 +30,9 @@ public class ApplicationLifecycleListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             pool.init();
+            LOGGER.info(CONNECTION_POOL_WAS_INITIALIZED_MSG);
         } catch (CouldNotInitializeConnectionPoolException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(CONNECTION_POOL_WAS_NOT_INITIALIZED_MSG);
         }
     }
 
@@ -34,8 +40,9 @@ public class ApplicationLifecycleListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         try {
             pool.destroy();
+            LOGGER.info(CONNECTION_POOL_WAS_DESTROYED_MSG);
         } catch (CouldNotDestroyConnectionPoolException | InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.info(CONNECTION_POOL_WAS_NOT_DESTROYED_MSG);
         }
     }
 
