@@ -19,7 +19,7 @@ public class CurrentDateTag extends SimpleTagSupport {
         final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         try {
-            out.println(String.format(TAG_OUTPUT, month, day, year));
+            out.println(String.format(TAG_OUTPUT, month + 1, day, year));
         } catch (IOException e) {
             throw new JspException(e);
         }

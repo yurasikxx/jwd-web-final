@@ -10,6 +10,7 @@ public class ShowErrorPageCommand implements Command {
     private static final String ERROR_JSP_PATH = "/jsp/error.jsp";
 
     private static volatile ShowErrorPageCommand instance;
+
     private final BaseCommandResponse errorCommandResponse = new CommandResponse(ERROR_JSP_PATH, false);
 
     private ShowErrorPageCommand() {

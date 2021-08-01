@@ -7,6 +7,7 @@ import com.epam.jwd.dao.TeamDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
+import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
 
 import java.util.ArrayList;
@@ -87,6 +88,11 @@ public class CompetitionService implements CompetitionBaseService {
     @Override
     public Team findTeamById(Long id) throws DaoException, ServiceException {
         return teamDao.findById(id).orElseThrow(() -> new ServiceException(String.format(TEAM_WAS_NOT_FOUND_MSG, id)));
+    }
+
+    @Override
+    public List<Competition> findBySportName(Sport sport) throws DaoException {
+        return competitionDao.findBySportName(sport);
     }
 
     @Override
