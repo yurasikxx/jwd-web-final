@@ -5,12 +5,12 @@
 <html>
 <head>
     <title>Totalizator</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
 <body onload="time()">
-<div id="margin-div">
-    <div id="border-div">
+<div id="default-margin-div">
+    <div id="default-border-div">
         <c:choose>
             <c:when test="${empty sessionScope.personName}">
                 <ul id="menu">
@@ -39,8 +39,13 @@
                         </li>
                         <li class="menu">
                             <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=competition_management_page">
-                                <b>Competition management</b>
+                               href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
+                                <b>Betslip list</b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
+                                <b>Log out</b>
                             </a>
                         </li>
                         <li class="menu">
@@ -51,19 +56,14 @@
                         </li>
                         <li class="menu">
                             <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
-                                <b>Betslip list</b>
+                               href="${pageContext.request.contextPath}/controller?command=competition_management_page">
+                                <b>Competition management</b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=bet_list_page">
-                                <b>Bet list</b>
-                            </a>
-                        </li>
-                        <li class="menu">
-                            <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
-                                <b>Log out</b>
+                               href="${pageContext.request.contextPath}/controller?command=bet_management_page">
+                                <b>Bet management</b>
                             </a>
                         </li>
                     </ul>

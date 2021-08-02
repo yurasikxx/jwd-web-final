@@ -3,12 +3,12 @@
 <html>
 <head>
     <title>Betslip management</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/person.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
 <body onload="time()">
-<div id="margin-div">
-    <div id="border-div">
+<div id="default-margin-div">
+    <div id="default-border-div">
         <ul id="menu">
             <li class="menu">
                 <a class="menu"
@@ -28,27 +28,27 @@
             </li>
         </ul>
         <h1>Betslip management</h1>
-        <ul id="operation">
-            <li class="operation">
-                <a class="operation"
+        <ul id="default-operation">
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
                     <b>View all betslips</b>
                 </a>
             </li>
-            <li class="operation">
-                <a class="operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=betslip_adding_page">
                     <b>Add betslip</b>
                 </a>
             </li>
-            <li class="operation">
-                <a class="operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=betslip_changing_page">
                     <b>Change betslip</b>
                 </a>
             </li>
-            <li class="operation">
-                <a class="operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=betslip_deleting_page">
                     <b>Delete betslip</b>
                 </a>

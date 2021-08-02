@@ -1,10 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="jwd" uri="custom" %>
 <html>
 <head>
     <title>Adding</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
-<body>
+<body onload="time()">
 <c:choose>
     <c:when test="${not empty requestScope.error}">
         ${requestScope.error}
@@ -104,5 +107,10 @@
 </c:choose>
 <br>
 <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main page</a>
+<h5>
+    <label id="time"></label>
+    <br>
+    <jwd:date/>
+</h5>
 </body>
 </html>

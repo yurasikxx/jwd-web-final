@@ -4,12 +4,12 @@
 <html>
 <head>
     <title>Registration</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/authorization.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
 <body onload="time()">
-<div id="margin-div">
-    <div id="border-div">
+<div id="auth-margin-div">
+    <div id="auth-border-div">
         <c:choose>
             <c:when test="${not empty requestScope.error}">
                 <p>${requestScope.error}</p>
@@ -31,6 +31,7 @@
         </c:choose>
     </div>
 </div>
+<h2><a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a></h2>
 <h5>
     <label id="time"></label>
     <br>

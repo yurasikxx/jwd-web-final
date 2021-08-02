@@ -1,0 +1,315 @@
+html {
+    font-family: "Century Gothic", serif;
+}
+
+body {
+    margin: 0;
+}
+
+#default-margin-div {
+    width: 1500px;
+    padding: 0 18px;
+    text-align: justify;
+}
+
+#default-border-div {
+    border-left: 1px ridge mediumturquoise;
+    border-right: 1px ridge mediumturquoise;
+    border-bottom: 1px ridge mediumturquoise;
+}
+
+#auth-margin-div {
+    width: 500px;
+    margin: 150px auto;
+    text-align: center;
+}
+
+#auth-border-div {
+    border: 1px ridge mediumturquoise;
+    border-radius: 10px;
+    padding: 35px;
+}
+
+#changing-margin-div {
+    width: 800px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+#changing-border-div {
+    border: 1px ridge mediumturquoise;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+#viewing-margin-div {
+    width: 100%;
+    padding-top: 10px;
+    text-align: center;
+}
+
+#viewing-border-div {
+    border: 1px ridge mediumturquoise;
+    border-radius: 10px;
+    text-align: justify;
+}
+
+#menu {
+    text-align: justify;
+    margin: 0;
+    padding: 0;
+    background-color: mediumturquoise;
+}
+
+li.menu {
+    display: inline-block;
+    border: 1px solid mediumturquoise;
+    margin: 0;
+    width: 494px;
+}
+
+a:link.menu, a:visited.menu {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover.menu {
+    color: yellowgreen;
+}
+
+a:active.menu {
+    color: mediumturquoise;
+    background-color: white;
+    text-decoration: none;
+}
+
+a.menu {
+    display: block;
+    padding: 20px 0;
+    text-align: center;
+}
+
+li.menu:hover {
+    background-color: white;
+    text-decoration: none;
+}
+
+li.menu:active {
+    color: mediumturquoise;
+    background-color: white;
+    text-decoration: none;
+}
+
+#default-operation {
+    text-align: justify;
+    margin: 0;
+    padding: 0;
+    background-color: yellowgreen;
+}
+
+li.default-operation {
+    display: inline-block;
+    border: 1px solid yellowgreen;
+    margin: 0;
+    width: 369px;
+}
+
+a:link.default-operation, a:visited.default-operation {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover.default-operation {
+    color: mediumturquoise;
+}
+
+a:active.default-operation {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+a.default-operation {
+    display: block;
+    padding: 20px 0;
+    text-align: center;
+}
+
+li.default-operation:hover {
+    background-color: white;
+    text-decoration: none;
+}
+
+li.default-operation:active {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+#competition-operation {
+    text-align: justify;
+    margin: 0;
+    padding: 0;
+    background-color: yellowgreen;
+}
+
+li.competition-operation {
+    display: inline-block;
+    border: 1px solid yellowgreen;
+    margin: 0;
+    width: 294px;
+}
+
+a:link.competition-operation, a:visited.competition-operation {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover.competition-operation {
+    color: mediumturquoise;
+}
+
+a:active.competition-operation {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+a.competition-operation {
+    display: block;
+    padding: 20px 0;
+    text-align: center;
+}
+
+a:link.changing, a:visited.changing {
+    color: mediumturquoise;
+    text-decoration: none;
+}
+
+a:hover.changing {
+    color: yellowgreen;
+}
+
+a:active.changing {
+    color: white;
+    text-decoration: none;
+}
+
+a.changing {
+    display: block;
+    padding: 20px 0;
+    text-align: center;
+}
+
+li.competition-operation :hover {
+    background-color: white;
+    text-decoration: none;
+}
+
+li.competition-operation :active {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+#bet-operation {
+    text-align: justify;
+    margin: 0;
+    padding: 0;
+    background-color: yellowgreen;
+}
+
+li.bet-operation {
+    display: inline-block;
+    border: 1px solid yellowgreen;
+    margin: 0;
+    width: 469px;
+}
+
+a:link.bet-operation, a:visited.bet-operation {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover.bet-operation {
+    color: mediumturquoise;
+}
+
+a:active.bet-operation {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+a.bet-operation {
+    display: block;
+    padding: 20px 0;
+    text-align: center;
+}
+
+li.bet-operation:hover {
+    background-color: white;
+    text-decoration: none;
+}
+
+li.bet-operation:active {
+    color: yellowgreen;
+    background-color: white;
+    text-decoration: none;
+}
+
+h1 {
+    text-align: center;
+    color: yellowgreen;
+}
+
+h2 {
+    text-align: center;
+    color: darkturquoise;
+}
+
+h3 {
+    text-align: center;
+}
+
+h5 {
+    text-align: center;
+    color: yellowgreen;
+}
+
+table {
+    width: 100%;
+}
+
+p {
+    font-family: "Century Gothic", serif;
+    font-size: 1.4em;
+    text-align: center;
+    padding: 0 10px;
+    line-height: 1.5;
+}
+
+input[type=number], [type=text], [type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px ridge mediumturquoise;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    color: white;
+    background-color: paleturquoise;
+    padding: 14px 14px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: yellowgreen;
+}

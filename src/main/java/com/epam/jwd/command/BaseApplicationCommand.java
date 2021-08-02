@@ -96,7 +96,7 @@ public enum BaseApplicationCommand {
     BET_CHANGE(BetChangingCommand.getInstance(), ADMINISTRATOR),
     BET_DELETING_PAGE(ShowBetDeletingPageCommand.getInstance(), ADMINISTRATOR, USER),
     BET_DELETE(BetDeletingCommand.getInstance(), ADMINISTRATOR, USER),
-    BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR, BOOKMAKER),
+    BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_RESULTS_COMMITTING_PAGE(ShowCompetitionResultsCommittingPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),
     ERROR(ShowErrorPageCommand.getInstance()),

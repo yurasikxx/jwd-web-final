@@ -55,6 +55,7 @@ public class CompetitionResultsCommitCommand implements Command {
     private static final String NUMBER_MUST_BE_POSITIVE_MSG = "Entered number must be positive";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
     private static final long RANDOM_COMPETITION_RESULT_ID = 1 + (long) (Math.random() * 3);
+    private static final String COMPETITION_DOES_NOT_EXIST_MSG = "Competition with such ID doesn't exist";
 
     private static volatile CompetitionResultsCommitCommand instance;
 
@@ -95,6 +96,13 @@ public class CompetitionResultsCommitCommand implements Command {
 
     private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
+            if (!competitionService.findAll().contains(competitionService.findById(getCheckedCompetitionId(request)))) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_DOES_NOT_EXIST_MSG);
+                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betHistoryErrorCommandResponse;
+            }
+
             final Long competitionId = getCheckedCompetitionId(request);
             final List<Betslip> betslips = betslipService.findByCompetitionId(competitionId);
             final List<Bet> bets = betService.findByCompetitionId(competitionId);
@@ -141,7 +149,7 @@ public class CompetitionResultsCommitCommand implements Command {
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, SUCCESSFUL_OPERATION_MESSAGE);
 
             return betHistoryCommandResponse;
-        } catch (IncorrectEnteredDataException | NumberFormatException e) {
+        } catch (IncorrectEnteredDataException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, FIELD_MUST_BE_FILLED_MSG);
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
