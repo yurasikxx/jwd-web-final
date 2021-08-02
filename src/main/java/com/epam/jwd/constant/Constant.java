@@ -12,6 +12,7 @@ public class Constant {
 
     public static final String PERSON_ATTRIBUTE_NAME = "person";
     public static final String COMPETITION_ATTRIBUTE_NAME = "competition";
+    public static final String SELECT_COMPETITION_ATTRIBUTE_NAME = "selectCompetition";
     public static final String BETSLIP_ATTRIBUTE_NAME = "betslip";
     public static final String BET_ATTRIBUTE_NAME = "bet";
     public static final String BET_HISTORY_ATTRIBUTE_NAME = "betHistory";

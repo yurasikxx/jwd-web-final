@@ -106,7 +106,6 @@ public class BetAddingCommand implements Command {
 
             return betCommandResponse;
         } catch (DaoException | ServiceException e) {
-            e.printStackTrace();
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 

@@ -128,6 +128,49 @@
                     <h1>Main user page</h1>
                     <p><jwd:welcome/></p>
                     <p><label>Balance: ${sessionScope.personBalance}</label></p>
+                    <h1>Betslips</h1>
+                    <table>
+                        <tr>
+                            <th><h2>Home win</h2></th>
+                            <th><h2>Home won't lose</h2></th>
+                            <th><h2>Draw</h2></th>
+                            <th><h2>No draw</h2></th>
+                            <th><h2>Away won't lose</h2></th>
+                            <th><h2>Away win</h2></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <c:forEach var="homeWin" items="${requestScope.homeWin}">
+                                    <h3>${homeWin}</h3>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="homeWillNotLose" items="${requestScope.homeWillNotLose}">
+                                    <h3>${homeWillNotLose}</h3>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="draw" items="${requestScope.draw}">
+                                    <h3>${draw}</h3>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="noDraw" items="${requestScope.noDraw}">
+                                    <h3>${noDraw}</h3>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="awayWillNotLose" items="${requestScope.awayWillNotLose}">
+                                    <h3>${awayWillNotLose}</h3>
+                                </c:forEach>
+                            </td>
+                            <td>
+                                <c:forEach var="awayWin" items="${requestScope.awayWin}">
+                                    <h3>${awayWin}</h3>
+                                </c:forEach>
+                            </td>
+                        </tr>
+                    </table>
                 </c:if>
             </c:otherwise>
         </c:choose>

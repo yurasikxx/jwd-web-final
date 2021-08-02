@@ -50,9 +50,7 @@ public class Betslip extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Competition: " + competition +
-                ", Bet Type: " + betType.getName() +
-                ", Coefficient: " + coefficient;
+        return competition + ", CF: " + coefficient;
     }
 
 }

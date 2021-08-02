@@ -4,6 +4,7 @@ import com.epam.jwd.dao.BetslipBaseDao;
 import com.epam.jwd.dao.BetslipDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
 
 import java.util.ArrayList;
@@ -72,6 +73,11 @@ public class BetslipService implements BetslipBaseService {
     @Override
     public List<Betslip> findByCompetitionId(Long id) throws DaoException {
         return betslipDao.findByCompetitionId(id);
+    }
+
+    @Override
+    public List<Betslip> findByBetType(BetType betType) throws DaoException {
+        return betslipDao.findByBetType(betType);
     }
 
     @Override

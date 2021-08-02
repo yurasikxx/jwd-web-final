@@ -148,7 +148,7 @@
             </table>
             <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
                 <h3>
-                    <a href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
+                    <a class="changing" href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
                         Back to betslip management
                     </a>
                 </h3>

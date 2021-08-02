@@ -12,12 +12,11 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
 public class ShowCompetitionResultsCommittingPageCommand implements Command {
 
     private static final String COMPETITION_RESULTS_COMMITTING_OPERATION_MSG = "Competition results committing operation";
-    private static final String SELECT_COMPETITION_ATTRIBUTE_NAME = "selectCompetition";
 
     private static volatile ShowCompetitionResultsCommittingPageCommand instance;
 

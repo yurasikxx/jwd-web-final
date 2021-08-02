@@ -138,7 +138,7 @@
                       method="post">
                     <label for="competition-select">Competition</label>
                     <select id="competition-select" name="id">
-                        <option value="0">Select competition...</option>
+                        <option value="0">Select competition</option>
                         <c:forEach var="selectCompetition" items="${requestScope.selectCompetition}">
                             <option value="${selectCompetition.id}">${selectCompetition}</option>
                         </c:forEach>

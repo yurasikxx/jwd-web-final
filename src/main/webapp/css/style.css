@@ -6,6 +6,10 @@ body {
     margin: 0;
 }
 
+::-webkit-scrollbar {
+    width: 2px;
+}
+
 #default-margin-div {
     width: 1500px;
     padding: 0 18px;
