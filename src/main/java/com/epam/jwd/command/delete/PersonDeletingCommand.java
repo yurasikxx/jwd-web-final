@@ -7,8 +7,11 @@ import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
+
+import java.util.List;
 
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
@@ -16,6 +19,7 @@ import static com.epam.jwd.constant.Constant.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class PersonDeletingCommand implements Command {
@@ -62,6 +66,10 @@ public class PersonDeletingCommand implements Command {
             }
 
             personService.delete(id);
+
+            final List<Person> persons = personService.findAll();
+
+            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, persons);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_DELETED_MSG);
 
             return personCommandResponse;

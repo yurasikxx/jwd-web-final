@@ -19,6 +19,7 @@ public class Constant {
     public static final String SELECT_BET_TYPE_ATTRIBUTE_NAME = "selectBetType";
     public static final String SELECT_BETSLIP_ATTRIBUTE_NAME = "selectBetslip";
     public static final String BET_ATTRIBUTE_NAME = "bet";
+    public static final String SELECT_BET_ATTRIBUTE_NAME = "selectBet";
     public static final String BET_HISTORY_ATTRIBUTE_NAME = "betHistory";
     public static final String ERROR_ATTRIBUTE_NAME = "error";
     public static final String PERSON_BALANCE_SESSION_ATTRIBUTE_NAME = "personBalance";

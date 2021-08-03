@@ -7,8 +7,11 @@ import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.model.Betslip;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
+
+import java.util.List;
 
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
@@ -16,6 +19,7 @@ import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class BetslipDeletingCommand implements Command {
@@ -62,7 +66,11 @@ public class BetslipDeletingCommand implements Command {
             }
 
             betslipService.delete(id);
+
+            final List<Betslip> betslips = betslipService.findAll();
+
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_SUCCESSFULLY_DELETED_MSG);
+            request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
             return betslipCommandResponse;
         } catch (IncorrectEnteredDataException e) {

@@ -154,32 +154,6 @@
                     </a>
                 </h2>
             </c:when>
-            <c:when test="${not empty requestScope.bet}">
-                <form action="${pageContext.request.contextPath}/controller?command=bet_change" method="post">
-                    <label>${requestScope.bet}</label>
-                    <br>
-                    <label for="idField">Bet ID: </label>
-                    <br>
-                    <input type="number" id="idField" name="id">
-                    <br>
-                    <label for="betBetslipIdField">Betslip ID: </label>
-                    <br>
-                    <input type="number" id="betBetslipIdField" name="betslipId">
-                    <br>
-                    <label for="betTotalField">Bet total: </label>
-                    <br>
-                    <input type="number" id="betTotalField" name="betTotal">
-                    <br>
-                    <label for="betPersonIdField">Person ID: </label>
-                    <br>
-                    <input type="number" id="betPersonIdField" name="personId">
-                    <br>
-                    <input type="submit" value="Change">
-                </form>
-                <br>
-                <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">Back to bet
-                    management</a>
-            </c:when>
             <c:when test="${not empty requestScope.betHistory}">
                 <h1>${requestScope.betHistory}</h1>
                 <form action="${pageContext.request.contextPath}/controller?command=commit_competition_results"

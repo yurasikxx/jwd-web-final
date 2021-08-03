@@ -21,11 +21,9 @@ import com.epam.jwd.command.change.ShowBetslipChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionResultsCommittingPageCommand;
 import com.epam.jwd.command.change.ShowPersonChangingPageCommand;
-import com.epam.jwd.command.delete.BetDeletingCommand;
 import com.epam.jwd.command.delete.BetslipDeletingCommand;
 import com.epam.jwd.command.delete.CompetitionDeletingCommand;
 import com.epam.jwd.command.delete.PersonDeletingCommand;
-import com.epam.jwd.command.delete.ShowBetDeletingPageCommand;
 import com.epam.jwd.command.delete.ShowBetslipDeletingPageCommand;
 import com.epam.jwd.command.delete.ShowCompetitionDeletingPageCommand;
 import com.epam.jwd.command.delete.ShowPersonDeletingPageCommand;
@@ -71,7 +69,7 @@ public enum BaseApplicationCommand {
     PERSON_BETS_LIST_PAGE(ShowPersonBetsViewingPageCommand.getInstance(), USER),
     PERSON_BET_HISTORY_PAGE(ShowPersonBetHistoryPageCommand.getInstance(), USER),
     COMPETITION_MANAGEMENT_PAGE(ShowCompetitionManagementPageCommand.getInstance(), ADMINISTRATOR),
-    COMPETITION_LIST_PAGE(ShowCompetitionViewingPageCommand.getInstance(), ADMINISTRATOR, BOOKMAKER, USER, UNAUTHORIZED),
+    COMPETITION_LIST_PAGE(ShowCompetitionViewingPageCommand.getInstance(), ADMINISTRATOR, BOOKMAKER, USER),
     COMPETITION_ADDING_PAGE(ShowCompetitionAddingPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_ADD(CompetitionAddingCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_CHANGING_PAGE(ShowCompetitionChangingPageCommand.getInstance(), ADMINISTRATOR),
@@ -90,8 +88,6 @@ public enum BaseApplicationCommand {
     BET_LIST_PAGE(ShowAllBetsViewingPageCommand.getInstance(), ADMINISTRATOR),
     BET_ADDING_PAGE(ShowBetAddingPageCommand.getInstance(), USER),
     BET_ADD(BetAddingCommand.getInstance(), USER),
-    BET_DELETING_PAGE(ShowBetDeletingPageCommand.getInstance(), ADMINISTRATOR, USER),
-    BET_DELETE(BetDeletingCommand.getInstance(), ADMINISTRATOR, USER),
     BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR),
     COMPETITION_RESULTS_COMMITTING_PAGE(ShowCompetitionResultsCommittingPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),

@@ -40,7 +40,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 public class BetslipAddingCommand implements Command {
 
     private static final String BETSLIP_SUCCESSFULLY_ADDED_MSG = "Betslip successfully added";
-    private static final int INITIAL_RANDOM_NUMBER_VALUE = MIN_LONG_ID_VALUE.intValue();
+    private static final int INITIAL_RANDOM_NUMBER_VALUE = 2;
     private static final int RANDOM_NUMBER_RANGE = 8;
 
     private static volatile BetslipAddingCommand instance;
