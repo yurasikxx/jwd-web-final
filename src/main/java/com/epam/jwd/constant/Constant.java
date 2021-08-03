@@ -11,9 +11,13 @@ public class Constant {
     public static final String INDEX_JSP_PATH = "/index.jsp";
 
     public static final String PERSON_ATTRIBUTE_NAME = "person";
+    public static final String SELECT_PERSON_ATTRIBUTE_NAME = "selectPerson";
     public static final String COMPETITION_ATTRIBUTE_NAME = "competition";
+    public static final String SELECT_TEAM_ATTRIBUTE_NAME = "selectTeam";
     public static final String SELECT_COMPETITION_ATTRIBUTE_NAME = "selectCompetition";
     public static final String BETSLIP_ATTRIBUTE_NAME = "betslip";
+    public static final String SELECT_BET_TYPE_ATTRIBUTE_NAME = "selectBetType";
+    public static final String SELECT_BETSLIP_ATTRIBUTE_NAME = "selectBetslip";
     public static final String BET_ATTRIBUTE_NAME = "bet";
     public static final String BET_HISTORY_ATTRIBUTE_NAME = "betHistory";
     public static final String ERROR_ATTRIBUTE_NAME = "error";

@@ -13,12 +13,10 @@ import com.epam.jwd.command.add.ShowRegistrationPageCommand;
 import com.epam.jwd.command.auth.LogInCommand;
 import com.epam.jwd.command.auth.LogOutCommand;
 import com.epam.jwd.command.auth.ShowLogInPageCommand;
-import com.epam.jwd.command.change.BetChangingCommand;
 import com.epam.jwd.command.change.BetslipChangingCommand;
 import com.epam.jwd.command.change.CompetitionChangingCommand;
 import com.epam.jwd.command.change.CompetitionResultsCommitCommand;
 import com.epam.jwd.command.change.PersonChangingCommand;
-import com.epam.jwd.command.change.ShowBetChangingPageCommand;
 import com.epam.jwd.command.change.ShowBetslipChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionResultsCommittingPageCommand;
@@ -92,8 +90,6 @@ public enum BaseApplicationCommand {
     BET_LIST_PAGE(ShowAllBetsViewingPageCommand.getInstance(), ADMINISTRATOR),
     BET_ADDING_PAGE(ShowBetAddingPageCommand.getInstance(), USER),
     BET_ADD(BetAddingCommand.getInstance(), USER),
-    BET_CHANGING_PAGE(ShowBetChangingPageCommand.getInstance(), ADMINISTRATOR),
-    BET_CHANGE(BetChangingCommand.getInstance(), ADMINISTRATOR),
     BET_DELETING_PAGE(ShowBetDeletingPageCommand.getInstance(), ADMINISTRATOR, USER),
     BET_DELETE(BetDeletingCommand.getInstance(), ADMINISTRATOR, USER),
     BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR),

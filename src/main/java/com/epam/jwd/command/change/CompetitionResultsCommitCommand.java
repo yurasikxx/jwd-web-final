@@ -13,6 +13,7 @@ import com.epam.jwd.model.BetHistory;
 import com.epam.jwd.model.BetResult;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.CompetitionResult;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Team;
@@ -36,6 +37,7 @@ import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
+import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 import static com.epam.jwd.model.BetResult.LOSS;
@@ -146,7 +148,10 @@ public class CompetitionResultsCommitCommand implements Command {
 
             competitionService.delete(competitionId);
 
+            final List<Competition> competitions = competitionService.findAll();
+
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, SUCCESSFUL_OPERATION_MESSAGE);
+            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
 
             return betHistoryCommandResponse;
         } catch (IncorrectEnteredDataException e) {

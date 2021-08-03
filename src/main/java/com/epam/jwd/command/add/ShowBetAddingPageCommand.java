@@ -12,11 +12,11 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 
 public class ShowBetAddingPageCommand implements Command {
 
     private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation\n";
-    private static final String SELECT_BETSLIPS_ATTRIBUTE_NAME = "selectBetslip";
 
     private static volatile ShowBetAddingPageCommand instance;
 
@@ -45,7 +45,7 @@ public class ShowBetAddingPageCommand implements Command {
         final List<Betslip> betslips = betslipService.findAll();
 
         request.setAttribute(BET_ATTRIBUTE_NAME, BET_ADDING_OPERATION_MSG);
-        request.setAttribute(SELECT_BETSLIPS_ATTRIBUTE_NAME, betslips);
+        request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
         return betCommandResponse;
     }

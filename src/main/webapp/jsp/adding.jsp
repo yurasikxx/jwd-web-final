@@ -12,25 +12,36 @@
     <div id="changing-border-div">
         <c:choose>
             <c:when test="${not empty requestScope.error}">
-                ${requestScope.error}
+                <p>${requestScope.error}</p>
                 <c:if test="${not empty requestScope.person}">
-                    <h2><a class="changing"
-                           href="${pageContext.request.contextPath}/controller?command=person_adding_page">${requestScope.person}</a>
+                    <h2>
+                        <a class="changing"
+                           href="${pageContext.request.contextPath}/controller?command=person_adding_page">
+                                ${requestScope.person}
+                        </a>
                     </h2>
                 </c:if>
                 <c:if test="${not empty requestScope.competition}">
-                    <h2><a class="changing"
-                           href="${pageContext.request.contextPath}/controller?command=competition_adding_page">${requestScope.competition}</a>
+                    <h2>
+                        <a class="changing"
+                           href="${pageContext.request.contextPath}/controller?command=competition_adding_page">
+                                ${requestScope.competition}
+                        </a>
                     </h2>
                 </c:if>
                 <c:if test="${not empty requestScope.betslip}">
-                    <h2><a class="changing"
-                           href="${pageContext.request.contextPath}/controller?command=betslip_adding_page">${requestScope.betslip}</a>
+                    <h2>
+                        <a class="changing"
+                           href="${pageContext.request.contextPath}/controller?command=betslip_adding_page">
+                                ${requestScope.betslip}
+                        </a>
                     </h2>
                 </c:if>
                 <c:if test="${not empty requestScope.bet}">
-                    <h2><a class="changing"
-                           href="${pageContext.request.contextPath}/controller?command=bet_adding_page">${requestScope.bet}</a>
+                    <h2>
+                        <a class="changing"
+                           href="${pageContext.request.contextPath}/controller?command=bet_adding_page">${requestScope.bet}
+                        </a>
                     </h2>
                 </c:if>
             </c:when>
@@ -121,7 +132,7 @@
                     <select id="betslipSelect" name="betslipId">
                         <option value="0">Select betslip</option>
                         <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
-                            <option value="${selectBetslip.id}">${selectBetslip.betType}, ${selectBetslip}</option>
+                            <option value="${selectBetslip.id}">${selectBetslip.betType.name}, ${selectBetslip}</option>
                         </c:forEach>
                     </select>
                     <label for="betTotalField">Bet total ID</label>

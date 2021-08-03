@@ -10,12 +10,16 @@ import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
@@ -28,6 +32,8 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
+import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
@@ -96,7 +102,13 @@ public class BetslipAddingCommand implements Command {
             }
 
             betslipService.save(betslip);
+
+            final List<Competition> competitions = competitionService.findAll();
+            final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
+
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_SUCCESSFULLY_ADDED_MSG);
+            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
+            request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betTypes);
 
             return betslipCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {

@@ -8,8 +8,11 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
+import com.epam.jwd.model.Team;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
+
+import java.util.List;
 
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
@@ -20,6 +23,8 @@ import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
+import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_DIFFERENT_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG;
@@ -28,7 +33,6 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 public class CompetitionChangingCommand implements Command {
 
     private static final String COMPETITION_SUCCESSFULLY_CHANGED_MSG = "Competition successfully changed";
-    private static final String COMPETITION_DOES_NOT_EXIST_MSG = "Competition with such ID doesn't exist";
 
     private static volatile CompetitionChangingCommand instance;
 
@@ -76,7 +80,13 @@ public class CompetitionChangingCommand implements Command {
                     competitionService.findTeamById(awayTeamId));
 
             competitionService.update(competition);
+
+            final List<Team> teams = competitionService.findAllTeams();
+            final List<Competition> competitions = competitionService.findAll();
+
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, COMPETITION_SUCCESSFULLY_CHANGED_MSG);
+            request.setAttribute(SELECT_TEAM_ATTRIBUTE_NAME, teams);
+            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
 
             return competitionCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {

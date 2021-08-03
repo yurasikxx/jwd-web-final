@@ -4,9 +4,15 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.model.Person;
+import com.epam.jwd.service.PersonBaseService;
+import com.epam.jwd.service.PersonService;
+
+import java.util.List;
 
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 
 public class ShowPersonChangingPageCommand implements Command {
 
@@ -14,9 +20,11 @@ public class ShowPersonChangingPageCommand implements Command {
 
     private static volatile ShowPersonChangingPageCommand instance;
 
+    private final PersonBaseService personService;
     private final BaseCommandResponse personCommandResponse;
 
     private ShowPersonChangingPageCommand() {
+        this.personService = PersonService.getInstance();
         this.personCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
@@ -34,7 +42,11 @@ public class ShowPersonChangingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        final List<Person> persons = personService.findAll();
+
         request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_CHANGING_OPERATION_MSG);
+        request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, persons);
+
         return personCommandResponse;
     }
 

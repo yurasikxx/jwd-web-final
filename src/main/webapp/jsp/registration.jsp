@@ -13,9 +13,11 @@
         <c:choose>
             <c:when test="${not empty requestScope.error}">
                 <p>${requestScope.error}</p>
-                <a href="${pageContext.request.contextPath}/controller?command=register_page">Try again</a>
-                <br>
-                <a href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
+                <h2>
+                    <a class="changing" href="${pageContext.request.contextPath}/controller?command=register_page">
+                        Try again
+                    </a>
+                </h2>
             </c:when>
             <c:otherwise>
                 <form action="${pageContext.request.contextPath}/controller?command=register" method="post">

@@ -8,9 +8,11 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
+import com.epam.jwd.model.Team;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
@@ -21,6 +23,7 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
+import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_DIFFERENT_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG;
@@ -79,7 +82,11 @@ public class CompetitionAddingCommand implements Command {
             }
 
             competitionService.save(competition);
+
+            final List<Team> teams = competitionService.findAllTeams();
+
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, COMPETITION_SUCCESSFULLY_ADDED_MSG);
+            request.setAttribute(SELECT_TEAM_ATTRIBUTE_NAME, teams);
 
             return competitionCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {

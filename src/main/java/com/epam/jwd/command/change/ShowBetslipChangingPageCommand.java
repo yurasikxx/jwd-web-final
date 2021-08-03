@@ -4,9 +4,23 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.model.BetType;
+import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.Competition;
+import com.epam.jwd.service.BetslipBaseService;
+import com.epam.jwd.service.BetslipService;
+import com.epam.jwd.service.CompetitionBaseService;
+import com.epam.jwd.service.CompetitionService;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
 public class ShowBetslipChangingPageCommand implements Command {
 
@@ -14,9 +28,13 @@ public class ShowBetslipChangingPageCommand implements Command {
 
     private static volatile ShowBetslipChangingPageCommand instance;
 
+    private final CompetitionBaseService competitionService;
+    private final BetslipBaseService betslipService;
     private final BaseCommandResponse betslipCommandResponse;
 
     private ShowBetslipChangingPageCommand() {
+        this.competitionService = CompetitionService.getInstance();
+        this.betslipService = BetslipService.getInstance();
         this.betslipCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
@@ -34,7 +52,15 @@ public class ShowBetslipChangingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        final List<Betslip> betslips = betslipService.findAll();
+        final List<Competition> competitions = competitionService.findAll();
+        final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
+
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_CHANGING_OPERATION_MSG);
+        request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
+        request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
+        request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betTypes);
+
         return betslipCommandResponse;
     }
 

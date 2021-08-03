@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
 public class ShowBetslipAddingPageCommand implements Command {
 
     private static final String BETSLIP_ADDING_OPERATION_MSG = "Betslip adding operation";
-    private static final String SELECT_BET_TYPE_ATTRIBUTE_NAME = "selectBetType";
 
     private static volatile ShowBetslipAddingPageCommand instance;
 

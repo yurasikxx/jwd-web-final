@@ -12,6 +12,8 @@ import com.epam.jwd.model.Role;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import java.util.List;
+
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
@@ -21,6 +23,7 @@ import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
@@ -73,7 +76,11 @@ public class PersonChangingCommand implements Command {
             final Person person = new Person(id, login, password, balance, Role.USER);
 
             personService.update(person);
+
+            final List<Person> persons = personService.findAll();
+
             request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_CHANGED_MSG);
+            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, persons);
 
             return personCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {

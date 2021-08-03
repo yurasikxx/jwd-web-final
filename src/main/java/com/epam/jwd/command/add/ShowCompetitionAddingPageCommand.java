@@ -12,11 +12,11 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 
 public class ShowCompetitionAddingPageCommand implements Command {
 
     private static final String COMPETITION_ADDING_OPERATION_MSG = "Competition adding operation";
-    private static final String SELECT_TEAM_ATTRIBUTE_NAME = "selectTeam";
 
     private static volatile ShowCompetitionAddingPageCommand instance;
 

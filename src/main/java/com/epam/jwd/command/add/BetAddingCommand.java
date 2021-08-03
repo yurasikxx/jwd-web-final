@@ -19,6 +19,7 @@ import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG;
 import static com.epam.jwd.constant.Constant.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
@@ -95,9 +97,12 @@ public class BetAddingCommand implements Command {
             betService.save(bet);
             personService.updateBalance(placedBetPerson);
 
+            final List<Betslip> betslips = betslipService.findAll();
+
             Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
                     placedBetPerson.getBalance());
             request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_ADDED_MSG);
+            request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
             return betCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
