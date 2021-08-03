@@ -135,7 +135,7 @@
                             <option value="${selectBetslip.id}">${selectBetslip.betType.name}, ${selectBetslip}</option>
                         </c:forEach>
                     </select>
-                    <label for="betTotalField">Bet total ID</label>
+                    <label for="betTotalField">Bet total</label>
                     <br>
                     <input type="number" id="betTotalField" name="betTotal">
                     <br>
@@ -143,7 +143,7 @@
                 </form>
             </c:when>
             <c:otherwise>
-                Oops! Something went wrong...
+                <p>Oops! Something went wrong...</p>
             </c:otherwise>
         </c:choose>
         <h5>

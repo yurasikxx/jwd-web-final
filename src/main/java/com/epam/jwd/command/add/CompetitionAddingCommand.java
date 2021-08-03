@@ -22,7 +22,6 @@ import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TEAMS_MUST_BE_DIFFERENT_MSG;
@@ -33,6 +32,7 @@ public class CompetitionAddingCommand implements Command {
 
     private static final String COMPETITION_SUCCESSFULLY_ADDED_MSG = "Competition successfully added";
     private static final String COMPETITION_ALREADY_EXISTS_MSG = "Competition with these teams already exist";
+    private static final String TEAMS_NOT_SELECTED_MSG = "Teams not selected";
 
     private static volatile CompetitionAddingCommand instance;
 
@@ -94,7 +94,7 @@ public class CompetitionAddingCommand implements Command {
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return competitionCommandResponse;
-        }  catch (DaoException | ServiceException e) {
+        } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
@@ -104,7 +104,7 @@ public class CompetitionAddingCommand implements Command {
 
     private boolean cannotBeAdded(BaseCommandRequest request, Long homeTeamId, Long awayTeamId) throws DaoException, ServiceException {
         if (homeTeamId < MIN_LONG_ID_VALUE || awayTeamId < MIN_LONG_ID_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, TEAMS_NOT_SELECTED_MSG);
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return true;

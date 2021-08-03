@@ -24,7 +24,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class CompetitionDeletingCommand implements Command {
 
-    private static final String WRONG_ENTERED_DATA_MSG = "Competition with such ID doesn't exist or entered id is non-positive number";
+    private static final String COMPETITION_NOT_SELECTED_MSG = "Competition not selected";
     private static final String COMPETITION_CANNOT_BE_DELETED_MSG = "Competition cannot be deleted while there is unplayed bet";
     private static final String COMPETITION_SUCCESSFULLY_DELETED_MSG = "Competition successfully deleted";
 
@@ -60,7 +60,7 @@ public class CompetitionDeletingCommand implements Command {
             final Long id = getCheckedId(request);
 
             if (!competitionService.canBeDeleted(id)) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_ENTERED_DATA_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_NOT_SELECTED_MSG);
                 request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
                 return competitionErrorCommandResponse;
             }

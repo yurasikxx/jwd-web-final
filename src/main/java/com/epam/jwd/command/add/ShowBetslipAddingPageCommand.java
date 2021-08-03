@@ -4,12 +4,14 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.model.AbstractBaseEntity;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +48,10 @@ public class ShowBetslipAddingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        final List<Competition> competitions = competitionService.findAll();
+        final List<Competition> competitions = competitionService.findAll()
+                .stream()
+                .sorted(Comparator.comparing(AbstractBaseEntity::getId))
+                .collect(Collectors.toList());
         final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
 
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_ADDING_OPERATION_MSG);

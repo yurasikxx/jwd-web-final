@@ -84,8 +84,8 @@
             <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
                 <h3>
                     <a class="changing"
-                       href="${pageContext.request.contextPath}/controller?command=person_management_page">
-                        Back to person management
+                       href="${pageContext.request.contextPath}/controller?command=competition_management_page">
+                        Back to competition management
                     </a>
                 </h3>
             </c:if>
@@ -241,7 +241,7 @@
                 </tr>
             </table>
             <h3>
-                <a href="${pageContext.request.contextPath}/controller?command=bet_management_page">
+                <a class="changing" href="${pageContext.request.contextPath}/controller?command=bet_management_page">
                     Back to bet management
                 </a>
             </h3>
@@ -314,6 +314,11 @@
                     </td>
                 </tr>
             </table>
+            <h3>
+                <a class="changing" href="${pageContext.request.contextPath}/controller?command=bet_management_page">
+                    Back to bet management
+                </a>
+            </h3>
         </c:if>
         <c:if test="${not empty requestScope.personBet}">
             <h1>My bets</h1>

@@ -27,11 +27,11 @@ import static com.epam.jwd.model.Sport.HOCKEY;
 public class ShowMainPageCommand implements Command {
 
     private static final String MAIN_JSP_PATH = "/jsp/main.jsp";
-    private static final String COMPETITIONS_WERE_NOT_FOUND_MSG = "Competitions weren't found";
+    private static final String COMPETITIONS_WERE_NOT_FOUND_MSG = "Competitions coming soon...";
     private static final String BASKETBALL_COMPETITION_ATTRIBUTE_NAME = "basketballCompetition";
     private static final String FOOTBALL_COMPETITION_ATTRIBUTE_NAME = "footballCompetition";
     private static final String HOCKEY_COMPETITION_ATTRIBUTE_NAME = "hockeyCompetition";
-    private static final String BETSLIPS_WERE_NOT_FOUND_MSG = "Betslips weren't found";
+    private static final String BETSLIPS_WERE_NOT_FOUND_MSG = "Betslips coming soon...";
     private static final String HOME_WIN_ATTRIBUTE_NAME = "homeWin";
     private static final String AWAY_WIN_ATTRIBUTE_NAME = "awayWin";
     private static final String DRAW_ATTRIBUTE_NAME = "draw";

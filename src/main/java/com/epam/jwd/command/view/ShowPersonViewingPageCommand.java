@@ -4,11 +4,14 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.model.AbstractBaseEntity;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
@@ -38,7 +41,10 @@ public class ShowPersonViewingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        final List<Person> persons = personService.findAll();
+        final List<Person> persons = personService.findAll()
+                .stream()
+                .sorted(Comparator.comparing(AbstractBaseEntity::getId))
+                .collect(Collectors.toList());
         request.setAttribute(PERSON_ATTRIBUTE_NAME, persons);
 
         return personCommandResponse;

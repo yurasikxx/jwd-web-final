@@ -22,7 +22,6 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
@@ -33,6 +32,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 public class CompetitionChangingCommand implements Command {
 
     private static final String COMPETITION_SUCCESSFULLY_CHANGED_MSG = "Competition successfully changed";
+    private static final String COMPETITION_OR_TEAMS_NOT_SELECTED_MSG = "Competition or teams not selected";
 
     private static volatile CompetitionChangingCommand instance;
 
@@ -104,7 +104,7 @@ public class CompetitionChangingCommand implements Command {
 
     private boolean cannotBeChanged(BaseCommandRequest request, Long id, Long homeTeamId, Long awayTeamId) throws ServiceException, DaoException {
         if (id < MIN_LONG_ID_VALUE || homeTeamId < MIN_LONG_ID_VALUE || awayTeamId < MIN_LONG_ID_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_OR_TEAMS_NOT_SELECTED_MSG);
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
             return true;

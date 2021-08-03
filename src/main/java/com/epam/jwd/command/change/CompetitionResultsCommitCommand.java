@@ -36,7 +36,6 @@ import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
@@ -54,10 +53,9 @@ public class CompetitionResultsCommitCommand implements Command {
     private static final String SUCCESSFUL_OPERATION_MESSAGE = "Competition results successfully committed and " +
             "all related bets added to bet history";
     private static final String FIELD_MUST_BE_FILLED_MSG = "Competition ID field must be filled";
-    private static final String NUMBER_MUST_BE_POSITIVE_MSG = "Entered number must be positive";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
     private static final long RANDOM_COMPETITION_RESULT_ID = 1 + (long) (Math.random() * 3);
-    private static final String COMPETITION_DOES_NOT_EXIST_MSG = "Competition with such ID doesn't exist";
+    private static final String COMPETITION_NOT_SELECTED_MSG = "Competition not selected";
 
     private static volatile CompetitionResultsCommitCommand instance;
 
@@ -99,7 +97,7 @@ public class CompetitionResultsCommitCommand implements Command {
     private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
             if (!competitionService.findAll().contains(competitionService.findById(getCheckedCompetitionId(request)))) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_DOES_NOT_EXIST_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_NOT_SELECTED_MSG);
                 request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
                 return betHistoryErrorCommandResponse;
@@ -110,13 +108,6 @@ public class CompetitionResultsCommitCommand implements Command {
             final List<Bet> bets = betService.findByCompetitionId(competitionId);
             final List<BetHistory> historyBets = new ArrayList<>();
             final List<Person> winBetPersons = new ArrayList<>();
-
-            if (competitionId < MIN_LONG_ID_VALUE) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBER_MUST_BE_POSITIVE_MSG);
-                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-                return betHistoryErrorCommandResponse;
-            }
 
             for (Bet bet : bets) {
                 final Team home = bet.getBetslip().getCompetition().getHome();

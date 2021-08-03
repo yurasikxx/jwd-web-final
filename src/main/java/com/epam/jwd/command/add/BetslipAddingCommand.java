@@ -8,6 +8,7 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
+import com.epam.jwd.model.AbstractBaseEntity;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.Competition;
@@ -17,6 +18,7 @@ import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ public class BetslipAddingCommand implements Command {
     private static final String BETSLIP_SUCCESSFULLY_ADDED_MSG = "Betslip successfully added";
     private static final int INITIAL_RANDOM_NUMBER_VALUE = 2;
     private static final int RANDOM_NUMBER_RANGE = 8;
+    private static final String COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG = "Competition or bet type not selected";
 
     private static volatile BetslipAddingCommand instance;
 
@@ -84,7 +87,14 @@ public class BetslipAddingCommand implements Command {
                 coefficient = getCheckedCoefficient(request);
             }
 
-            if (competitionId < MIN_LONG_ID_VALUE || betTypeId < MIN_LONG_ID_VALUE || coefficient < MIN_INDEX_VALUE) {
+            if (competitionId < MIN_LONG_ID_VALUE || betTypeId < MIN_LONG_ID_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipCommandResponse;
+            }
+
+            if (coefficient < MIN_INDEX_VALUE) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
@@ -103,7 +113,10 @@ public class BetslipAddingCommand implements Command {
 
             betslipService.save(betslip);
 
-            final List<Competition> competitions = competitionService.findAll();
+            final List<Competition> competitions = competitionService.findAll()
+                    .stream()
+                    .sorted(Comparator.comparing(AbstractBaseEntity::getId))
+                    .collect(Collectors.toList());
             final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
 
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_SUCCESSFULLY_ADDED_MSG);

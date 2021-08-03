@@ -9,10 +9,10 @@
 <body onload="time()">
 <div id="auth-margin-div">
     <div id="auth-border-div">
-        <h1>Something went wrong...</h1>
-        <h2>
+        <p>Something went wrong...</p>
+        <h3>
             <a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">Main page</a>
-        </h2>
+        </h3>
         <h5>
             <label id="time"></label>
             <br>

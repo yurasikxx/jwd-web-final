@@ -19,9 +19,11 @@ import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
 import javax.servlet.http.HttpSession;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
@@ -44,6 +46,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 public class BetAddingCommand implements Command {
 
     private static final String INSUFFICIENT_FUNDS_MSG = "Insufficient funds on the balance";
+    private static final String BETSLIP_NOT_SELECTED_MSG = "Betslip not selected";
 
     private static volatile BetAddingCommand instance;
 
@@ -97,7 +100,10 @@ public class BetAddingCommand implements Command {
             betService.save(bet);
             personService.updateBalance(placedBetPerson);
 
-            final List<Betslip> betslips = betslipService.findAll();
+            final List<Betslip> betslips = betslipService.findAll()
+                    .stream()
+                    .sorted(Comparator.comparing(o -> o.getCompetition().toString()))
+                    .collect(Collectors.toList());
 
             Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
                     placedBetPerson.getBalance());
@@ -119,7 +125,14 @@ public class BetAddingCommand implements Command {
     }
 
     private boolean cannotBeSaved(BaseCommandRequest request, Long betslipId, Integer betTotal, Person person, Bet bet) {
-        if (betslipId < MIN_LONG_ID_VALUE || betTotal < MIN_LONG_ID_VALUE) {
+        if (betslipId < MIN_LONG_ID_VALUE) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_NOT_SELECTED_MSG);
+            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+            return true;
+        }
+
+        if (betTotal < MIN_LONG_ID_VALUE) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
             request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 

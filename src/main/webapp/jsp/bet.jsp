@@ -46,20 +46,18 @@
             </li>
         </ul>
         <h1>Bet management</h1>
-        <ul id="default-operation">
-            <li class="default-operation">
-                <a class="default-operation"
+            <h2>
+                <a class="changing"
                    href="${pageContext.request.contextPath}/controller?command=bet_list_page">
                     <b>View all bets</b>
                 </a>
-            </li>
-            <li class="default-operation">
-                <a class="default-operation"
+            </h2>
+            <h2>
+                <a class="changing"
                    href="${pageContext.request.contextPath}/controller?command=bet_history_page">
                     <b>Bet history</b>
                 </a>
-            </li>
-        </ul>
+            </h2>
         <h5>
             <label id="time"></label>
             <br>

@@ -12,12 +12,12 @@ import com.epam.jwd.model.Team;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
 public class CompetitionService implements CompetitionBaseService {
 
-    private static final String COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG = "Competition wasn't found by given id: %s";
     private static final String TEAM_WAS_NOT_FOUND_MSG = "Team with such id was not found: %s";
 
     private static volatile CompetitionService instance;
@@ -71,8 +71,14 @@ public class CompetitionService implements CompetitionBaseService {
 
     @Override
     public Competition findById(Long id) throws ServiceException, DaoException {
-        return competitionDao.findById(id).
-                orElseThrow(() -> new ServiceException(String.format(COMPETITION_WAS_NOT_FOUND_BY_GIVEN_ID_MSG, id)));
+        final Optional<Competition> optional = competitionDao.findById(id);
+        Competition competition = null;
+
+        if (optional.isPresent()) {
+            competition = optional.get();
+        }
+
+        return competition;
     }
 
     @Override

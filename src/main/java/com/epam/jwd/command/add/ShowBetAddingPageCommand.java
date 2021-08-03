@@ -8,7 +8,9 @@ import com.epam.jwd.model.Betslip;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
@@ -42,7 +44,10 @@ public class ShowBetAddingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        final List<Betslip> betslips = betslipService.findAll();
+        final List<Betslip> betslips = betslipService.findAll()
+                .stream()
+                .sorted(Comparator.comparing(o -> o.getCompetition().toString()))
+                .collect(Collectors.toList());
 
         request.setAttribute(BET_ATTRIBUTE_NAME, BET_ADDING_OPERATION_MSG);
         request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);

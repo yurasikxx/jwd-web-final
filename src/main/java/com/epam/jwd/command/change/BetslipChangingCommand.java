@@ -39,6 +39,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 public class BetslipChangingCommand implements Command {
 
     private static final String BETSLIP_SUCCESSFULLY_CHANGED_MSG = "Betslip successfully changed";
+    private static final String BETSLIP_COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG = "Betslip, competition or bet type not selected";
 
     private static volatile BetslipChangingCommand instance;
 
@@ -76,9 +77,14 @@ public class BetslipChangingCommand implements Command {
             final Long betTypeId = getCheckedBetTypeId(request);
             final Integer coefficient = getCheckedCoefficient(request);
 
-            if (id < MIN_LONG_ID_VALUE || competitionId < MIN_LONG_ID_VALUE
-                    || betTypeId < MIN_LONG_ID_VALUE
-                    || coefficient < MIN_LONG_ID_VALUE) {
+            if (id < MIN_LONG_ID_VALUE || competitionId < MIN_LONG_ID_VALUE || betTypeId < MIN_LONG_ID_VALUE) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG);
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+
+                return betslipCommandResponse;
+            }
+
+            if (coefficient < MIN_LONG_ID_VALUE) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 

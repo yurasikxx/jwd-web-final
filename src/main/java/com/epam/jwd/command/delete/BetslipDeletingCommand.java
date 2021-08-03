@@ -24,7 +24,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
 
 public class BetslipDeletingCommand implements Command {
 
-    private static final String WRONG_ENTERED_PERSON_DATA_MSG = "Betslip with such id doesn't exist or entered id is non-positive number";
+    private static final String BETSLIP_NOT_SELECTED_MSG = "Betslip not selected";
     private static final String BETSLIP_CANNOT_BE_DELETED_MSG = "Betslip cannot be deleted while there is unplayed bet";
     private static final String BETSLIP_SUCCESSFULLY_DELETED_MSG = "Betslip successfully deleted";
 
@@ -60,7 +60,7 @@ public class BetslipDeletingCommand implements Command {
             final Long id = getCheckedId(request);
 
             if (!betslipService.canBeDeleted(id)) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_ENTERED_PERSON_DATA_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_NOT_SELECTED_MSG);
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
                 return betslipErrorCommandResponse;
             }

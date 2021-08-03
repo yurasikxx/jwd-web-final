@@ -21,10 +21,11 @@ import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.model.Role.USER;
 
 public class PersonDeletingCommand implements Command {
 
-    private static final String WRONG_ENTERED_PERSON_DATA_MSG = "Person with such id doesn't exist or entered id is non-positive number";
+    private static final String PERSON_NOT_SELECTED_MSG = "Person not selected";
     private static final String PERSON_CANNOT_BE_DELETED_MSG = "Person cannot be deleted while there is unplayed bet";
     private static final String PERSON_SUCCESSFULLY_DELETED_MSG = "Person successfully deleted";
 
@@ -59,7 +60,7 @@ public class PersonDeletingCommand implements Command {
             final Long id = getCheckedId(request);
 
             if (!personService.canBeDeleted(id)) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, WRONG_ENTERED_PERSON_DATA_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_NOT_SELECTED_MSG);
                 request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
 
                 return personCommandResponse;
@@ -67,10 +68,10 @@ public class PersonDeletingCommand implements Command {
 
             personService.delete(id);
 
-            final List<Person> persons = personService.findAll();
+            final List<Person> users = personService.findByRole(USER);
 
-            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, persons);
             request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_DELETED_MSG);
+            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, users);
 
             return personCommandResponse;
         } catch (IncorrectEnteredDataException e) {
