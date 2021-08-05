@@ -1,10 +1,16 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="jwd" uri="custom" %>
+<c:if test="${not empty sessionScope.locale}">
+    <fmt:setLocale scope="application" value="${sessionScope.locale}"/>
+</c:if>
+<fmt:setBundle basename="application" scope="application"/>
+<fmt:requestEncoding value="UTF-8"/>
 <html>
 <head>
-    <title>Totalizator</title>
+    <title><fmt:message key="main.title"/></title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
@@ -12,131 +18,180 @@
 <div id="default-margin-div">
     <div id="default-border-div">
         <c:choose>
-            <c:when test="${empty sessionScope.personName}">
+            <c:when test="${not empty requestScope.error}">
+                <p>${requestScope.error}</p>
+                <h2>
+                    <a class="changing"
+                       href="${pageContext.request.contextPath}/controller?command=main_page">
+                        <fmt:message key="back.main"/>
+                    </a>
+                </h2>
+            </c:when>
+            <c:when test="${empty sessionScope.personRole}">
                 <ul id="menu">
                     <li class="menu">
-                        <a class="menu" href=""><b>Main</b></a>
+                        <a class="menu" href=""><b><fmt:message key="main"/></b></a>
                     </li>
                     <li class="menu">
                         <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_in_page">
-                            <b>Log in</b>
+                            <b><fmt:message key="log.in"/></b>
                         </a>
                     </li>
                     <li class="menu">
                         <a class="menu" href="${pageContext.request.contextPath}/controller?command=register_page">
-                            <b>Sign up</b>
+                            <b><fmt:message key="sign.up"/></b>
                         </a>
                     </li>
                 </ul>
-                <h1>Main page</h1>
+                <h1><fmt:message key="main.page.title"/></h1>
                 <p><jwd:welcome/></p>
+                <h1><fmt:message key="main.competitions"/></h1>
+                <table>
+                    <tr>
+                        <th><h2><fmt:message key="main.table.competition.basketball"/></h2></th>
+                        <th><h2><fmt:message key="main.table.competition.football"/></h2></th>
+                        <th><h2><fmt:message key="main.table.competition.hockey"/></h2></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <c:forEach var="basketballCompetition" items="${requestScope.basketballCompetition}">
+                                <h3>${basketballCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach var="footballCompetition" items="${requestScope.footballCompetition}">
+                                <h3>${footballCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach var="hockeyCompetition" items="${requestScope.hockeyCompetition}">
+                                <h3>${hockeyCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </table>
+                <div id="language-margin-div">
+                    <div id="language-border-div">
+                        <form action="${pageContext.request.contextPath}/controller?command=select_language"
+                              method="post">
+                            <label for="select-language"><fmt:message key="language.title"/></label>
+                            <select id="select-language" name="locale">
+                                <option value=""><fmt:message key="language.select"/></option>
+                                <option value="1"><fmt:message key="language.english"/></option>
+                                <option value="2"><fmt:message key="language.russian"/></option>
+                                <option value="3"><fmt:message key="language.french"/></option>
+                            </select>
+                            <input type="submit" value="<fmt:message key="language.select"/>">
+                        </form>
+                    </div>
+                </div>
             </c:when>
             <c:otherwise>
                 <c:if test="${sessionScope.personRole eq Role.ADMINISTRATOR}">
                     <ul id="menu">
                         <li class="menu">
-                            <a class="menu" href=""><b>Main</b></a>
+                            <a class="menu" href=""><b><fmt:message key="main"/></b></a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
-                                <b>Betslip list</b>
+                                <b><fmt:message key="betslip.list"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
-                                <b>Log out</b>
+                                <b><fmt:message key="log.out"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=person_management_page">
-                                <b>Person management</b>
+                                <b><fmt:message key="person.management"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=competition_management_page">
-                                <b>Competition management</b>
+                                <b><fmt:message key="competition.management"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=bet_management_page">
-                                <b>Bet management</b>
+                                <b><fmt:message key="bet.management"/></b>
                             </a>
                         </li>
                     </ul>
-                    <h1>Main administrator page</h1>
+                    <h1><fmt:message key="main.admin.page.title"/></h1>
                     <p><jwd:welcome/></p>
                 </c:if>
                 <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
                     <ul id="menu">
                         <li class="menu">
-                            <a class="menu" href=""><b>Main</b></a>
+                            <a class="menu" href=""><b><fmt:message key="main"/></b></a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
-                                <b>Betslip management</b>
+                                <b><fmt:message key="betslip.management"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
-                                <b>Log out</b>
+                                <b><fmt:message key="log.out"/></b>
                             </a>
                         </li>
                     </ul>
-                    <h1>Main bookmaker page</h1>
+                    <h1><fmt:message key="main.bookmaker.page.title"/></h1>
                     <p><jwd:welcome/></p>
                 </c:if>
                 <c:if test="${sessionScope.personRole eq Role.USER}">
                     <ul id="menu">
                         <li class="menu">
-                            <a class="menu" href=""><b>Main</b></a>
+                            <a class="menu" href=""><b><fmt:message key="main"/></b></a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=bet_adding_page">
-                                <b>Place bet</b>
+                                <b><fmt:message key="main.user.menu.place.bet"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
-                                <b>Betslip list</b>
+                                <b><fmt:message key="betslip.list"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=person_bets_list_page">
-                                <b>My bets</b>
+                                <b><fmt:message key="main.user.menu.bets"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=person_bet_history_page">
-                                <b>My history bet</b>
+                                <b><fmt:message key="main.user.menu.history.bet"/></b>
                             </a>
                         </li>
                         <li class="menu">
                             <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
-                                <b>Log out</b>
+                                <b><fmt:message key="log.out"/></b>
                             </a>
                         </li>
                     </ul>
-                    <h1>Main user page</h1>
+                    <h1><fmt:message key="main.user.page.title"/></h1>
                     <p><jwd:welcome/></p>
-                    <p><label>Balance: ${sessionScope.personBalance}</label></p>
-                    <h1>Betslips</h1>
+                    <p><label><fmt:message key="main.user.balance"/>: ${sessionScope.personBalance}</label></p>
+                    <h1><fmt:message key="main.user.betslips"/></h1>
                     <table>
                         <tr>
-                            <th><h2>Home win</h2></th>
-                            <th><h2>Home won't lose</h2></th>
-                            <th><h2>Draw</h2></th>
-                            <th><h2>No draw</h2></th>
-                            <th><h2>Away won't lose</h2></th>
-                            <th><h2>Away win</h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.home.win"/></h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.home.w'ont.lose"/></h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.draw"/></h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.no.draw"/></h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.away.w'ont.lose"/></h2></th>
+                            <th><h2><fmt:message key="main.user.table.betslip.away.win"/></h2></th>
                         </tr>
                         <tr>
                             <td>
@@ -172,33 +227,48 @@
                         </tr>
                     </table>
                 </c:if>
+                <h1><fmt:message key="main.competitions"/></h1>
+                <table>
+                    <tr>
+                        <th><h2><fmt:message key="main.table.competition.basketball"/></h2></th>
+                        <th><h2><fmt:message key="main.table.competition.football"/></h2></th>
+                        <th><h2><fmt:message key="main.table.competition.hockey"/></h2></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <c:forEach var="basketballCompetition" items="${requestScope.basketballCompetition}">
+                                <h3>${basketballCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach var="footballCompetition" items="${requestScope.footballCompetition}">
+                                <h3>${footballCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach var="hockeyCompetition" items="${requestScope.hockeyCompetition}">
+                                <h3>${hockeyCompetition}</h3>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </table>
+                <div id="language-margin-div">
+                    <div id="language-border-div">
+                        <form action="${pageContext.request.contextPath}/controller?command=select_language"
+                              method="post">
+                            <label for="select-auth-language"><fmt:message key="language.title"/></label>
+                            <select id="select-auth-language" name="locale">
+                                <option value=""><fmt:message key="language.select"/></option>
+                                <option value="1"><fmt:message key="language.english"/></option>
+                                <option value="2"><fmt:message key="language.russian"/></option>
+                                <option value="3"><fmt:message key="language.french"/></option>
+                            </select>
+                            <input type="submit" value="<fmt:message key="language.select"/>">
+                        </form>
+                    </div>
+                </div>
             </c:otherwise>
         </c:choose>
-        <h1>Competitions</h1>
-        <table>
-            <tr>
-                <th><h2>Basketball</h2></th>
-                <th><h2>Football</h2></th>
-                <th><h2>Hockey</h2></th>
-            </tr>
-            <tr>
-                <td>
-                    <c:forEach var="basketballCompetition" items="${requestScope.basketballCompetition}">
-                        <h3>${basketballCompetition}</h3>
-                    </c:forEach>
-                </td>
-                <td>
-                    <c:forEach var="footballCompetition" items="${requestScope.footballCompetition}">
-                        <h3>${footballCompetition}</h3>
-                    </c:forEach>
-                </td>
-                <td>
-                    <c:forEach var="hockeyCompetition" items="${requestScope.hockeyCompetition}">
-                        <h3>${hockeyCompetition}</h3>
-                    </c:forEach>
-                </td>
-            </tr>
-        </table>
         <h5>
             <label id="time"></label>
             <br>

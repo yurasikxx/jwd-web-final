@@ -4,6 +4,8 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
@@ -18,14 +20,16 @@ import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 
 public class ShowBetAddingPageCommand implements Command {
 
-    private static final String BET_ADDING_OPERATION_MSG = "Bet adding operation\n";
+    private static final String BET_ADDING_MESSAGE_KEY = "bet.adding";
 
     private static volatile ShowBetAddingPageCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final BetslipBaseService betslipService;
     private final BaseCommandResponse betCommandResponse;
 
     private ShowBetAddingPageCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
@@ -49,7 +53,7 @@ public class ShowBetAddingPageCommand implements Command {
                 .sorted(Comparator.comparing(o -> o.getCompetition().toString()))
                 .collect(Collectors.toList());
 
-        request.setAttribute(BET_ATTRIBUTE_NAME, BET_ADDING_OPERATION_MSG);
+        request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(BET_ADDING_MESSAGE_KEY));
         request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
         return betCommandResponse;

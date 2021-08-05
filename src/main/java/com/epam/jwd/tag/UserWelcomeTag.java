@@ -1,5 +1,8 @@
 package com.epam.jwd.tag;
 
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -13,9 +16,11 @@ import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 
 public class UserWelcomeTag extends TagSupport {
 
-    private static final String PERSON_WELCOME_MSG = "Hello, %s!";
-    private static final String DEFAULT_WELCOME_MSG = "Hello! You may log in or sign up by clicking above :)";
+    private static final String UNAUTHORIZED_WELCOME_MESSAGE_KEY = "person.unauthorized.welcome";
+    private static final String AUTHORIZED_WELCOME_MESSAGE_KEY = "person.authorized.welcome";
     private static final String REGEX = "_";
+
+    private final BaseApplicationMessageManager messageManager = ApplicationMessageManager.getInstance();
 
     @Override
     public int doStartTag() throws JspException {
@@ -39,8 +44,9 @@ public class UserWelcomeTag extends TagSupport {
                 .map(Object::toString)
                 .map(name -> name.split(REGEX))
                 .map(stringFunction)
-                .map(formattedName -> String.format(PERSON_WELCOME_MSG, formattedName))
-                .orElse(DEFAULT_WELCOME_MSG);
+                .map(formattedName -> String.format(messageManager.getString(UNAUTHORIZED_WELCOME_MESSAGE_KEY),
+                        formattedName))
+                .orElse(messageManager.getString(AUTHORIZED_WELCOME_MESSAGE_KEY));
     }
 
     private void printTextToOut(String tagResultText) throws JspException {

@@ -7,6 +7,8 @@ import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.Person;
@@ -26,36 +28,38 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BETSLIP_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.BET_SUCCESSFULLY_ADDED_MSG;
 import static com.epam.jwd.constant.Constant.BET_TOTAL_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.INCORRECT_ENTERED_DATA;
+import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.INCORRECT_DATA_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
-import static com.epam.jwd.constant.Constant.PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG;
+import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.PERSON_HAS_BET_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 public class BetAddingCommand implements Command {
 
-    private static final String INSUFFICIENT_FUNDS_MSG = "Insufficient funds on the balance";
-    private static final String BETSLIP_NOT_SELECTED_MSG = "Betslip not selected";
+    private static final String BET_ADDED_MESSAGE_KEY = "bet.added";
+    private static final String PERSON_BALANCE_MESSAGE_KEY = "person.balance";
+    private static final String BETSLIP_SELECT_MESSAGE_KEY = "betslip.not.selected";
 
     private static volatile BetAddingCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
     private final BetslipBaseService betslipService;
     private final BetBaseService betService;
     private final BaseCommandResponse betCommandResponse;
 
     private BetAddingCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
@@ -107,48 +111,44 @@ public class BetAddingCommand implements Command {
 
             Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
                     placedBetPerson.getBalance());
-            request.setAttribute(BET_ATTRIBUTE_NAME, BET_SUCCESSFULLY_ADDED_MSG);
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(BET_ADDED_MESSAGE_KEY));
             request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
-
-            return betCommandResponse;
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, INCORRECT_ENTERED_DATA);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(INCORRECT_DATA_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (DaoException | ServiceException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
+
+        return betCommandResponse;
     }
 
     private boolean cannotBeSaved(BaseCommandRequest request, Long betslipId, Integer betTotal, Person person, Bet bet) {
         if (betslipId < MIN_LONG_ID_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_NOT_SELECTED_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_SELECT_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return true;
         }
 
         if (betTotal < MIN_LONG_ID_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(NUMBERS_POSITIVE_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return true;
         }
 
         if (person.getBalance() - betTotal < MIN_INDEX_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, INSUFFICIENT_FUNDS_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(PERSON_BALANCE_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return true;
         }
 
         if (!betService.canSave(bet)) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG);
-            request.setAttribute(BET_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(PERSON_HAS_BET_MESSAGE_KEY));
+            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return true;
         }
@@ -163,7 +163,7 @@ public class BetAddingCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private Integer getCheckedBetTotal(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -174,7 +174,7 @@ public class BetAddingCommand implements Command {
             return betTotal;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private String extractPersonNameFromSession(HttpSession session) {

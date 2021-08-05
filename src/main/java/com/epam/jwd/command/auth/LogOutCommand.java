@@ -5,7 +5,10 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+import javax.servlet.http.HttpSession;
+
 import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
+import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 
 public class LogOutCommand implements Command {
 
@@ -31,7 +34,16 @@ public class LogOutCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        final HttpSession currentSession;
+        String locale = null;
+
+        if (request.getCurrentSession().isPresent()) {
+            currentSession = request.getCurrentSession().get();
+            locale = currentSession.getAttribute(LOCALE_PARAMETER_NAME).toString();
+        }
+
         request.invalidateCurrentSession();
+        request.createSession().setAttribute(LOCALE_PARAMETER_NAME, locale);
         return logoutCommandResponse;
     }
 

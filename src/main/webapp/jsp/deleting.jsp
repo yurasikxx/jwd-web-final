@@ -1,9 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="jwd" uri="custom" %>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="application"/>
 <html>
 <head>
-    <title>Deleting</title>
+    <title><fmt:message key="deleting"/></title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
@@ -49,62 +52,64 @@
             <c:when test="${not empty requestScope.person}">
                 <h1>${requestScope.person}</h1>
                 <form action="${pageContext.request.contextPath}/controller?command=person_delete" method="post">
-                    <label for="personSelect">Person ID</label>
+                    <label for="personSelect"><fmt:message key="person"/></label>
                     <select id="personSelect" name="id">
-                        <option value="0">Select person</option>
+                        <option value="0"><fmt:message key="person.select"/></option>
                         <c:forEach var="selectPerson" items="${requestScope.selectPerson}">
                             <option value="${selectPerson.id}">${selectPerson}</option>
                         </c:forEach>
                     </select>
-                    <input type="submit" value="Delete">
+                    <input type="submit" value="<fmt:message key="delete"/>">
                 </form>
                 <h2>
                     <a class="changing"
                        href="${pageContext.request.contextPath}/controller?command=person_management_page">
-                        Back to person management
+                        <fmt:message key="back.person.management"/>
                     </a>
                 </h2>
             </c:when>
             <c:when test="${not empty requestScope.competition}">
                 <h1>${requestScope.competition}</h1>
                 <form action="${pageContext.request.contextPath}/controller?command=competition_delete" method="post">
-                    <label for="competitionSelect">Competition</label>
+                    <label for="competitionSelect"><fmt:message key="competition"/></label>
                     <select id="competitionSelect" name="id">
-                        <option value="0">Select competition</option>
+                        <option value="0"><fmt:message key="competition.select"/></option>
                         <c:forEach var="selectCompetition" items="${requestScope.selectCompetition}">
                             <option value="${selectCompetition.id}">${selectCompetition}</option>
                         </c:forEach>
                     </select>
-                    <input type="submit" value="Delete">
+                    <input type="submit" value="<fmt:message key="delete"/>">
                 </form>
                 <h2>
                     <a class="changing"
                        href="${pageContext.request.contextPath}/controller?command=competition_management_page">
-                        Back to competition management
+                        <fmt:message key="back.competition.management"/>
                     </a>
                 </h2>
             </c:when>
             <c:when test="${not empty requestScope.betslip}">
                 <h1>${requestScope.betslip}</h1>
                 <form action="${pageContext.request.contextPath}/controller?command=betslip_delete" method="post">
-                    <label for="betslipSelect">Betslip</label>
+                    <label for="betslipSelect"><fmt:message key="betslip"/></label>
                     <select id="betslipSelect" name="id">
-                        <option value="0">Select betslip</option>
+                        <option value="0"><fmt:message key="betslip.select"/></option>
                         <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
-                            <option value="${selectBetslip.id}">${selectBetslip.betType.name}, ${selectBetslip}</option>
+                            <option value="${selectBetslip.id}">
+                                    ${selectBetslip.id}, ${selectBetslip.betType.name}, ${selectBetslip}
+                            </option>
                         </c:forEach>
                     </select>
-                    <input type="submit" value="Delete">
+                    <input type="submit" value="<fmt:message key="delete"/>">
                 </form>
                 <h2>
                     <a class="changing"
                        href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
-                        Back to betslip management
+                        <fmt:message key="back.betslip.management"/>
                     </a>
                 </h2>
             </c:when>
             <c:otherwise>
-                Oops! Something went wrong...
+                <fmt:message key="error.msg"/>
             </c:otherwise>
         </c:choose>
         <h5>
@@ -115,7 +120,9 @@
     </div>
 </div>
 <h2>
-    <a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a>
+    <a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">
+        <fmt:message key="back.main"/>
+    </a>
 </h2>
 </body>
 </html>

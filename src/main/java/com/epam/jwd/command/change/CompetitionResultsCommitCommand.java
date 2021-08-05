@@ -8,6 +8,8 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetHistory;
 import com.epam.jwd.model.BetResult;
@@ -31,14 +33,14 @@ import com.epam.jwd.service.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.BetResult.LOSS;
 import static com.epam.jwd.model.BetResult.WIN;
 import static com.epam.jwd.model.BetType.AWAY_TEAM_WILL_NOT_LOSE;
@@ -50,15 +52,15 @@ import static com.epam.jwd.model.BetType.NO_DRAW;
 
 public class CompetitionResultsCommitCommand implements Command {
 
-    private static final String SUCCESSFUL_OPERATION_MESSAGE = "Competition results successfully committed and " +
-            "all related bets added to bet history";
-    private static final String FIELD_MUST_BE_FILLED_MSG = "Competition ID field must be filled";
+    private static final String SUCCESSFUL_OPERATION_MESSAGE_KEY = "competition.results.committed";
+    private static final String COMPETITION_RESULTS_EMPTY_MESSAGE_KEY = "competition.results.empty";
+    private static final String COMPETITION_NOT_SELECTED_MESSAGE_KEY = "competition.not.selected";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
     private static final long RANDOM_COMPETITION_RESULT_ID = 1 + (long) (Math.random() * 3);
-    private static final String COMPETITION_NOT_SELECTED_MSG = "Competition not selected";
 
     private static volatile CompetitionResultsCommitCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
     private final CompetitionBaseService competitionService;
     private final BetslipBaseService betslipService;
@@ -68,6 +70,7 @@ public class CompetitionResultsCommitCommand implements Command {
     private final BaseCommandResponse betHistoryErrorCommandResponse;
 
     private CompetitionResultsCommitCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
         this.competitionService = CompetitionService.getInstance();
         this.betslipService = BetslipService.getInstance();
@@ -97,8 +100,8 @@ public class CompetitionResultsCommitCommand implements Command {
     private BaseCommandResponse getCommandResponse(BaseCommandRequest request) {
         try {
             if (!competitionService.findAll().contains(competitionService.findById(getCheckedCompetitionId(request)))) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, COMPETITION_NOT_SELECTED_MSG);
-                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_NOT_SELECTED_MESSAGE_KEY));
+                request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
                 return betHistoryErrorCommandResponse;
             }
@@ -141,22 +144,17 @@ public class CompetitionResultsCommitCommand implements Command {
 
             final List<Competition> competitions = competitionService.findAll();
 
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, SUCCESSFUL_OPERATION_MESSAGE);
+            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(SUCCESSFUL_OPERATION_MESSAGE_KEY));
             request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
-
-            return betHistoryCommandResponse;
         } catch (IncorrectEnteredDataException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, FIELD_MUST_BE_FILLED_MSG);
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betHistoryErrorCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_RESULTS_EMPTY_MESSAGE_KEY));
+            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
-            e.printStackTrace();
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betHistoryErrorCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
+            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
+
+        return betHistoryCommandResponse;
     }
 
     private void updatePersonBalance(List<BetHistory> historyBets, List<Person> winBetPersons) throws ServiceException, DaoException {
@@ -221,7 +219,7 @@ public class CompetitionResultsCommitCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
 }

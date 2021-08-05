@@ -16,7 +16,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Locale;
+
+import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 
 @WebServlet("/controller")
 public class ApplicationController extends HttpServlet {
@@ -49,6 +53,12 @@ public class ApplicationController extends HttpServlet {
 
 
     private void process(HttpServletRequest req, HttpServletResponse resp) {
+        final HttpSession session = req.getSession();
+
+        if (session.getAttribute(LOCALE_PARAMETER_NAME) == null) {
+            session.setAttribute(LOCALE_PARAMETER_NAME, Locale.getDefault());
+        }
+
         final Command command = ApplicationCommand.getInstance().resolveCommand(req);
         final BaseCommandRequest request = new CommandRequest(req);
         final BaseCommandResponse response = command.execute(request);

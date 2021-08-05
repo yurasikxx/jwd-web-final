@@ -46,6 +46,18 @@ body {
     padding: 25px;
 }
 
+#language-margin-div {
+    width: 300px;
+    margin: 5px auto;
+    text-align: center;
+}
+
+#language-border-div {
+    border: 1px ridge mediumturquoise;
+    border-radius: 5px;
+    padding: 10px;
+}
+
 #viewing-margin-div {
     width: 100%;
     padding-top: 10px;

@@ -7,31 +7,35 @@ import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INITIAL_BALANCE_VALUE;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 public class PersonAddingCommand implements Command {
 
-    private static final String PERSON_SUCCESSFULLY_ADDED_MSG = "Person successfully added";
-    private static final String INVALID_CREDENTIALS_MSG = "Person with such login already exists or login/password are empty";
+    private static final String PERSON_ADDED_MESSAGE_KEY = "person.added";
+    private static final String ADDING_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.adding.invalid";
 
     private static volatile PersonAddingCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
     private final BaseCommandResponse personCommandResponse;
 
     private PersonAddingCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
         this.personCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
@@ -61,27 +65,23 @@ public class PersonAddingCommand implements Command {
             final Person person = new Person(login, password, INITIAL_BALANCE_VALUE);
 
             if (!personService.canRegister(person)) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, INVALID_CREDENTIALS_MSG);
-                request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ADDING_INVALID_CREDENTIALS_MESSAGE_KEY));
+                request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
                 return personCommandResponse;
             }
 
             personService.getNewRegisteredPersons(personService.register(person));
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_ADDED_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_ADDED_MESSAGE_KEY));
         } catch (IncorrectEnteredDataException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (DaoException | ServiceException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
+
+        return personCommandResponse;
     }
 
     private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -92,7 +92,7 @@ public class PersonAddingCommand implements Command {
             return login;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -103,7 +103,7 @@ public class PersonAddingCommand implements Command {
             return password;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
 }

@@ -7,34 +7,38 @@ import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
 import java.util.List;
 
-import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.EMPTY_ID_SENT_MSG;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.ID_EMPTY_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.Role.USER;
 
 public class PersonDeletingCommand implements Command {
 
-    private static final String PERSON_NOT_SELECTED_MSG = "Person not selected";
-    private static final String PERSON_CANNOT_BE_DELETED_MSG = "Person cannot be deleted while there is unplayed bet";
-    private static final String PERSON_SUCCESSFULLY_DELETED_MSG = "Person successfully deleted";
+    private static final String PERSON_SELECT_MESSAGE_KEY = "person.not.selected";
+    private static final String PERSON_CANNOT_DELETE_MESSAGE_KEY = "person.cannot.delete";
+    private static final String PERSON_DELETED_MESSAGE_KEY = "person.deleted";
 
     private static volatile PersonDeletingCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
     private final BaseCommandResponse personCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
 
     private PersonDeletingCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
     }
 
@@ -60,8 +64,8 @@ public class PersonDeletingCommand implements Command {
             final Long id = getCheckedId(request);
 
             if (!personService.canBeDeleted(id)) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_NOT_SELECTED_MSG);
-                request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(PERSON_SELECT_MESSAGE_KEY));
+                request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
                 return personCommandResponse;
             }
@@ -70,26 +74,20 @@ public class PersonDeletingCommand implements Command {
 
             final List<Person> users = personService.findByRole(USER);
 
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_SUCCESSFULLY_DELETED_MSG);
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_DELETED_MESSAGE_KEY));
             request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, users);
-
-            return personCommandResponse;
         } catch (IncorrectEnteredDataException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, EMPTY_ID_SENT_MSG);
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ID_EMPTY_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (ServiceException | DaoException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, PERSON_CANNOT_BE_DELETED_MSG);
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return personCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(PERSON_CANNOT_DELETE_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
+
+        return personCommandResponse;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -100,7 +98,7 @@ public class PersonDeletingCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
 }

@@ -4,19 +4,23 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 
 public class ShowPersonAddingPageCommand implements Command {
 
-    private static final String PERSON_ADDING_OPERATION_MSG = "Person adding operation";
+    private static final String PERSON_ADDING_MESSAGE_KEY = "person.adding";
 
     private static volatile ShowPersonAddingPageCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final BaseCommandResponse personCommandResponse;
 
     private ShowPersonAddingPageCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.personCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
@@ -34,7 +38,7 @@ public class ShowPersonAddingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        request.setAttribute(PERSON_ATTRIBUTE_NAME, PERSON_ADDING_OPERATION_MSG);
+        request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_ADDING_MESSAGE_KEY));
         return personCommandResponse;
     }
 

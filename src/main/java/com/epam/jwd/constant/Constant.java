@@ -2,6 +2,7 @@ package com.epam.jwd.constant;
 
 public class Constant {
 
+    public static final String MAIN_JSP_PATH = "/jsp/main.jsp";
     public static final String REGISTER_JSP_PATH = "/jsp/registration.jsp";
     public static final String LOGIN_JSP_PATH = "/jsp/login.jsp";
     public static final String ADDING_JSP_PATH = "/jsp/adding.jsp";
@@ -21,6 +22,7 @@ public class Constant {
     public static final String BET_ATTRIBUTE_NAME = "bet";
     public static final String BET_HISTORY_ATTRIBUTE_NAME = "betHistory";
     public static final String ERROR_ATTRIBUTE_NAME = "error";
+    public static final String LANGUAGE_ATTRIBUTE_NAME = "language";
     public static final String PERSON_BALANCE_SESSION_ATTRIBUTE_NAME = "personBalance";
     public static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
     public static final String PERSON_ROLE_SESSION_ATTRIBUTE_NAME = "personRole";
@@ -35,20 +37,20 @@ public class Constant {
     public static final String COEFFICIENT_PARAMETER_NAME = "coefficient";
     public static final String BETSLIP_PARAMETER_NAME = "betslipId";
     public static final String BET_TOTAL_PARAMETER_NAME = "betTotal";
+    public static final String LOCALE_PARAMETER_NAME = "locale";
 
-    public static final String SOMETHING_WENT_WRONG_MSG = "Something went wrong...";
-    public static final String ALL_FIELDS_MUST_BE_FILLED_MSG = "All fields must be filled";
-    public static final String TEAMS_MUST_BE_DIFFERENT_MSG = "Teams must be different";
-    public static final String TEAMS_MUST_BE_FROM_THE_SAME_SPORT_MSG = "Teams must be from the same sport";
-    public static final String TRY_AGAIN_MSG = "Try again";
-    public static final String EMPTY_ID_SENT_MSG = "ID was not entered";
-    public static final String NUMBERS_MUST_BE_POSITIVE_MSG = "Numbers must be positive";
-    public static final String INCORRECT_ENTERED_DATA = ALL_FIELDS_MUST_BE_FILLED_MSG + " and must be numbers";
-    public static final String BETSLIP_ALREADY_EXISTS_MSG = "Betslip of given competition with such bet type already exists";
-    public static final String BET_SUCCESSFULLY_ADDED_MSG = "Bet successfully added";
-    public static final String PERSON_ALREADY_HAS_BET_WITH_SUCH_BETSLIP_MSG = "Person already has bet with such betslip";
-    public static final String EMPTY_CREDENTIALS_MSG = "Credentials must not be empty";
-    public static final String THERE_WHILE_NO_USER_MSG = "There while no user...";
+    public static final String ERROR_MESSAGE_KEY = "error.msg";
+    public static final String TRY_AGAIN_MESSAGE_KEY = "try.again";
+    public static final String FIELDS_FILLED_MESSAGE_KEY = "fields.filled";
+    public static final String TEAM_DIFFERENCE_MESSAGE_KEY = "competition.team.difference";
+    public static final String TEAM_SPORT_DIFFERENCE_MESSAGE_KEY = "competition.team.sport.difference";
+    public static final String ID_EMPTY_MESSAGE_KEY = "id.empty";
+    public static final String NUMBERS_POSITIVE_MESSAGE_KEY = "numbers.positive";
+    public static final String INCORRECT_DATA_MESSAGE_KEY = "data.incorrect";
+    public static final String BETSLIP_ALREADY_EXISTS_MESSAGE_KEY = "betslip.already.exists";
+    public static final String PERSON_HAS_BET_MESSAGE_KEY = "person.has.bet";
+    public static final String EMPTY_CREDENTIALS_MESSAGE_KEY = "credentials.empty";
+    public static final String EMPTY_USER_MESSAGE_KEY = "person.empty";
 
     public static final int EMPTY_LIST_SIZE_VALUE = 0;
     public static final int INITIAL_ID_VALUE = 1;

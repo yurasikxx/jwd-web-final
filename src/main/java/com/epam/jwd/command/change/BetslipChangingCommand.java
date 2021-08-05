@@ -8,6 +8,8 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
+import com.epam.jwd.manager.ApplicationMessageManager;
+import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.Competition;
@@ -20,34 +22,36 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.jwd.constant.Constant.ALL_FIELDS_MUST_BE_FILLED_MSG;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.BET_TYPE_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COEFFICIENT_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.COMPETITION_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.NUMBERS_MUST_BE_POSITIVE_MSG;
+import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SOMETHING_WENT_WRONG_MSG;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MSG;
+import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 public class BetslipChangingCommand implements Command {
 
-    private static final String BETSLIP_SUCCESSFULLY_CHANGED_MSG = "Betslip successfully changed";
-    private static final String BETSLIP_COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG = "Betslip, competition or bet type not selected";
+    private static final String BETSLIP_CHANGED_MESSAGE_KEY = "betslip.changed";
+    private static final String BETSLIP_COMPETITION_BET_TYPE_SELECT_MESSAGE_KEY = "betslip.competition.bet.type.select";
 
     private static volatile BetslipChangingCommand instance;
 
+    private final BaseApplicationMessageManager messageManager;
     private final CompetitionBaseService competitionService;
     private final BetslipBaseService betslipService;
     private final BaseCommandResponse betslipCommandResponse;
 
     private BetslipChangingCommand() {
+        this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betslipCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
@@ -78,15 +82,15 @@ public class BetslipChangingCommand implements Command {
             final Integer coefficient = getCheckedCoefficient(request);
 
             if (id < MIN_LONG_ID_VALUE || competitionId < MIN_LONG_ID_VALUE || betTypeId < MIN_LONG_ID_VALUE) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, BETSLIP_COMPETITION_OR_BET_TYPE_NOT_SELECTED_MSG);
-                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_COMPETITION_BET_TYPE_SELECT_MESSAGE_KEY));
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
                 return betslipCommandResponse;
             }
 
             if (coefficient < MIN_LONG_ID_VALUE) {
-                request.setAttribute(ERROR_ATTRIBUTE_NAME, NUMBERS_MUST_BE_POSITIVE_MSG);
-                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(NUMBERS_POSITIVE_MESSAGE_KEY));
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
                 return betslipCommandResponse;
             }
@@ -100,23 +104,19 @@ public class BetslipChangingCommand implements Command {
             final List<Competition> competitions = competitionService.findAll();
             final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
 
-            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, BETSLIP_SUCCESSFULLY_CHANGED_MSG);
+            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_CHANGED_MESSAGE_KEY));
             request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
             request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
             request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betTypes);
-
-            return betslipCommandResponse;
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, SOMETHING_WENT_WRONG_MSG);
-            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betslipCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
+            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, ALL_FIELDS_MUST_BE_FILLED_MSG);
-            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, TRY_AGAIN_MSG);
-
-            return betslipCommandResponse;
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
+            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
+
+        return betslipCommandResponse;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -127,7 +127,7 @@ public class BetslipChangingCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private Long getCheckedCompetitionId(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -138,7 +138,7 @@ public class BetslipChangingCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private Long getCheckedBetTypeId(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -149,7 +149,7 @@ public class BetslipChangingCommand implements Command {
             return id;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private Integer getCheckedCoefficient(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -160,7 +160,7 @@ public class BetslipChangingCommand implements Command {
             return coefficient;
         }
 
-        throw new IncorrectEnteredDataException(ALL_FIELDS_MUST_BE_FILLED_MSG);
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
 }

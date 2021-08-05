@@ -1,10 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.epam.jwd.model.Role" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="jwd" uri="custom" %>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="application"/>
 <html>
 <head>
-    <title>Viewing</title>
+    <title><fmt:message key="viewing"/></title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/time.js"></script>
 </head>
@@ -12,13 +15,13 @@
 <div id=viewing-margin-div>
     <div id="viewing-border-div">
         <c:if test="${not empty requestScope.person}">
-            <h1>Persons</h1>
+            <h1><fmt:message key="persons"/></h1>
             <table>
                 <tr>
-                    <th><h2>ID</h2></th>
-                    <th><h2>Login</h2></th>
-                    <th><h2>Balance</h2></th>
-                    <th><h2>Role</h2></th>
+                    <th><h2><fmt:message key="id"/></h2></th>
+                    <th><h2><fmt:message key="auth.login"/></h2></th>
+                    <th><h2><fmt:message key="auth.password"/></h2></th>
+                    <th><h2><fmt:message key="role"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -45,18 +48,18 @@
             </table>
             <h3>
                 <a class="changing" href="${pageContext.request.contextPath}/controller?command=person_management_page">
-                    Back to person management
+                    <fmt:message key="back.person.management"/>
                 </a>
             </h3>
         </c:if>
         <c:if test="${not empty requestScope.competition}">
-            <h1>Competitions</h1>
+            <h1><fmt:message key="competitions"/></h1>
             <table>
                 <tr>
-                    <th><h2>ID</h2></th>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
+                    <th><h2><fmt:message key="id"/></h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -85,23 +88,24 @@
                 <h3>
                     <a class="changing"
                        href="${pageContext.request.contextPath}/controller?command=competition_management_page">
-                        Back to competition management
+                        <fmt:message key="back.competition.management"/>
                     </a>
                 </h3>
             </c:if>
         </c:if>
         <c:if test="${not empty requestScope.betslip}">
-            <h1>Betslips</h1>
+            <h1><fmt:message key="betslips"/></h1>
             <table>
                 <tr>
-                    <th><h2>ID</h2></th>
-                    <th><h2>Competition ID</h2></th>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
-                    <th><h2>Bet type ID</h2></th>
-                    <th><h2>Bet type</h2></th>
-                    <th><h2>Coefficient</h2></th>
+                    <th><h2><fmt:message key="id"/></h2></th>
+                    <th><h2><fmt:message key="competition.id"/></h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
+                    f
+                    <th><h2><fmt:message key="bet.type.id"/></h2></th>
+                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="coefficient"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -148,29 +152,30 @@
             </table>
             <c:if test="${sessionScope.personRole eq Role.BOOKMAKER}">
                 <h3>
-                    <a class="changing" href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
-                        Back to betslip management
+                    <a class="changing"
+                       href="${pageContext.request.contextPath}/controller?command=betslip_management_page">
+                        <fmt:message key="back.betslip.management"/>
                     </a>
                 </h3>
             </c:if>
         </c:if>
         <c:if test="${not empty requestScope.bet}">
-            <h1>Bets</h1>
+            <h1><fmt:message key="bets"/></h1>
             <table>
                 <tr>
-                    <th><h2>ID</h2></th>
-                    <th><h2>Betslip ID</h2></th>
-                    <th><h2>Competition ID</h2></th>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
-                    <th><h2>Bet type ID</h2></th>
-                    <th><h2>Bet type</h2></th>
-                    <th><h2>Coefficient</h2></th>
-                    <th><h2>Person ID</h2></th>
-                    <th><h2>Login</h2></th>
-                    <th><h2>Role</h2></th>
-                    <th><h2>Bet total</h2></th>
+                    <th><h2><fmt:message key="id"/></h2></th>
+                    <th><h2><fmt:message key="betslip.id"/></h2></th>
+                    <th><h2><fmt:message key="competition.id"/></h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="bet.type.id"/></h2></th>
+                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="coefficient"/></h2></th>
+                    <th><h2><fmt:message key="person.id"/></h2></th>
+                    <th><h2><fmt:message key="auth.login"/></h2></th>
+                    <th><h2><fmt:message key="role"/></h2></th>
+                    <th><h2><fmt:message key="bet.total"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -242,24 +247,24 @@
             </table>
             <h3>
                 <a class="changing" href="${pageContext.request.contextPath}/controller?command=bet_management_page">
-                    Back to bet management
+                    <fmt:message key="back.bet.management"/>
                 </a>
             </h3>
         </c:if>
         <c:if test="${not empty requestScope.betHistory}">
-            <h1>Bet history</h1>
+            <h1><fmt:message key="bet.history"/></h1>
             <table>
                 <tr>
-                    <th><h2>ID</h2></th>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
-                    <th><h2>Bet type</h2></th>
-                    <th><h2>Coefficient</h2></th>
-                    <th><h2>Bet total</h2></th>
-                    <th><h2>User</h2></th>
-                    <th><h2>Competition result</h2></th>
-                    <th><h2>Bet result</h2></th>
+                    <th><h2><fmt:message key="id"/></h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="coefficient"/></h2></th>
+                    <th><h2><fmt:message key="bet.total"/></h2></th>
+                    <th><h2><fmt:message key="user"/></h2></th>
+                    <th><h2><fmt:message key="competition.result"/></h2></th>
+                    <th><h2><fmt:message key="bet.result"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -316,20 +321,20 @@
             </table>
             <h3>
                 <a class="changing" href="${pageContext.request.contextPath}/controller?command=bet_management_page">
-                    Back to bet management
+                    <fmt:message key="back.bet.management"/>
                 </a>
             </h3>
         </c:if>
         <c:if test="${not empty requestScope.personBet}">
-            <h1>My bets</h1>
+            <h1><fmt:message key="main.user.menu.bets"/></h1>
             <table>
                 <tr>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
-                    <th><h2>Bet type</h2></th>
-                    <th><h2>Coefficient</h2></th>
-                    <th><h2>Bet total</h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="coefficient"/></h2></th>
+                    <th><h2><fmt:message key="bet.total"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -366,17 +371,17 @@
             </table>
         </c:if>
         <c:if test="${not empty requestScope.personBetHistory}">
-            <h1>My bet history</h1>
+            <h1><fmt:message key="main.user.menu.history.bet"/></h1>
             <table>
                 <tr>
-                    <th><h2>Sport</h2></th>
-                    <th><h2>Home</h2></th>
-                    <th><h2>Away</h2></th>
-                    <th><h2>Bet type</h2></th>
-                    <th><h2>Coefficient</h2></th>
-                    <th><h2>Bet total</h2></th>
-                    <th><h2>Competition result</h2></th>
-                    <th><h2>Bet result</h2></th>
+                    <th><h2><fmt:message key="sport"/></h2></th>
+                    <th><h2><fmt:message key="home"/></h2></th>
+                    <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="coefficient"/></h2></th>
+                    <th><h2><fmt:message key="bet.total"/></h2></th>
+                    <th><h2><fmt:message key="competition.result"/></h2></th>
+                    <th><h2><fmt:message key="bet.result"/></h2></th>
                 </tr>
                 <tr>
                     <td>
@@ -430,6 +435,10 @@
         </h5>
     </div>
 </div>
-<h2><a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">Back to main</a></h2>
+<h2>
+    <a class="changing" href="${pageContext.request.contextPath}/controller?command=main_page">
+        <fmt:message key="back.main"/>
+    </a>
+</h2>
 </body>
 </html>
