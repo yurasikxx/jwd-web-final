@@ -38,6 +38,12 @@ import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code BetslipChangingCommand} class implements {@code Command}
+ * interface and execute command that changes betslip.
+ *
+ * @see Command
+ */
 public class BetslipChangingCommand implements Command {
 
     private static final String BETSLIP_CHANGED_MESSAGE_KEY = "betslip.changed";

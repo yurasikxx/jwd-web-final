@@ -19,6 +19,12 @@ import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowCompetitionAddingPageCommand} class implements {@code Command}
+ * interface and execute command that showing competition adding page.
+ *
+ * @see Command
+ */
 public class ShowCompetitionAddingPageCommand implements Command {
 
     private static final String COMPETITION_ADDING_MESSAGE_KEY = "competition.adding";

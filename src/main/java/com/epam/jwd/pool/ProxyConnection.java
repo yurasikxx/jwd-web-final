@@ -19,6 +19,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+/**
+ * A {@code ProxyConnection} class delegates @{@code Connection} class methods
+ * and puts opened connections into connection pool instead of closing them.
+ *
+ * @see ConnectionPool
+ * @see ConnectionPoolManager
+ */
 public class ProxyConnection implements Connection {
 
     private final Connection actualConnection;
@@ -67,11 +74,17 @@ public class ProxyConnection implements Connection {
         actualConnection.rollback();
     }
 
+    /**
+     * Puts connection to pool instead of its real closing.
+     */
     @Override
     public void close() {
         ConnectionPoolManager.getInstance().releaseConnection(this);
     }
 
+    /**
+     * Really closes connection.
+     */
     void realClose() throws SQLException {
         actualConnection.close();
     }

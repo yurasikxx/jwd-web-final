@@ -23,6 +23,11 @@ import static com.epam.jwd.command.ApplicationCommand.COMMAND_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ROLE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.model.Role.UNAUTHORIZED;
 
+/**
+ * A {@code PermissionFilter} is a class that make command permission checking.
+ *
+ * @see Filter
+ */
 @WebFilter(urlPatterns = "/*")
 public class PermissionFilter implements Filter {
 

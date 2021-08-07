@@ -1,5 +1,8 @@
 package com.epam.jwd.exception;
 
+/**
+ * A {@code IncorrectEnteredDataException} class catch incorrect entered data.
+ */
 public class IncorrectEnteredDataException extends Exception {
 
     public IncorrectEnteredDataException(String message) {

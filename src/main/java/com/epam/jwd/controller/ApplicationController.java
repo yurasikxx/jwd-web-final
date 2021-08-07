@@ -22,6 +22,12 @@ import java.util.Locale;
 
 import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 
+/**
+ * An {@code ApplicationController} class is a main application servlet
+ * that performs controller function by managing command executing.
+ *
+ * @see Command
+ */
 @WebServlet("/controller")
 public class ApplicationController extends HttpServlet {
 

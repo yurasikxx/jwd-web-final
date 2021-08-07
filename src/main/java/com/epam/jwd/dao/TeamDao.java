@@ -16,7 +16,13 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
-public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
+/**
+ * A {@code TeamDao} class is a team entity data access object that
+ * is an implementation of abstract {@code TeamDao} class.
+ *
+ * @see CommonDao
+ */
+public class TeamDao extends CommonDao<Team> {
 
     private static final Logger LOGGER = LogManager.getLogger(TeamDao.class);
 

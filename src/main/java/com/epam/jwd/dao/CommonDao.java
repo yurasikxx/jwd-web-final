@@ -35,6 +35,13 @@ import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.PREPARED_ENTITIES_WERE_FOUND;
 import static com.epam.jwd.constant.Constant.PREPARED_ENTITIES_WERE_NOT_FOUND_MSG;
 
+/**
+ * Abstract {@code CommonDao} class is an interlayer
+ * between {@code BaseDao} and other entity DAOs.
+ *
+ * @param <T> entity extending {@code BaseEntity} interface.
+ * @see BaseDao
+ */
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     private static final Logger LOGGER = LogManager.getLogger(CommonDao.class);
@@ -195,10 +202,32 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 .findFirst();
     }
 
+    /**
+     * Saves entity to database.
+     *
+     * @param resultSet a given result set.
+     * @param entity    a given entity.
+     * @throws BusinessValidationException if unauthorized person will try save entity.
+     */
     protected abstract void saveResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
 
+    /**
+     * Updates entity inside database.
+     *
+     * @param resultSet a given result set.
+     * @param entity    a given entity.
+     * @throws BusinessValidationException if unauthorized person will try update entity.
+     */
     protected abstract void updateResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
 
+    /**
+     * Retrieves objects from the database.
+     *
+     * @param resultSet a given result set.
+     * @return a retrieved entity.
+     * @throws SQLException                  if failed to execute query.
+     * @throws UnknownEnumAttributeException if there is unknown enum constant.
+     */
     protected abstract T mapResultSet(ResultSet resultSet) throws SQLException, UnknownEnumAttributeException;
 
 }

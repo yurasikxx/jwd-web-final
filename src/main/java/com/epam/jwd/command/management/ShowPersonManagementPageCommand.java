@@ -5,6 +5,12 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+/**
+ * A {@code ShowPersonManagementPageCommand} class implements {@code Command}
+ * interface and execute command that showing person management page.
+ *
+ * @see Command
+ */
 public class ShowPersonManagementPageCommand implements Command {
 
     private static final String PERSON_JSP_PATH = "/jsp/person.jsp";

@@ -5,6 +5,12 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+/**
+ * A {@code ShowBetManagementPageCommand} class implements {@code Command}
+ * interface and execute command that showing bet management page.
+ *
+ * @see Command
+ */
 public class ShowBetManagementPageCommand implements Command {
 
     private static final String BET_JSP_PATH = "/jsp/bet.jsp";

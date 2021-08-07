@@ -29,6 +29,12 @@ import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code PersonChangingCommand} class implements {@code Command}
+ * interface and execute command that changes person.
+ *
+ * @see Command
+ */
 public class PersonChangingCommand implements Command {
 
     private static final String PERSON_CHANGED_MESSAGE_KEY = "person.changed";

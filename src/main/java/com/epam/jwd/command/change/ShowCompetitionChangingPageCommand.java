@@ -18,6 +18,12 @@ import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowCompetitionChangingPageCommand} class implements {@code Command}
+ * interface and execute command that showing competition changing page.
+ *
+ * @see Command
+ */
 public class ShowCompetitionChangingPageCommand implements Command {
 
     private static final String COMPETITION_CHANGING_MESSAGE_KEY = "competition.changing";

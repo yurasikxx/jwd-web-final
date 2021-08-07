@@ -2,10 +2,21 @@ package com.epam.jwd.model;
 
 import java.util.Objects;
 
+/**
+ * Abstract class {@code AbstractBaseEntity} is layer
+ * between {@code BaseEntity} interface and other application models.
+ *
+ * @see BaseEntity
+ */
 public abstract class AbstractBaseEntity implements BaseEntity {
 
     private final Long id;
 
+    /**
+     * An {@code AbstractBaseEntity} constructor.
+     *
+     * @param id entity ID.
+     */
     public AbstractBaseEntity(Long id) {
         this.id = id;
     }

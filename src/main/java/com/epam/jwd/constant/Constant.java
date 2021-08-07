@@ -1,5 +1,8 @@
 package com.epam.jwd.constant;
 
+/**
+ * A {@code Constant} class contains most general constants of the application that used ubiquitous
+ */
 public class Constant {
 
     public static final String MAIN_JSP_PATH = "/jsp/main.jsp";

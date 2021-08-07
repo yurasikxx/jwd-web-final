@@ -21,6 +21,13 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
+/**
+ * Class {@code ConnectionPoolManager} manages the connection pool
+ * and implements all {@code ConnectionPool} methods.
+ *
+ * @see ConnectionPool
+ * @see ProxyConnection
+ */
 public class ConnectionPoolManager implements ConnectionPool {
 
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPoolManager.class);
@@ -195,6 +202,11 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**
+     * Registers JDBC drivers
+     *
+     * @throws CouldNotInitializeConnectionPoolException if failed to initialize connection pool.
+     */
     private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
@@ -233,6 +245,9 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
+    /**
+     * Deregisters JDBC drivers
+     */
     private void deregisterDrivers() {
         final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {

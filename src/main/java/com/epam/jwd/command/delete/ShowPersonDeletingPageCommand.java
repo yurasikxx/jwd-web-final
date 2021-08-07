@@ -19,6 +19,12 @@ import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 import static com.epam.jwd.model.Role.USER;
 
+/**
+ * A {@code ShowPersonDeletingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person deleting page.
+ *
+ * @see Command
+ */
 public class ShowPersonDeletingPageCommand implements Command {
 
     private static final String PERSON_DELETING_MESSAGE_KEY = "person.deleting";

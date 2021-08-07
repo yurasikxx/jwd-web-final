@@ -5,6 +5,12 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+/**
+ * A {@code ShowBetslipManagementPageCommand} class implements {@code Command}
+ * interface and execute command that showing betslip management page.
+ *
+ * @see Command
+ */
 public class ShowBetslipManagementPageCommand implements Command {
 
     private static final String BETSLIP_JSP_PATH = "/jsp/betslip.jsp";

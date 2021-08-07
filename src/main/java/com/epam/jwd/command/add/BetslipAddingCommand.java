@@ -41,6 +41,12 @@ import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code BetslipAddingCommand} class implements {@code Command}
+ * interface and execute command that adds betslip.
+ *
+ * @see Command
+ */
 public class BetslipAddingCommand implements Command {
 
     private static final String BETSLIP_ADDED_MESSAGE_KEY = "betslip.added";

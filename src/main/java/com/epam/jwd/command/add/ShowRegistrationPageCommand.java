@@ -7,6 +7,12 @@ import com.epam.jwd.command.CommandResponse;
 
 import static com.epam.jwd.constant.Constant.REGISTER_JSP_PATH;
 
+/**
+ * A {@code ShowRegistrationPageCommand} class implements {@code Command}
+ * interface and execute command that showing registration page.
+ *
+ * @see Command
+ */
 public class ShowRegistrationPageCommand implements Command {
 
     private static volatile ShowRegistrationPageCommand instance;

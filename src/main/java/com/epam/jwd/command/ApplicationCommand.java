@@ -2,6 +2,12 @@ package com.epam.jwd.command;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * An {@code ApplicationCommand} class resolves request attribute and
+ * returns given command.
+ *
+ * @see BaseApplicationCommand
+ */
 public class ApplicationCommand {
 
     public static final String COMMAND_PARAMETER_NAME = "command";

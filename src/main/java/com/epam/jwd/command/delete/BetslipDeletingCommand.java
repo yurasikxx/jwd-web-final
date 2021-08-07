@@ -24,6 +24,12 @@ import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code BetslipDeletingCommand} class implements {@code Command}
+ * interface and execute command that deletes betslip.
+ *
+ * @see Command
+ */
 public class BetslipDeletingCommand implements Command {
 
     private static final String BETSLIP_SELECT_MESSAGE_KEY = "betslip.not.selected";

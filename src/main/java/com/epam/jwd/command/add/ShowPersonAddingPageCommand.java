@@ -10,6 +10,12 @@ import com.epam.jwd.manager.BaseApplicationMessageManager;
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowPersonAddingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person adding page.
+ *
+ * @see Command
+ */
 public class ShowPersonAddingPageCommand implements Command {
 
     private static final String PERSON_ADDING_MESSAGE_KEY = "person.adding";

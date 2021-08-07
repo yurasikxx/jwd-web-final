@@ -10,6 +10,12 @@ import javax.servlet.http.HttpSession;
 import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 
+/**
+ * A {@code LogOutCommand} class implements {@code Command}
+ * interface and execute command that logs person out.
+ *
+ * @see Command
+ */
 public class LogOutCommand implements Command {
 
     private static volatile LogOutCommand instance;

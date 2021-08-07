@@ -11,6 +11,13 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
+/**
+ * A {@code BetService} class is a bet service that is
+ * an {@code BetBaseService} interface implementation.
+ *
+ * @see BaseService
+ * @see BetBaseService
+ */
 public class BetService implements BetBaseService {
 
     private static final String BET_WAS_NOT_FIND_BY_GIVEN_ID_MSG = "Bet wasn't find by given ID";

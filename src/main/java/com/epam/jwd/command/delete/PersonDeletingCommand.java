@@ -25,6 +25,12 @@ import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.Role.USER;
 
+/**
+ * A {@code PersonDeletingCommand} class implements {@code Command}
+ * interface and execute command that deletes person.
+ *
+ * @see Command
+ */
 public class PersonDeletingCommand implements Command {
 
     private static final String PERSON_SELECT_MESSAGE_KEY = "person.not.selected";

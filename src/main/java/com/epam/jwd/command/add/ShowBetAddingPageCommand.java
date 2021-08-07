@@ -18,6 +18,12 @@ import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowBetAddingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person bet page.
+ *
+ * @see Command
+ */
 public class ShowBetAddingPageCommand implements Command {
 
     private static final String BET_ADDING_MESSAGE_KEY = "bet.adding";

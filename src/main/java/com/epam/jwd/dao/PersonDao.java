@@ -19,6 +19,14 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
+/**
+ * A {@code PersonDao} class is a person entity data access object that
+ * is an implementation of abstract {@code CommonDao} class
+ * and {@code PersonBaseDao} interface.
+ *
+ * @see CommonDao
+ * @see PersonBaseDao
+ */
 public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonDao.class);

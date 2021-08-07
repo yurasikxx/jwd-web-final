@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowBetslipViewingPageCommand} class implements {@code Command}
+ * interface and execute command that showing betslip viewing page.
+ *
+ * @see Command
+ */
 public class ShowBetslipViewingPageCommand implements Command {
 
     private static volatile ShowBetslipViewingPageCommand instance;

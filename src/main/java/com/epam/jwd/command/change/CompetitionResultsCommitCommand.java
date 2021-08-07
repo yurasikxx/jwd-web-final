@@ -50,6 +50,12 @@ import static com.epam.jwd.model.BetType.HOME_TEAM_WILL_NOT_LOSE;
 import static com.epam.jwd.model.BetType.HOME_TEAM_WIN;
 import static com.epam.jwd.model.BetType.NO_DRAW;
 
+/**
+ * A {@code CompetitionResultsCommitCommand} class implements {@code Command}
+ * interface and execute command that commits competition results.
+ *
+ * @see Command
+ */
 public class CompetitionResultsCommitCommand implements Command {
 
     private static final String SUCCESSFUL_OPERATION_MESSAGE_KEY = "competition.results.committed";

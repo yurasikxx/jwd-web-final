@@ -44,6 +44,12 @@ import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code BetAddingCommand} class implements {@code Command}
+ * interface and execute command that adds bet.
+ *
+ * @see Command
+ */
 public class BetAddingCommand implements Command {
 
     private static final String BET_ADDED_MESSAGE_KEY = "bet.added";

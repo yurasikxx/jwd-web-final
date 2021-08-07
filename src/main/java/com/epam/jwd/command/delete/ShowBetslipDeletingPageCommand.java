@@ -19,6 +19,12 @@ import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowBetslipDeletingPageCommand} class implements {@code Command}
+ * interface and execute command that showing betslip deleting page.
+ *
+ * @see Command
+ */
 public class ShowBetslipDeletingPageCommand implements Command {
 
     private static final String BETSLIP_DELETING_MESSAGE_KEY = "betslip.deleting";

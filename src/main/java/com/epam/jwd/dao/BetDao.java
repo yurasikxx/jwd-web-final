@@ -23,6 +23,14 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
+/**
+ * A {@code BetDao} class is a bet entity data access object that
+ * is an implementation of abstract {@code CommonDao} class
+ * and {@code BetBaseDao} interface.
+ *
+ * @see CommonDao
+ * @see BetBaseDao
+ */
 public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(BetDao.class);

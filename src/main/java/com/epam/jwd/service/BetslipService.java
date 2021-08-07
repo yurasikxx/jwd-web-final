@@ -12,6 +12,13 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
+/**
+ * A {@code BetslipService} class is a betslip service that is
+ * an {@code BetslipBaseService} interface implementation.
+ *
+ * @see BaseService
+ * @see BetslipBaseService
+ */
 public class BetslipService implements BetslipBaseService {
 
     private static final String BETSLIP_WAS_NOT_FIND_BY_GIVEN_ID_MSG = "Betslip wasn't find by given id";

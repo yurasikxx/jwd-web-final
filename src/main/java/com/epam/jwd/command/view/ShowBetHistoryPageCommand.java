@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowBetHistoryPageCommand} class implements {@code Command}
+ * interface and execute command that showing bet history viewing page.
+ *
+ * @see Command
+ */
 public class ShowBetHistoryPageCommand implements Command {
 
     private static volatile ShowBetHistoryPageCommand instance;

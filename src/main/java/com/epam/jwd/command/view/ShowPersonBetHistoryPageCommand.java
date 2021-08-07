@@ -17,6 +17,12 @@ import java.util.Optional;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowPersonBetHistoryPageCommand} class implements {@code Command}
+ * interface and execute command that showing bet history viewing page.
+ *
+ * @see Command
+ */
 public class ShowPersonBetHistoryPageCommand implements Command {
 
     private static final String PERSON_BET_HISTORY_ATTRIBUTE_NAME = "personBetHistory";

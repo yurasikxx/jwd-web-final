@@ -29,6 +29,12 @@ import static com.epam.jwd.model.Sport.BASKETBALL;
 import static com.epam.jwd.model.Sport.FOOTBALL;
 import static com.epam.jwd.model.Sport.HOCKEY;
 
+/**
+ * A {@code ShowMainPageCommand} class implements {@code Command}
+ * interface and execute command that showing main page.
+ *
+ * @see Command
+ */
 public class ShowMainPageCommand implements Command {
 
     private static final String EMPTY_COMPETITIONS_MESSAGE_KEY = "competition.empty";

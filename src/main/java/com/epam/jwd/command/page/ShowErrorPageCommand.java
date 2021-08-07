@@ -5,6 +5,12 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+/**
+ * A {@code ShowErrorPageCommand} class implements {@code Command}
+ * interface and execute command that showing error page.
+ *
+ * @see Command
+ */
 public class ShowErrorPageCommand implements Command {
 
     private static final String ERROR_JSP_PATH = "/jsp/error.jsp";

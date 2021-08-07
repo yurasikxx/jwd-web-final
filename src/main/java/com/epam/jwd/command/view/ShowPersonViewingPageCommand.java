@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowPersonViewingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person viewing page.
+ *
+ * @see Command
+ */
 public class ShowPersonViewingPageCommand implements Command {
 
     private static volatile ShowPersonViewingPageCommand instance;

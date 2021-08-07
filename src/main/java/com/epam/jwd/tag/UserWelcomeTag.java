@@ -14,6 +14,11 @@ import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 
+/**
+ * An {@code UserWelcomeTag} class is a custom JSP tag that used for to greet the application person.
+ *
+ * @see TagSupport
+ */
 public class UserWelcomeTag extends TagSupport {
 
     private static final String UNAUTHORIZED_WELCOME_MESSAGE_KEY = "person.unauthorized.welcome";

@@ -18,6 +18,14 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
+/**
+ * A {@code CompetitionDao} class is a competition entity data access object that
+ * is an implementation of abstract {@code CommonDao} class
+ * and {@code CompetitionBaseDao} interface.
+ *
+ * @see CommonDao
+ * @see CompetitionBaseDao
+ */
 public class CompetitionDao extends CommonDao<Competition> implements CompetitionBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(CompetitionDao.class);

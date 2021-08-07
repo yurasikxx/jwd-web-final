@@ -1,5 +1,11 @@
 package com.epam.jwd.command;
 
+/**
+ * A {@code CommandResponse} class implements
+ * {@code BaseCommandResponse} interface methods.
+ *
+ * @see BaseCommandResponse
+ */
 public class CommandResponse implements BaseCommandResponse {
 
     private final String path;

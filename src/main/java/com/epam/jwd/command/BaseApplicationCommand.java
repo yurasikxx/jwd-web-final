@@ -16,6 +16,7 @@ import com.epam.jwd.command.auth.ShowLogInPageCommand;
 import com.epam.jwd.command.change.BetslipChangingCommand;
 import com.epam.jwd.command.change.CompetitionChangingCommand;
 import com.epam.jwd.command.change.CompetitionResultsCommitCommand;
+import com.epam.jwd.command.change.LanguageSelectionCommand;
 import com.epam.jwd.command.change.PersonChangingCommand;
 import com.epam.jwd.command.change.ShowBetslipChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionChangingPageCommand;
@@ -50,6 +51,11 @@ import static com.epam.jwd.model.Role.BOOKMAKER;
 import static com.epam.jwd.model.Role.UNAUTHORIZED;
 import static com.epam.jwd.model.Role.USER;
 
+/**
+ * A {@code BaseApplicationCommand} enum store all application commands
+ *
+ * @see ApplicationCommand
+ */
 public enum BaseApplicationCommand {
 
     MAIN_PAGE(ShowMainPageCommand.getInstance()),

@@ -18,6 +18,14 @@ import static at.favre.lib.crypto.bcrypt.BCrypt.MIN_COST;
 import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
+
+/**
+ * A {@code PersonService} class is a person service that is
+ * an {@code PersonBaseService} interface implementation.
+ *
+ * @see BaseService
+ * @see PersonBaseService
+ */
 public class PersonService implements PersonBaseService {
 
     private static final Logger LOGGER = LogManager.getLogger(PersonService.class);

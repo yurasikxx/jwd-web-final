@@ -23,6 +23,12 @@ import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.REGISTER_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code RegisterCommand} class implements {@code Command}
+ * interface and execute command that signs person in.
+ *
+ * @see Command
+ */
 public class RegisterCommand implements Command {
 
     private static final String REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.registration.invalid";

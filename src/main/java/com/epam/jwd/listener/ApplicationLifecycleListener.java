@@ -10,6 +10,14 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+/**
+ * A {@code ApplicationLifecycleListener} is class that
+ * implement {@code ServletContextListener} and
+ * initialize and destroy connection pool.
+ *
+ * @see ServletContextListener
+ * @see ConnectionPoolManager
+ */
 @WebListener
 public class ApplicationLifecycleListener implements ServletContextListener {
 

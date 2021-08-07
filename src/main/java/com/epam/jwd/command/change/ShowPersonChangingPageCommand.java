@@ -15,10 +15,16 @@ import com.epam.jwd.service.PersonService;
 import java.util.List;
 
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 
+/**
+ * A {@code ShowPersonChangingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person changing page.
+ *
+ * @see Command
+ */
 public class ShowPersonChangingPageCommand implements Command {
 
     private static final String PERSON_CHANGING_MESSAGE_KEY = "person.changing";

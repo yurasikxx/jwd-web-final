@@ -1,6 +1,5 @@
 package com.epam.jwd.service;
 
-import com.epam.jwd.dao.BetHistoryBaseDao;
 import com.epam.jwd.dao.BetHistoryDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
@@ -8,11 +7,18 @@ import com.epam.jwd.model.BetHistory;
 
 import java.util.List;
 
+/**
+ * A {@code BetHistoryService} class is a bet history service that is
+ * an {@code BetHistoryBaseService} interface implementation.
+ *
+ * @see BaseService
+ * @see BetHistoryBaseService
+ */
 public class BetHistoryService implements BetHistoryBaseService {
 
     private static volatile BetHistoryService instance;
 
-    private final BetHistoryBaseDao betHistoryDao;
+    private final BetHistoryDao betHistoryDao;
 
     private BetHistoryService() {
         this.betHistoryDao = BetHistoryDao.getInstance();

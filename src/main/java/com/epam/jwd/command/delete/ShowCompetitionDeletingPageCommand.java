@@ -16,6 +16,12 @@ import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowCompetitionDeletingPageCommand} class implements {@code Command}
+ * interface and execute command that showing competition deleting page.
+ *
+ * @see Command
+ */
 public class ShowCompetitionDeletingPageCommand implements Command {
 
     private static final String COMPETITION_DELETING_MESSAGE_KEY = "competition.deleting";

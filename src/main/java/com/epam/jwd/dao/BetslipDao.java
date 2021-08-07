@@ -20,6 +20,14 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
+/**
+ * A {@code BetslipDao} class is a betslip entity data access object that
+ * is an implementation of abstract {@code CommonDao} class
+ * and {@code BetslipBaseDao} interface.
+ *
+ * @see CommonDao
+ * @see BetslipBaseDao
+ */
 public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(BetslipDao.class);

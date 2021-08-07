@@ -4,6 +4,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * An {@code ApplicationMessageManager} class implements
+ * {@code BaseApplicationMessageManager} interface and its methods.
+ *
+ * @see BaseApplicationMessageManager
+ */
 public class ApplicationMessageManager implements BaseApplicationMessageManager {
 
     private static final String APPLICATION_BUNDLE_NAME = "application";

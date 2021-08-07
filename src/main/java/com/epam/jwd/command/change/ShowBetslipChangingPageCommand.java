@@ -24,6 +24,12 @@ import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowBetslipChangingPageCommand} class implements {@code Command}
+ * interface and execute command that showing betslip changing page.
+ *
+ * @see Command
+ */
 public class ShowBetslipChangingPageCommand implements Command {
 
     private static final String BETSLIP_CHANGING_MESSAGE_KEY = "betslip.changing";

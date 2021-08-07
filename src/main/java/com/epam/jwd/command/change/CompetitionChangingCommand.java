@@ -31,6 +31,12 @@ import static com.epam.jwd.constant.Constant.TEAM_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TEAM_SPORT_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code CompetitionChangingCommand} class implements {@code Command}
+ * interface and execute command that changes competition.
+ *
+ * @see Command
+ */
 public class CompetitionChangingCommand implements Command {
 
     private static final String COMPETITION_CHANGED_MESSAGE_KEY = "competition.changed";

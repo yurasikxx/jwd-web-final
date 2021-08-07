@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowAllBetsViewingPageCommand} class implements {@code Command}
+ * interface and execute command that showing all bets viewing page.
+ *
+ * @see Command
+ */
 public class ShowAllBetsViewingPageCommand implements Command {
 
     private static volatile ShowAllBetsViewingPageCommand instance;

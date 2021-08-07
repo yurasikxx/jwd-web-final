@@ -2,7 +2,6 @@ package com.epam.jwd.service;
 
 import com.epam.jwd.dao.CompetitionBaseDao;
 import com.epam.jwd.dao.CompetitionDao;
-import com.epam.jwd.dao.TeamBaseDao;
 import com.epam.jwd.dao.TeamDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
@@ -16,6 +15,13 @@ import java.util.Optional;
 
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 
+/**
+ * A {@code CompetitionService} class is a competition service that is
+ * an {@code CompetitionBaseService} interface implementation.
+ *
+ * @see BaseService
+ * @see CompetitionBaseService
+ */
 public class CompetitionService implements CompetitionBaseService {
 
     private static final String TEAM_WAS_NOT_FOUND_MSG = "Team with such id was not found: %s";
@@ -23,7 +29,7 @@ public class CompetitionService implements CompetitionBaseService {
     private static volatile CompetitionService instance;
 
     private final CompetitionBaseDao competitionDao;
-    private final TeamBaseDao teamDao;
+    private final TeamDao teamDao;
 
     private CompetitionService() {
         this.competitionDao = CompetitionDao.getInstance();

@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.VIEWING_JSP_PATH;
 
+/**
+ * A {@code ShowCompetitionViewingPageCommand} class implements {@code Command}
+ * interface and execute command that showing competition viewing page.
+ *
+ * @see Command
+ */
 public class ShowCompetitionViewingPageCommand implements Command {
 
     private static volatile ShowCompetitionViewingPageCommand instance;

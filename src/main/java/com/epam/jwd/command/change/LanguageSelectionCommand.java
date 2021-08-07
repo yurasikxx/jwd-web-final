@@ -1,5 +1,9 @@
-package com.epam.jwd.command;
+package com.epam.jwd.command.change;
 
+import com.epam.jwd.command.BaseCommandRequest;
+import com.epam.jwd.command.BaseCommandResponse;
+import com.epam.jwd.command.Command;
+import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.command.page.ShowMainPageCommand;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.manager.ApplicationMessageManager;
@@ -15,12 +19,19 @@ import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MAIN_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code LanguageSelectionCommand} class implements {@code Command}
+ * interface and execute command that select application language.
+ *
+ * @see Command
+ */
 public class LanguageSelectionCommand implements Command {
 
     private static final String LANGUAGE_NOT_SELECTED_MESSAGE_KEY = "language.not.selected";
     private static final String EN_LANGUAGE = "en";
     private static final String RU_LANGUAGE = "ru";
     private static final String FR_LANGUAGE = "fr";
+
     private static volatile LanguageSelectionCommand instance;
 
     private final BaseApplicationMessageManager messageManager;

@@ -6,6 +6,11 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.util.Calendar;
 
+/**
+ * An {@code CurrentDateTag} class is a custom JSP tag that used for output current date.
+ *
+ * @see SimpleTagSupport
+ */
 public class CurrentDateTag extends SimpleTagSupport {
 
     private static final String TAG_OUTPUT = "%02d/%02d/%4d";

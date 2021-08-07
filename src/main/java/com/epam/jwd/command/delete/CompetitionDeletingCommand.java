@@ -24,6 +24,12 @@ import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code CompetitionDeletingCommand} class implements {@code Command}
+ * interface and execute command that deletes competition.
+ *
+ * @see Command
+ */
 public class CompetitionDeletingCommand implements Command {
 
     private static final String COMPETITION_SELECT_MESSAGE_KEY = "competition.not.selected";

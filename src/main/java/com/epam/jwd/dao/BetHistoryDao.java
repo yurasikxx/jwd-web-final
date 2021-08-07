@@ -21,7 +21,13 @@ import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_ID_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 
-public class BetHistoryDao extends CommonDao<BetHistory> implements BetHistoryBaseDao {
+/**
+ * A {@code BetHistoryDao} class is a bet history entity data access object that
+ * is an implementation of abstract {@code CommonDao} class.
+ *
+ * @see CommonDao
+ */
+public class BetHistoryDao extends CommonDao<BetHistory> {
 
     private static final Logger LOGGER = LogManager.getLogger(BetHistoryDao.class);
 

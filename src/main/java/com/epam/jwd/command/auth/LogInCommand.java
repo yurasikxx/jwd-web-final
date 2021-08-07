@@ -29,6 +29,12 @@ import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ROLE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code LogInCommand} class implements {@code Command}
+ * interface and execute command that logs person in.
+ *
+ * @see Command
+ */
 public class LogInCommand implements Command {
 
     private static final String INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.auth.invalid";

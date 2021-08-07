@@ -16,6 +16,12 @@ import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 
+/**
+ * A {@code ShowCompetitionResultsCommittingPageCommand} class implements {@code Command}
+ * interface and execute command that showing competition results committing page.
+ *
+ * @see Command
+ */
 public class ShowCompetitionResultsCommittingPageCommand implements Command {
 
     private static final String COMPETITION_RESULTS_COMMITTING_MESSAGE_KEY = "competition.results.committing";

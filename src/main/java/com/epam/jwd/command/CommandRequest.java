@@ -4,6 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
+/**
+ * A {@code CommandRequest} class implements
+ * {@code BaseCommandRequest} interface methods.
+ *
+ * @see BaseCommandRequest
+ */
 public class CommandRequest implements BaseCommandRequest {
 
     private final HttpServletRequest request;

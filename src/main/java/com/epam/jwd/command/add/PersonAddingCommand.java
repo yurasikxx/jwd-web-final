@@ -23,6 +23,12 @@ import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
+/**
+ * A {@code PersonAddingCommand} class implements {@code Command}
+ * interface and execute command that adds person.
+ *
+ * @see Command
+ */
 public class PersonAddingCommand implements Command {
 
     private static final String PERSON_ADDED_MESSAGE_KEY = "person.added";

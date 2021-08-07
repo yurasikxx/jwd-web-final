@@ -7,6 +7,12 @@ import com.epam.jwd.command.CommandResponse;
 
 import static com.epam.jwd.constant.Constant.LOGIN_JSP_PATH;
 
+/**
+ * A {@code ShowLogInPageCommand} class implements {@code Command}
+ * interface and execute command that showing authorization page.
+ *
+ * @see Command
+ */
 public class ShowLogInPageCommand implements Command {
 
     private static volatile ShowLogInPageCommand instance;
