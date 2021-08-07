@@ -19,26 +19,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.epam.jwd.constant.Constant.ENTITIES_WERE_FOUND_MSG;
+import static com.epam.jwd.constant.Constant.ENTITIES_WERE_NOT_FOUND_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_DELETED_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_NOT_DELETED_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_NOT_SAVED_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_NOT_UPDATED_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_SAVED_MSG;
+import static com.epam.jwd.constant.Constant.ENTITY_WAS_UPDATED_MSG;
+import static com.epam.jwd.constant.Constant.FAILED_TO_DELETE_ENTITY_MSG;
+import static com.epam.jwd.constant.Constant.FAILED_TO_FIND_PREPARED_ENTITIES_MSG;
+import static com.epam.jwd.constant.Constant.FAILED_TO_SAVE_ENTITY_MSG;
+import static com.epam.jwd.constant.Constant.FAILED_TO_UPDATE_ENTITY_MSG;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
+import static com.epam.jwd.constant.Constant.PREPARED_ENTITIES_WERE_FOUND;
+import static com.epam.jwd.constant.Constant.PREPARED_ENTITIES_WERE_NOT_FOUND_MSG;
 
 public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
     private static final Logger LOGGER = LogManager.getLogger(CommonDao.class);
-
-    private static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";
-    private static final String FAILED_TO_FIND_PREPARED_ENTITIES_MSG = "Failed to find prepared entities";
-    private static final String FAILED_TO_UPDATE_ENTITY_MSG = "Failed to update entity";
-    private static final String FAILED_TO_DELETE_ENTITY_MSG = "Failed to delete entity";
-    private static final String ENTITY_WAS_SAVED_MSG = "Entity was saved";
-    private static final String ENTITY_WAS_NOT_SAVED_MSG = "Entity wasn't saved";
-    private static final String ENTITY_WAS_UPDATED_MSG = "Entity was updated";
-    private static final String ENTITY_WAS_NOT_UPDATED_MSG = "Entity wasn't updated";
-    private static final String ENTITY_WAS_DELETED_MSG = "Entity was deleted";
-    private static final String ENTITY_WAS_NOT_DELETED_MSG = "Entity wasn't deleted";
-    private static final String PREPARED_ENTITIES_WERE_FOUND = "Prepared entities were found";
-    private static final String PREPARED_ENTITIES_WERE_NOT_FOUND_MSG = "Prepared entities weren't found";
-    private static final String ENTITIES_WERE_FOUND_MSG = "Entities were found";
-    private static final String ENTITIES_WERE_NOT_FOUND_MSG = "Entities weren't found";
 
     private final String selectAllSql;
     private final String findAllSql;

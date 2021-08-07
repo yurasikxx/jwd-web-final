@@ -52,6 +52,21 @@ public class Constant {
     public static final String EMPTY_CREDENTIALS_MESSAGE_KEY = "credentials.empty";
     public static final String EMPTY_USER_MESSAGE_KEY = "person.empty";
 
+    public static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";
+    public static final String FAILED_TO_FIND_PREPARED_ENTITIES_MSG = "Failed to find prepared entities";
+    public static final String FAILED_TO_UPDATE_ENTITY_MSG = "Failed to update entity";
+    public static final String FAILED_TO_DELETE_ENTITY_MSG = "Failed to delete entity";
+    public static final String ENTITY_WAS_SAVED_MSG = "Entity was saved";
+    public static final String ENTITY_WAS_NOT_SAVED_MSG = "Entity wasn't saved";
+    public static final String ENTITY_WAS_UPDATED_MSG = "Entity was updated";
+    public static final String ENTITY_WAS_NOT_UPDATED_MSG = "Entity wasn't updated";
+    public static final String ENTITY_WAS_DELETED_MSG = "Entity was deleted";
+    public static final String ENTITY_WAS_NOT_DELETED_MSG = "Entity wasn't deleted";
+    public static final String PREPARED_ENTITIES_WERE_FOUND = "Prepared entities were found";
+    public static final String PREPARED_ENTITIES_WERE_NOT_FOUND_MSG = "Prepared entities weren't found";
+    public static final String ENTITIES_WERE_FOUND_MSG = "Entities were found";
+    public static final String ENTITIES_WERE_NOT_FOUND_MSG = "Entities weren't found";
+
     public static final int EMPTY_LIST_SIZE_VALUE = 0;
     public static final int INITIAL_ID_VALUE = 1;
     public static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
