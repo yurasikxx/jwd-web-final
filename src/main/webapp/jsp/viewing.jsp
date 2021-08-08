@@ -20,7 +20,7 @@
                 <tr>
                     <th><h2><fmt:message key="id"/></h2></th>
                     <th><h2><fmt:message key="auth.login"/></h2></th>
-                    <th><h2><fmt:message key="auth.password"/></h2></th>
+                    <th><h2><fmt:message key="main.user.balance"/></h2></th>
                     <th><h2><fmt:message key="role"/></h2></th>
                 </tr>
                 <tr>
@@ -102,7 +102,6 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
-                    f
                     <th><h2><fmt:message key="bet.type.id"/></h2></th>
                     <th><h2><fmt:message key="bet.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>

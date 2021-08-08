@@ -38,15 +38,12 @@ public class BetslipDaoTest {
 
     @Test
     public void testSavingAndDeleting() throws DaoException {
-        final List<Competition> competitions = competitionDao.findAll();
-        assertNotNull(competitions);
-        final Competition competition = competitions.get(competitions.size() - INDEX_ROLLBACK_VALUE);
+        final Competition competition = competitionDao.findAll()
+                .get(competitionDao.findAll().size() - INDEX_ROLLBACK_VALUE);
+        assertNotNull(competition);
         final Betslip saved = betslipDao.save(new Betslip(competition, DRAW, COEFFICIENT));
         assertNotNull(saved);
-        final Betslip betslip = betslipDao.findAll().get(betslipDao.findAll().size() - INDEX_ROLLBACK_VALUE);
-        assertNotNull(betslip);
-
-        betslipDao.delete(betslip.getId());
+        betslipDao.delete((long) betslipDao.findAll().size());
     }
 
     @Test

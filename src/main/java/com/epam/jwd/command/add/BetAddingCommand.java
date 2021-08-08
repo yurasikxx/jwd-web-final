@@ -21,11 +21,8 @@ import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
 import javax.servlet.http.HttpSession;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BETSLIP_PARAMETER_NAME;
@@ -35,13 +32,13 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INCORRECT_DATA_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_HAS_BET_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -52,7 +49,6 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class BetAddingCommand implements Command {
 
-    private static final String BET_ADDED_MESSAGE_KEY = "bet.added";
     private static final String PERSON_BALANCE_MESSAGE_KEY = "person.balance";
     private static final String BETSLIP_SELECT_MESSAGE_KEY = "betslip.not.selected";
 
@@ -62,14 +58,16 @@ public class BetAddingCommand implements Command {
     private final PersonBaseService personService;
     private final BetslipBaseService betslipService;
     private final BetBaseService betService;
-    private final BaseCommandResponse betCommandResponse;
+    private final BaseCommandResponse successAddingCommandResponse;
+    private final BaseCommandResponse errorAddingCommandResponse;
 
     private BetAddingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
-        this.betCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
+        this.successAddingCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+        this.errorAddingCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
     public static BetAddingCommand getInstance() {
@@ -104,30 +102,27 @@ public class BetAddingCommand implements Command {
                     person.getBalance() - Objects.requireNonNull(betTotal), person.getRole());
 
             if (cannotBeSaved(request, betslipId, betTotal, person, bet)) {
-                return betCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             betService.save(bet);
             personService.updateBalance(placedBetPerson);
 
-            final List<Betslip> betslips = betslipService.findAll()
-                    .stream()
-                    .sorted(Comparator.comparing(o -> o.getCompetition().toString()))
-                    .collect(Collectors.toList());
-
             Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
                     placedBetPerson.getBalance());
-            request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(BET_ADDED_MESSAGE_KEY));
-            request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(INCORRECT_DATA_MESSAGE_KEY));
             request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         }
 
-        return betCommandResponse;
+        return successAddingCommandResponse;
     }
 
     private boolean cannotBeSaved(BaseCommandRequest request, Long betslipId, Integer betTotal, Person person, Bet bet) {
@@ -158,6 +153,7 @@ public class BetAddingCommand implements Command {
 
             return true;
         }
+
         return false;
     }
 

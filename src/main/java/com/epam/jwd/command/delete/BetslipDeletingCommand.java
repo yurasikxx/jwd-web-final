@@ -9,19 +9,16 @@ import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.Betslip;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 
-import java.util.List;
-
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.BETSLIP_JSP_PATH;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_EMPTY_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -34,17 +31,19 @@ public class BetslipDeletingCommand implements Command {
 
     private static final String BETSLIP_SELECT_MESSAGE_KEY = "betslip.not.selected";
     private static final String BETSLIP_CANNOT_DELETE_MESSAGE_KEY = "betslip.cannot.delete";
-    private static final String BETSLIP_DELETED_MESSAGE_KEY = "betslip.deleted";
 
     private static volatile BetslipDeletingCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final BetslipBaseService betslipService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
+    private final BaseCommandResponse successDeletingCommandResponse;
+    private final BaseCommandResponse errorDeletingCommandResponse;
 
     private BetslipDeletingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.betslipService = BetslipService.getInstance();
+        this.successDeletingCommandResponse = new CommandResponse(BETSLIP_JSP_PATH, true);
+        this.errorDeletingCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
     public static BetslipDeletingCommand getInstance() {
@@ -72,15 +71,10 @@ public class BetslipDeletingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_SELECT_MESSAGE_KEY));
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return betslipCommandResponse;
+                return errorDeletingCommandResponse;
             }
 
             betslipService.delete(id);
-
-            final List<Betslip> betslips = betslipService.findAll();
-
-            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_DELETED_MESSAGE_KEY));
-            request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
         } catch (IncorrectEnteredDataException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
@@ -92,7 +86,7 @@ public class BetslipDeletingCommand implements Command {
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
 
-        return betslipCommandResponse;
+        return successDeletingCommandResponse;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {

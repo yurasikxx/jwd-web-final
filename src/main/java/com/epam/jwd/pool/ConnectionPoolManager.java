@@ -64,7 +64,8 @@ public class ConnectionPoolManager implements ConnectionPool {
     private static final int MAX_POOL_SIZE;
 
     static {
-        try (InputStream propertyFile = ConnectionPoolManager.class.getClassLoader().getResourceAsStream(DATABASE_PROPERTIES_FILE_NAME)) {
+        try (InputStream propertyFile = ConnectionPoolManager.class.getClassLoader()
+                .getResourceAsStream(DATABASE_PROPERTIES_FILE_NAME)) {
             properties.load(propertyFile);
             LOGGER.info(PROPERTIES_WERE_LOADED_MSG);
         } catch (IOException e) {

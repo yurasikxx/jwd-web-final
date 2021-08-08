@@ -13,11 +13,11 @@ import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.jwd.constant.Constant.LANGUAGE_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.MAIN_JSP_PATH;
 import static com.epam.jwd.model.BetType.AWAY_TEAM_WILL_NOT_LOSE;
 import static com.epam.jwd.model.BetType.AWAY_TEAM_WIN;
@@ -36,6 +36,8 @@ import static com.epam.jwd.model.Sport.HOCKEY;
  * @see Command
  */
 public class ShowMainPageCommand implements Command {
+
+    private static final Logger LOGGER = LogManager.getLogger(ShowMainPageCommand.class);
 
     private static final String EMPTY_COMPETITIONS_MESSAGE_KEY = "competition.empty";
     private static final String BASKETBALL_COMPETITION_ATTRIBUTE_NAME = "basketballCompetition";
@@ -77,11 +79,15 @@ public class ShowMainPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
+        showMainPage(request);
+        return mainPageResponse;
+    }
+
+    private void showMainPage(BaseCommandRequest request) {
         try {
             final List<Competition> basketballCompetitions = competitionService.findBySportName(BASKETBALL);
             final List<Competition> footballCompetitions = competitionService.findBySportName(FOOTBALL);
             final List<Competition> hockeyCompetitions = competitionService.findBySportName(HOCKEY);
-
             final List<Betslip> homeWinBetslips = betslipService.findByBetType(HOME_TEAM_WIN);
             final List<Betslip> awayWinBetslips = betslipService.findByBetType(AWAY_TEAM_WIN);
             final List<Betslip> drawBetslips = betslipService.findByBetType(DRAW);
@@ -92,42 +98,16 @@ public class ShowMainPageCommand implements Command {
             request.setAttribute(BASKETBALL_COMPETITION_ATTRIBUTE_NAME, basketballCompetitions);
             request.setAttribute(FOOTBALL_COMPETITION_ATTRIBUTE_NAME, footballCompetitions);
             request.setAttribute(HOCKEY_COMPETITION_ATTRIBUTE_NAME, hockeyCompetitions);
-
             request.setAttribute(HOME_WIN_ATTRIBUTE_NAME, homeWinBetslips);
             request.setAttribute(AWAY_WIN_ATTRIBUTE_NAME, awayWinBetslips);
             request.setAttribute(DRAW_ATTRIBUTE_NAME, drawBetslips);
             request.setAttribute(HOME_WILL_NOT_LOSE_ATTRIBUTE_NAME, homeWillNotLoseBetslips);
             request.setAttribute(AWAY_WILL_NOT_LOSE_ATTRIBUTE_NAME, awayWillNotLoseBetslips);
             request.setAttribute(NO_DRAW_ATTRIBUTE_NAME, noDrawBetslips);
-
-            List<Long> longs = new ArrayList<>();
-            longs.add(1L);
-            longs.add(2L);
-            longs.add(3L);
-
-            request.setAttribute(LANGUAGE_ATTRIBUTE_NAME, longs);
         } catch (DaoException e) {
-            request.setAttribute(BASKETBALL_COMPETITION_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_COMPETITIONS_MESSAGE_KEY));
-            request.setAttribute(FOOTBALL_COMPETITION_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_COMPETITIONS_MESSAGE_KEY));
-            request.setAttribute(HOCKEY_COMPETITION_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_COMPETITIONS_MESSAGE_KEY));
-            request.setAttribute(HOME_WIN_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
-            request.setAttribute(AWAY_WIN_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
-            request.setAttribute(DRAW_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
-            request.setAttribute(HOME_WILL_NOT_LOSE_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
-            request.setAttribute(AWAY_WILL_NOT_LOSE_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
-            request.setAttribute(NO_DRAW_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
+            LOGGER.info(messageManager.getString(EMPTY_COMPETITIONS_MESSAGE_KEY));
+            LOGGER.info(messageManager.getString(EMPTY_BETSLIPS_MESSAGE_KEY));
         }
-
-        return mainPageResponse;
     }
 
 }

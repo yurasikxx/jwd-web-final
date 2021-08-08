@@ -27,10 +27,11 @@ public class ShowAllBetsViewingPageCommand implements Command {
     private static volatile ShowAllBetsViewingPageCommand instance;
 
     private final BetBaseService betService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse betCommandResponse;
 
     private ShowAllBetsViewingPageCommand() {
         this.betService = BetService.getInstance();
+        this.betCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowAllBetsViewingPageCommand getInstance() {
@@ -54,7 +55,7 @@ public class ShowAllBetsViewingPageCommand implements Command {
 
         request.setAttribute(BET_ATTRIBUTE_NAME, bets);
 
-        return betslipCommandResponse;
+        return betCommandResponse;
     }
 
 }

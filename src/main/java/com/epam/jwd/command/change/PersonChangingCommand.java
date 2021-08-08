@@ -14,8 +14,6 @@ import com.epam.jwd.model.Role;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
-import java.util.List;
-
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
@@ -26,7 +24,7 @@ import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.PERSON_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -37,19 +35,20 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class PersonChangingCommand implements Command {
 
-    private static final String PERSON_CHANGED_MESSAGE_KEY = "person.changed";
     private static final String BALANCE_PARAMETER_NAME = "balance";
 
     private static volatile PersonChangingCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
-    private final BaseCommandResponse personCommandResponse;
+    private final BaseCommandResponse successChangingCommandResponse;
+    private final BaseCommandResponse errorChangingCommandResponse;
 
     private PersonChangingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
-        this.personCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
+        this.successChangingCommandResponse = new CommandResponse(PERSON_JSP_PATH, true);
+        this.errorChangingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
     public static PersonChangingCommand getInstance() {
@@ -80,17 +79,12 @@ public class PersonChangingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(NUMBERS_POSITIVE_MESSAGE_KEY));
                 request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return personCommandResponse;
+                return errorChangingCommandResponse;
             }
 
             final Person person = new Person(id, login, password, balance, Role.USER);
 
             personService.update(person);
-
-            final List<Person> persons = personService.findAll();
-
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_CHANGED_MESSAGE_KEY));
-            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, persons);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
@@ -99,7 +93,7 @@ public class PersonChangingCommand implements Command {
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
 
-        return personCommandResponse;
+        return successChangingCommandResponse;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {

@@ -30,10 +30,11 @@ public class ShowPersonBetsViewingPageCommand implements Command {
     private static volatile ShowPersonBetsViewingPageCommand instance;
 
     private final BetBaseService betService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse betCommandResponse;
 
     private ShowPersonBetsViewingPageCommand() {
         this.betService = BetService.getInstance();
+        this.betCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowPersonBetsViewingPageCommand getInstance() {
@@ -68,7 +69,7 @@ public class ShowPersonBetsViewingPageCommand implements Command {
 
         request.setAttribute(PERSON_BET_ATTRIBUTE_NAME, currentUserBets);
 
-        return betslipCommandResponse;
+        return betCommandResponse;
     }
 
     private String extractPersonNameFromSession(HttpSession session) {

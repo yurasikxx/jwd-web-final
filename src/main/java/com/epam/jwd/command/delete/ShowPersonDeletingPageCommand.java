@@ -14,9 +14,9 @@ import com.epam.jwd.service.PersonService;
 import java.util.List;
 
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 import static com.epam.jwd.model.Role.USER;
 
 /**
@@ -58,16 +58,13 @@ public class ShowPersonDeletingPageCommand implements Command {
         try {
             final List<Person> users = personService.findByRole(USER);
 
-            request.setAttribute(PERSON_ATTRIBUTE_NAME,
-                    messageManager.getString(PERSON_DELETING_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_DELETING_MESSAGE_KEY));
             request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, users);
 
             return personDeletingPageResponse;
         } catch (DaoException e) {
-            request.setAttribute(PERSON_ATTRIBUTE_NAME,
-                    messageManager.getString(PERSON_DELETING_MESSAGE_KEY));
-            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME,
-                    messageManager.getString(EMPTY_USER_MESSAGE_KEY));
+            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_DELETING_MESSAGE_KEY));
+            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, messageManager.getString(EMPTY_USER_MESSAGE_KEY));
 
             return personDeletingPageResponse;
         }

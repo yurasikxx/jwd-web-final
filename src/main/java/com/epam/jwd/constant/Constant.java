@@ -1,13 +1,17 @@
 package com.epam.jwd.constant;
 
 /**
- * A {@code Constant} class contains most general constants of the application that used ubiquitous
+ * A {@code Constant} class contains most general constants of the application that used ubiquitous.
  */
 public class Constant {
 
     public static final String MAIN_JSP_PATH = "/jsp/main.jsp";
     public static final String REGISTER_JSP_PATH = "/jsp/registration.jsp";
     public static final String LOGIN_JSP_PATH = "/jsp/login.jsp";
+    public static final String PERSON_JSP_PATH = "/jsp/person.jsp";
+    public static final String COMPETITION_JSP_PATH = "/jsp/competition.jsp";
+    public static final String BETSLIP_JSP_PATH = "/jsp/betslip.jsp";
+    public static final String BET_JSP_PATH = "/jsp/bet.jsp";
     public static final String ADDING_JSP_PATH = "/jsp/adding.jsp";
     public static final String VIEWING_JSP_PATH = "/jsp/viewing.jsp";
     public static final String CHANGING_JSP_PATH = "/jsp/changing.jsp";
@@ -25,7 +29,6 @@ public class Constant {
     public static final String BET_ATTRIBUTE_NAME = "bet";
     public static final String BET_HISTORY_ATTRIBUTE_NAME = "betHistory";
     public static final String ERROR_ATTRIBUTE_NAME = "error";
-    public static final String LANGUAGE_ATTRIBUTE_NAME = "language";
     public static final String PERSON_BALANCE_SESSION_ATTRIBUTE_NAME = "personBalance";
     public static final String PERSON_NAME_SESSION_ATTRIBUTE_NAME = "personName";
     public static final String PERSON_ROLE_SESSION_ATTRIBUTE_NAME = "personRole";

@@ -27,10 +27,11 @@ public class ShowCompetitionViewingPageCommand implements Command {
     private static volatile ShowCompetitionViewingPageCommand instance;
 
     private final CompetitionBaseService competitionService;
-    private final BaseCommandResponse competitionPageResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse competitionPageResponse;
 
     private ShowCompetitionViewingPageCommand() {
         this.competitionService = CompetitionService.getInstance();
+        this.competitionPageResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowCompetitionViewingPageCommand getInstance() {

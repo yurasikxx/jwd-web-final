@@ -6,7 +6,6 @@ import com.epam.jwd.model.BaseEntity;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Interface {@code BaseDao} is an abstraction of data access object that is interlayer
  * between application and database management system.

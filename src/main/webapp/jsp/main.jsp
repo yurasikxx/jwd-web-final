@@ -78,7 +78,7 @@
                             <select id="select-language" name="locale">
                                 <option value=""><fmt:message key="language.select"/></option>
                                 <option value="1"><fmt:message key="language.english"/></option>
-                                <option value="2"><fmt:message key="language.russian"/></option>
+                                <option value="2"><fmt:message key="language.spanish"/></option>
                                 <option value="3"><fmt:message key="language.french"/></option>
                             </select>
                             <input type="submit" value="<fmt:message key="language.select"/>">
@@ -260,7 +260,7 @@
                             <select id="select-auth-language" name="locale">
                                 <option value=""><fmt:message key="language.select"/></option>
                                 <option value="1"><fmt:message key="language.english"/></option>
-                                <option value="2"><fmt:message key="language.russian"/></option>
+                                <option value="2"><fmt:message key="language.spanish"/></option>
                                 <option value="3"><fmt:message key="language.french"/></option>
                             </select>
                             <input type="submit" value="<fmt:message key="language.select"/>">

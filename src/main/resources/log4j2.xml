@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+<Configuration status="INFO">
     <Appenders>
-        <File name="PoolFileAppender" fileName="logs/pool.log" append="false">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
-        </File>
-        <File name="DaoFileAppender" fileName="logs/dao.log" append="false">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
-        </File>
-        <File name="ServiceFileAppender" fileName="service/dao.log" append="false">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
-        </File>
+        <Console name="OutLog" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <Console name="ErrLog" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.epam.jwd.pool" level="All" additivity="false">
-            <AppenderRef ref="PoolFileAppender"/>
+        <Logger name="com.epam.jwd" additivity="false">
+            <AppenderRef ref="OutLog" level="info"/>
+            <AppenderRef ref="ErrLog" level="error"/>
         </Logger>
-        <Logger name="com.epam.jwd.dao" level="All" additivity="false">
-            <AppenderRef ref="DaoFileAppender"/>
-        </Logger>
-        <Logger name="com.epam.jwd.service" level="All" additivity="false">
-            <AppenderRef ref="ServiceFileAppender"/>
-        </Logger>
+        <Root level="info">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
     </Loggers>
 </Configuration>

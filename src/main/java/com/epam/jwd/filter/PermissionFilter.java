@@ -59,6 +59,7 @@ public class PermissionFilter implements Filter {
         final HttpSession session = request.getSession(false);
         final Role currentRole = extractRoleFromSession(session);
         final Set<BaseApplicationCommand> allowedCommands = commandsByRoles.get(currentRole);
+
         if (allowedCommands.contains(command)) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {

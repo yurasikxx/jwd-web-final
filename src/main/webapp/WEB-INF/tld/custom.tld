@@ -8,7 +8,7 @@
     <tlib-version>1.2</tlib-version>
     <short-name>jwd</short-name>
     <uri>custom</uri>
-    
+
     <tag>
         <name>date</name>
         <tag-class>com.epam.jwd.tag.CurrentDateTag</tag-class>

@@ -27,10 +27,11 @@ public class ShowPersonViewingPageCommand implements Command {
     private static volatile ShowPersonViewingPageCommand instance;
 
     private final PersonBaseService personService;
-    private final BaseCommandResponse personCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse personCommandResponse;
 
     private ShowPersonViewingPageCommand() {
         this.personService = PersonService.getInstance();
+        this.personCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowPersonViewingPageCommand getInstance() {

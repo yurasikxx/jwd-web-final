@@ -27,10 +27,11 @@ public class ShowBetslipViewingPageCommand implements Command {
     private static volatile ShowBetslipViewingPageCommand instance;
 
     private final BetslipBaseService betslipService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse betslipCommandResponse;
 
     private ShowBetslipViewingPageCommand() {
         this.betslipService = BetslipService.getInstance();
+        this.betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowBetslipViewingPageCommand getInstance() {

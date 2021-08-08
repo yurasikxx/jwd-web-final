@@ -17,9 +17,10 @@ public class ShowErrorPageCommand implements Command {
 
     private static volatile ShowErrorPageCommand instance;
 
-    private final BaseCommandResponse errorCommandResponse = new CommandResponse(ERROR_JSP_PATH, false);
+    private final BaseCommandResponse errorCommandResponse;
 
     private ShowErrorPageCommand() {
+        this.errorCommandResponse = new CommandResponse(ERROR_JSP_PATH, false);
     }
 
     public static ShowErrorPageCommand getInstance() {

@@ -27,10 +27,11 @@ public class ShowBetHistoryPageCommand implements Command {
     private static volatile ShowBetHistoryPageCommand instance;
 
     private final BetHistoryBaseService betHistoryService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse betCommandResponse;
 
     private ShowBetHistoryPageCommand() {
         this.betHistoryService = BetHistoryService.getInstance();
+        this.betCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowBetHistoryPageCommand getInstance() {
@@ -53,7 +54,7 @@ public class ShowBetHistoryPageCommand implements Command {
                 .collect(Collectors.toList());
         request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, bets);
 
-        return betslipCommandResponse;
+        return betCommandResponse;
     }
 
 }

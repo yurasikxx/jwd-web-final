@@ -5,6 +5,8 @@ import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 
+import static com.epam.jwd.constant.Constant.PERSON_JSP_PATH;
+
 /**
  * A {@code ShowPersonManagementPageCommand} class implements {@code Command}
  * interface and execute command that showing person management page.
@@ -13,13 +15,12 @@ import com.epam.jwd.command.CommandResponse;
  */
 public class ShowPersonManagementPageCommand implements Command {
 
-    private static final String PERSON_JSP_PATH = "/jsp/person.jsp";
-
     private static volatile ShowPersonManagementPageCommand instance;
 
-    private final BaseCommandResponse personCommandResponse = new CommandResponse(PERSON_JSP_PATH, false);
+    private final BaseCommandResponse personCommandResponse;
 
     private ShowPersonManagementPageCommand() {
+        this.personCommandResponse = new CommandResponse(PERSON_JSP_PATH, false);
     }
 
     public static ShowPersonManagementPageCommand getInstance() {

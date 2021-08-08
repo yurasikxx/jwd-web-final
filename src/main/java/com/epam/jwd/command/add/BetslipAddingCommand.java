@@ -10,24 +10,19 @@ import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.AbstractBaseEntity;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
-import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BETSLIP_ALREADY_EXISTS_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.BETSLIP_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BET_TYPE_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.COEFFICIENT_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.COMPETITION_PARAMETER_NAME;
@@ -37,8 +32,6 @@ import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
-import static com.epam.jwd.constant.Constant.SELECT_BET_TYPE_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -49,9 +42,7 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class BetslipAddingCommand implements Command {
 
-    private static final String BETSLIP_ADDED_MESSAGE_KEY = "betslip.added";
     private static final String COMPETITION_BET_TYPE_SELECT_MESSAGE_KEY = "competition.bet.type.select";
-
     private static final int INITIAL_RANDOM_NUMBER_VALUE = 2;
     private static final int RANDOM_NUMBER_RANGE = 8;
 
@@ -60,13 +51,15 @@ public class BetslipAddingCommand implements Command {
     private final BaseApplicationMessageManager messageManager;
     private final CompetitionBaseService competitionService;
     private final BetslipBaseService betslipService;
-    private final BaseCommandResponse betslipCommandResponse;
+    private final BaseCommandResponse successAddingCommandResponse;
+    private final BaseCommandResponse errorAddingCommandResponse;
 
     private BetslipAddingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
         this.betslipService = BetslipService.getInstance();
-        this.betslipCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
+        this.successAddingCommandResponse = new CommandResponse(BETSLIP_JSP_PATH, true);
+        this.errorAddingCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
     public static BetslipAddingCommand getInstance() {
@@ -102,14 +95,14 @@ public class BetslipAddingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_BET_TYPE_SELECT_MESSAGE_KEY));
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return betslipCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             if (coefficient < MIN_INDEX_VALUE) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(NUMBERS_POSITIVE_MESSAGE_KEY));
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return betslipCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             final Betslip betslip = new Betslip(competitionService.findById(competitionId),
@@ -119,29 +112,23 @@ public class BetslipAddingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_ALREADY_EXISTS_MESSAGE_KEY));
                 request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return betslipCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             betslipService.save(betslip);
-
-            final List<Competition> competitions = competitionService.findAll()
-                    .stream()
-                    .sorted(Comparator.comparing(AbstractBaseEntity::getId))
-                    .collect(Collectors.toList());
-            final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
-
-            request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_ADDED_MESSAGE_KEY));
-            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
-            request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betTypes);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         }
 
-        return betslipCommandResponse;
+        return successAddingCommandResponse;
     }
 
     private Long getCheckedCompetitionId(BaseCommandRequest request) throws IncorrectEnteredDataException {

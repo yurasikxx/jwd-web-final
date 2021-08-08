@@ -9,19 +9,16 @@ import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
-import java.util.List;
-
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_EMPTY_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -34,17 +31,19 @@ public class CompetitionDeletingCommand implements Command {
 
     private static final String COMPETITION_SELECT_MESSAGE_KEY = "competition.not.selected";
     private static final String COMPETITION_CANNOT_DELETE_MESSAGE_KEY = "competition.cannot.delete";
-    private static final String COMPETITION_DELETED_MESSAGE_KEY = "competition.deleted";
 
     private static volatile CompetitionDeletingCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final CompetitionBaseService competitionService;
-    private final BaseCommandResponse competitionCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
+    private final BaseCommandResponse successDeletingCommandResponse;
+    private final BaseCommandResponse errorDeletingCommandResponse;
 
     private CompetitionDeletingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
+        this.successDeletingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.errorDeletingCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
     public static CompetitionDeletingCommand getInstance() {
@@ -72,15 +71,10 @@ public class CompetitionDeletingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_SELECT_MESSAGE_KEY));
                 request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return competitionCommandResponse;
+                return errorDeletingCommandResponse;
             }
 
             competitionService.delete(id);
-
-            final List<Competition> competitions = competitionService.findAll();
-
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_DELETED_MESSAGE_KEY));
-            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
         } catch (IncorrectEnteredDataException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
@@ -92,7 +86,7 @@ public class CompetitionDeletingCommand implements Command {
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
 
-        return competitionCommandResponse;
+        return successDeletingCommandResponse;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {

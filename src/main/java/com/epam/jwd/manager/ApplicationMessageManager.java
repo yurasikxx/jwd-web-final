@@ -1,6 +1,5 @@
 package com.epam.jwd.manager;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -41,7 +40,7 @@ public class ApplicationMessageManager implements BaseApplicationMessageManager 
 
     @Override
     public String getString(String key) {
-        return new String(bundle.getString(key).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        return bundle.getString(key);
     }
 
 }

@@ -57,7 +57,6 @@ public class ApplicationController extends HttpServlet {
         super.destroy();
     }
 
-
     private void process(HttpServletRequest req, HttpServletResponse resp) {
         final HttpSession session = req.getSession();
 

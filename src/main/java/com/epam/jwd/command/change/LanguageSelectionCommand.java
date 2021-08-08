@@ -15,8 +15,8 @@ import java.util.Objects;
 
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.MAIN_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -29,17 +29,20 @@ public class LanguageSelectionCommand implements Command {
 
     private static final String LANGUAGE_NOT_SELECTED_MESSAGE_KEY = "language.not.selected";
     private static final String EN_LANGUAGE = "en";
-    private static final String RU_LANGUAGE = "ru";
+    private static final String SPA_LANGUAGE = "spa";
     private static final String FR_LANGUAGE = "fr";
+    private static final String ENGLISH = "1";
+    private static final String SPANISH = "2";
+    private static final String FRENCH = "3";
 
     private static volatile LanguageSelectionCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
-    private final BaseCommandResponse languageCommandResponse;
+    private final BaseCommandResponse successSelectingCommandResponse;
 
     private LanguageSelectionCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
-        this.languageCommandResponse = new CommandResponse(MAIN_JSP_PATH, false);
+        this.successSelectingCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
     }
 
     public static LanguageSelectionCommand getInstance() {
@@ -65,24 +68,7 @@ public class LanguageSelectionCommand implements Command {
                 session = request.getCurrentSession().get();
             }
 
-            switch (languageId) {
-                case "1":
-                    Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, Locale.ENGLISH);
-                    messageManager.setLocale(EN_LANGUAGE);
-                    break;
-                case "2":
-                    Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, new Locale(RU_LANGUAGE));
-                    messageManager.setLocale(RU_LANGUAGE);
-                    break;
-                case "3":
-                    Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, Locale.FRENCH);
-                    messageManager.setLocale(FR_LANGUAGE);
-                    break;
-                default:
-                    request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(LANGUAGE_NOT_SELECTED_MESSAGE_KEY));
-                    request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-                    break;
-            }
+            switchLanguage(request, languageId, session);
 
             ShowMainPageCommand.getInstance().execute(request);
         } catch (IncorrectEnteredDataException e) {
@@ -90,7 +76,28 @@ public class LanguageSelectionCommand implements Command {
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
         }
 
-        return languageCommandResponse;
+        return successSelectingCommandResponse;
+    }
+
+    private void switchLanguage(BaseCommandRequest request, String languageId, HttpSession session) {
+        switch (languageId) {
+            case ENGLISH:
+                Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, Locale.ENGLISH);
+                messageManager.setLocale(EN_LANGUAGE);
+                break;
+            case SPANISH:
+                Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, new Locale(SPA_LANGUAGE));
+                messageManager.setLocale(SPA_LANGUAGE);
+                break;
+            case FRENCH:
+                Objects.requireNonNull(session).setAttribute(LOCALE_PARAMETER_NAME, Locale.FRENCH);
+                messageManager.setLocale(FR_LANGUAGE);
+                break;
+            default:
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(LANGUAGE_NOT_SELECTED_MESSAGE_KEY));
+                request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+                break;
+        }
     }
 
     private String getCheckedLanguage(BaseCommandRequest request) throws IncorrectEnteredDataException {

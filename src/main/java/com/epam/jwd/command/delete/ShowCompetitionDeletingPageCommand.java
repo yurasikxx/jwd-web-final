@@ -54,8 +54,7 @@ public class ShowCompetitionDeletingPageCommand implements Command {
     public BaseCommandResponse execute(BaseCommandRequest request) {
         final List<Competition> competitions = competitionService.findAll();
 
-        request.setAttribute(COMPETITION_ATTRIBUTE_NAME,
-                messageManager.getString(COMPETITION_DELETING_MESSAGE_KEY));
+        request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_DELETING_MESSAGE_KEY));
         request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
 
         return competitionDeletingPageResponse;

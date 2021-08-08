@@ -75,7 +75,6 @@ public class LogInCommand implements Command {
             final String login = getCheckedLogin(request);
             final String password = getCheckedPassword(request);
             final Integer balance = personService.findByLogin(login).getBalance();
-
             final Person person = new Person(login, password, balance);
 
             if (!personService.canLogIn(person)) {

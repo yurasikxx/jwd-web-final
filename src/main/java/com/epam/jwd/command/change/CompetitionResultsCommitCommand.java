@@ -15,7 +15,6 @@ import com.epam.jwd.model.BetHistory;
 import com.epam.jwd.model.BetResult;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
-import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.CompetitionResult;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Team;
@@ -35,11 +34,11 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.BetResult.LOSS;
 import static com.epam.jwd.model.BetResult.WIN;
@@ -58,7 +57,6 @@ import static com.epam.jwd.model.BetType.NO_DRAW;
  */
 public class CompetitionResultsCommitCommand implements Command {
 
-    private static final String SUCCESSFUL_OPERATION_MESSAGE_KEY = "competition.results.committed";
     private static final String COMPETITION_RESULTS_EMPTY_MESSAGE_KEY = "competition.results.empty";
     private static final String COMPETITION_NOT_SELECTED_MESSAGE_KEY = "competition.not.selected";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
@@ -72,8 +70,8 @@ public class CompetitionResultsCommitCommand implements Command {
     private final BetslipBaseService betslipService;
     private final BetBaseService betService;
     private final BetHistoryBaseService betHistoryService;
-    private final BaseCommandResponse betHistoryCommandResponse;
-    private final BaseCommandResponse betHistoryErrorCommandResponse;
+    private final BaseCommandResponse successCommittingCommandResponse;
+    private final BaseCommandResponse errorCommittingCommandResponse;
 
     private CompetitionResultsCommitCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
@@ -82,8 +80,8 @@ public class CompetitionResultsCommitCommand implements Command {
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
         this.betHistoryService = BetHistoryService.getInstance();
-        this.betHistoryCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
-        this.betHistoryErrorCommandResponse = betHistoryCommandResponse;
+        this.successCommittingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.errorCommittingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
     public static CompetitionResultsCommitCommand getInstance() {
@@ -109,7 +107,7 @@ public class CompetitionResultsCommitCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_NOT_SELECTED_MESSAGE_KEY));
                 request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return betHistoryErrorCommandResponse;
+                return errorCommittingCommandResponse;
             }
 
             final Long competitionId = getCheckedCompetitionId(request);
@@ -138,29 +136,32 @@ public class CompetitionResultsCommitCommand implements Command {
 
             updatePersonBalance(historyBets, winBetPersons);
 
-            for (Bet bet : bets) {
-                betService.delete(bet.getId());
-            }
-
-            for (Betslip betslip : betslips) {
-                betslipService.delete(betslip.getId());
-            }
-
-            competitionService.delete(competitionId);
-
-            final List<Competition> competitions = competitionService.findAll();
-
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(SUCCESSFUL_OPERATION_MESSAGE_KEY));
-            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
+            playedInformationDeletion(competitionId, betslips, bets);
         } catch (IncorrectEnteredDataException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_RESULTS_EMPTY_MESSAGE_KEY));
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorCommittingCommandResponse;
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorCommittingCommandResponse;
         }
 
-        return betHistoryCommandResponse;
+        return successCommittingCommandResponse;
+    }
+
+    private void playedInformationDeletion(Long competitionId, List<Betslip> betslips, List<Bet> bets) throws ServiceException, DaoException {
+        for (Bet bet : bets) {
+            betService.delete(bet.getId());
+        }
+
+        for (Betslip betslip : betslips) {
+            betslipService.delete(betslip.getId());
+        }
+
+        competitionService.delete(competitionId);
     }
 
     private void updatePersonBalance(List<BetHistory> historyBets, List<Person> winBetPersons) throws ServiceException, DaoException {

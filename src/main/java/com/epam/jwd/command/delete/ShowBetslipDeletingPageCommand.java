@@ -60,8 +60,7 @@ public class ShowBetslipDeletingPageCommand implements Command {
                 .sorted(Comparator.comparing(AbstractBaseEntity::getId))
                 .collect(Collectors.toList());
 
-        request.setAttribute(BETSLIP_ATTRIBUTE_NAME,
-                messageManager.getString(BETSLIP_DELETING_MESSAGE_KEY));
+        request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_DELETING_MESSAGE_KEY));
         request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
         return betslipDeletingCommandResponse;

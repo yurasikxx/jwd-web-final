@@ -27,7 +27,7 @@ public class BetHistoryDaoTest {
 
     private final CompetitionBaseDao competitionDao = CompetitionDao.getInstance();
     private final BetBaseDao betDao = BetDao.getInstance();
-    private final BetHistoryBaseDao betHistoryDao = BetHistoryDao.getInstance();
+    private final BetHistoryDao betHistoryDao = BetHistoryDao.getInstance();
 
     @BeforeClass
     public static void setUp() throws CouldNotInitializeConnectionPoolException {

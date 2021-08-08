@@ -9,26 +9,21 @@ import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.AbstractBaseEntity;
 import com.epam.jwd.model.Competition;
-import com.epam.jwd.model.Team;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TEAM_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TEAM_SPORT_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
@@ -41,7 +36,6 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class CompetitionAddingCommand implements Command {
 
-    private static final String COMPETITION_ADDED_MESSAGE_KEY = "competition.added";
     private static final String COMPETITION_ALREADY_EXISTS_MESSAGE_KEY = "competition.team.exists";
     private static final String TEAM_SELECT_MESSAGE_KEY = "team.select";
 
@@ -49,12 +43,14 @@ public class CompetitionAddingCommand implements Command {
 
     private final BaseApplicationMessageManager messageManager;
     private final CompetitionBaseService competitionService;
-    private final BaseCommandResponse competitionCommandResponse;
+    private final BaseCommandResponse successAddingCommandResponse;
+    private final BaseCommandResponse errorAddingCommandResponse;
 
     private CompetitionAddingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
-        this.competitionCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
+        this.successAddingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.errorAddingCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
     public static CompetitionAddingCommand getInstance() {
@@ -80,7 +76,7 @@ public class CompetitionAddingCommand implements Command {
             final Long awayTeamId = getCheckedAwayTeamId(request);
 
             if (cannotBeAdded(request, homeTeamId, awayTeamId)) {
-                return competitionCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             final Competition competition = new Competition(
@@ -91,27 +87,23 @@ public class CompetitionAddingCommand implements Command {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_ALREADY_EXISTS_MESSAGE_KEY));
                 request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
-                return competitionCommandResponse;
+                return errorAddingCommandResponse;
             }
 
             competitionService.save(competition);
-
-            final List<Team> teams = competitionService.findAllTeams()
-                    .stream()
-                    .sorted(Comparator.comparing(AbstractBaseEntity::getId))
-                    .collect(Collectors.toList());
-
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_ADDED_MESSAGE_KEY));
-            request.setAttribute(SELECT_TEAM_ATTRIBUTE_NAME, teams);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorAddingCommandResponse;
         }
 
-        return competitionCommandResponse;
+        return successAddingCommandResponse;
     }
 
     private boolean cannotBeAdded(BaseCommandRequest request, Long homeTeamId, Long awayTeamId) throws DaoException, ServiceException {
@@ -136,6 +128,7 @@ public class CompetitionAddingCommand implements Command {
 
             return true;
         }
+
         return false;
     }
 

@@ -10,23 +10,19 @@ import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Competition;
-import com.epam.jwd.model.Team;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
-
-import java.util.List;
 
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
-import static com.epam.jwd.constant.Constant.SELECT_COMPETITION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.SELECT_TEAM_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.TEAM_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TEAM_SPORT_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
@@ -39,19 +35,20 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class CompetitionChangingCommand implements Command {
 
-    private static final String COMPETITION_CHANGED_MESSAGE_KEY = "competition.changed";
     private static final String COMPETITION_TEAM_SELECT_MESSAGE_KEY = "competition.team.select";
 
     private static volatile CompetitionChangingCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final CompetitionBaseService competitionService;
-    private final BaseCommandResponse competitionCommandResponse;
+    private final BaseCommandResponse successChangingCommandResponse;
+    private final BaseCommandResponse errorChangingCommandResponse;
 
     private CompetitionChangingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
-        this.competitionCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
+        this.successChangingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.errorChangingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
     public static CompetitionChangingCommand getInstance() {
@@ -82,7 +79,7 @@ public class CompetitionChangingCommand implements Command {
             final Long awayTeamId = getCheckedAwayTeamId(request);
 
             if (cannotBeChanged(request, id, homeTeamId, awayTeamId)) {
-                return competitionCommandResponse;
+                return errorChangingCommandResponse;
             }
 
             final Competition competition = new Competition(id,
@@ -90,22 +87,19 @@ public class CompetitionChangingCommand implements Command {
                     competitionService.findTeamById(awayTeamId));
 
             competitionService.update(competition);
-
-            final List<Team> teams = competitionService.findAllTeams();
-            final List<Competition> competitions = competitionService.findAll();
-
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_CHANGED_MESSAGE_KEY));
-            request.setAttribute(SELECT_TEAM_ATTRIBUTE_NAME, teams);
-            request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorChangingCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorChangingCommandResponse;
         }
 
-        return competitionCommandResponse;
+        return successChangingCommandResponse;
     }
 
     private boolean cannotBeChanged(BaseCommandRequest request, Long id, Long homeTeamId, Long awayTeamId)

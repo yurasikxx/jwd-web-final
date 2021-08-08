@@ -30,10 +30,11 @@ public class ShowPersonBetHistoryPageCommand implements Command {
     private static volatile ShowPersonBetHistoryPageCommand instance;
 
     private final BetHistoryBaseService betHistoryService;
-    private final BaseCommandResponse betslipCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
+    private final BaseCommandResponse betHistoryCommandResponse;
 
     private ShowPersonBetHistoryPageCommand() {
         this.betHistoryService = BetHistoryService.getInstance();
+        this.betHistoryCommandResponse = new CommandResponse(VIEWING_JSP_PATH, false);
     }
 
     public static ShowPersonBetHistoryPageCommand getInstance() {
@@ -52,11 +53,12 @@ public class ShowPersonBetHistoryPageCommand implements Command {
     public BaseCommandResponse execute(BaseCommandRequest request) {
         final Optional<HttpSession> session = request.getCurrentSession();
         HttpSession currentSession = null;
+
         if (session.isPresent()) {
             currentSession = session.get();
         }
-        final String currentPersonLogin = extractPersonNameFromSession(currentSession);
 
+        final String currentPersonLogin = extractPersonNameFromSession(currentSession);
         final List<BetHistory> bets = betHistoryService.findAll();
         final List<BetHistory> currentUserBets = new ArrayList<>();
 
@@ -68,7 +70,7 @@ public class ShowPersonBetHistoryPageCommand implements Command {
 
         request.setAttribute(PERSON_BET_HISTORY_ATTRIBUTE_NAME, currentUserBets);
 
-        return betslipCommandResponse;
+        return betHistoryCommandResponse;
     }
 
     private String extractPersonNameFromSession(HttpSession session) {

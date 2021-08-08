@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 public class CompetitionDaoTest {
 
-    private final TeamBaseDao teamDao = TeamDao.getInstance();
+    private final TeamDao teamDao = TeamDao.getInstance();
     private final CompetitionBaseDao competitionDao = CompetitionDao.getInstance();
 
     @BeforeClass
