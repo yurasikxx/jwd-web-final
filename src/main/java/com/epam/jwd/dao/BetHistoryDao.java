@@ -100,34 +100,10 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
     protected void saveResultSet(ResultSet resultSet, BetHistory betHistory) {
         try {
             final List<BetHistory> bets = this.findAll();
+            final AtomicLong betAmount = new AtomicLong(bets.size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong betAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                    long id = betAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, id);
-                } else {
-                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    if (this.findById(idCounter.get()).isPresent()) {
-                        if (bets.contains(this.findById(idCounter.get()).get())) {
-                            idCounter.set(betAmount.incrementAndGet());
-                        }
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
-                }
-            }
+            setId(resultSet, bets, betAmount, idCounter);
 
             resultSet.updateLong(HOME_TEAM_ID_COLUMN, betHistory.getHome().getId());
             resultSet.updateLong(AWAY_TEAM_ID_COLUMN, betHistory.getAway().getId());
@@ -150,7 +126,7 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
     @Override
     protected void updateResultSet(ResultSet resultSet, BetHistory betHistory) {
         try {
-            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
+            final long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == betHistory.getId()) {
                 resultSet.updateLong(HOME_TEAM_ID_COLUMN, betHistory.getHome().getId());
@@ -183,6 +159,41 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
                 resultSet.getString(PERSON_LOGIN_COLUMN),
                 CompetitionResult.resolveCompetitionResultByName(resultSet.getString(COMPETITION_RESULT_NAME_COLUMN)),
                 BetResult.resolveBetResultById(resultSet.getLong(BET_RESULT_ID_COLUMN)));
+    }
+
+    private void setId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+        if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+            setFirstId(resultSet);
+        } else {
+            setCustomId(resultSet, bets, betAmount, idCounter);
+        }
+    }
+
+    private void setFirstId(ResultSet resultSet) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
+    }
+
+    private void setCustomId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException {
+        final Long getLastBet = bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId();
+
+        if (getLastBet.equals(betAmount.get())) {
+            final long id = betAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_HISTORY_ID_COLUMN, id);
+        } else {
+            while (getIntermediateId(bets, idCounter).equals(idCounter.get())) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
+        }
+    }
+
+    private Long getIntermediateId(List<BetHistory> bets, AtomicLong idCounter) {
+        return bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
     }
 
 }

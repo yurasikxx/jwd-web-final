@@ -77,33 +77,28 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
     }
 
     @Override
+    public Optional<Person> findByLogin(String login) throws DaoException {
+        return takeFirstNotNull(findPreparedEntities(
+                preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, login), findByLoginSql)
+        );
+    }
+
+    @Override
+    public List<Person> findByRole(Role role) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
+                findByRoleSql);
+    }
+
+    @Override
     protected void saveResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
         personRoleValidate(person);
 
         try {
             final List<Person> persons = this.findAll();
+            final AtomicLong personAmount = new AtomicLong(persons.size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-            if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
-                    long id = personAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(PERSON_ID_COLUMN, id);
-                } else {
-                    while (persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
-                }
-            }
+            setId(resultSet, persons, personAmount, idCounter);
 
             resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
             resultSet.updateString(PERSON_PASSWORD_COLUMN, person.getPassword());
@@ -123,7 +118,7 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         personRoleValidate(person);
 
         try {
-            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
+            final long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == person.getId()) {
                 resultSet.updateString(PERSON_LOGIN_COLUMN, person.getLogin());
@@ -148,23 +143,45 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
                 Role.resolveRoleById(resultSet.getLong(PERSON_ROLE_ID_COLUMN)));
     }
 
-    @Override
-    public Optional<Person> findByLogin(String login) throws DaoException {
-        return takeFirstNotNull(findPreparedEntities(
-                preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, login), findByLoginSql)
-        );
-    }
-
-    @Override
-    public List<Person> findByRole(Role role) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
-                findByRoleSql);
-    }
-
     private void personRoleValidate(Person person) throws BusinessValidationException {
         if (Role.UNAUTHORIZED.equals(person.getRole())) {
             throw new BusinessValidationException(UNAUTHORIZED_CHANGING_MSG);
         }
+    }
+
+    private void setId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
+        if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
+            setFirstId(resultSet);
+        } else {
+            setCustomId(resultSet, persons, personAmount, idCounter);
+        }
+    }
+
+    private void setFirstId(ResultSet resultSet) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
+    }
+
+    private void setCustomId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
+        final Long lastPersonId = persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId();
+
+        if (lastPersonId.equals(personAmount.get())) {
+            final long id = personAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(PERSON_ID_COLUMN, id);
+        } else {
+            while (getIntermediatePersonId(persons, idCounter).equals(idCounter.get())) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(PERSON_ID_COLUMN, idCounter.get());
+        }
+    }
+
+    private Long getIntermediatePersonId(List<Person> persons, AtomicLong idCounter) {
+        return persons.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
     }
 
 }

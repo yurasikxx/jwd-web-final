@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
@@ -112,37 +113,19 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     }
 
     @Override
+    public List<Bet> findByCompetitionId(Long id) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
+                findByCompetitionIdSql);
+    }
+
+    @Override
     protected void saveResultSet(ResultSet resultSet, Bet bet) {
         try {
             final List<Bet> bets = this.findAll();
+            final AtomicLong betAmount = new AtomicLong(bets.size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-            if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
-            } else {
-                final AtomicLong betAmount = new AtomicLong(findAll().size());
-                final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-                if (betAmount.get() == bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId()) {
-                    long id = betAmount.incrementAndGet();
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_ID_COLUMN, id);
-                } else {
-                    while (idCounter.get() == bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId()) {
-                        idCounter.incrementAndGet();
-                    }
-
-                    if (this.findById(idCounter.get()).isPresent()) {
-                        if (bets.contains(this.findById(idCounter.get()).get())) {
-                            idCounter.set(betAmount.incrementAndGet());
-                        }
-                    }
-
-                    resultSet.moveToInsertRow();
-                    resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
-                }
-            }
+            setId(resultSet, bets, betAmount, idCounter);
 
             resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
             resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
@@ -159,7 +142,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     @Override
     protected void updateResultSet(ResultSet resultSet, Bet bet) {
         try {
-            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
+            final long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == bet.getId()) {
                 resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
@@ -195,10 +178,55 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                         Role.resolveRoleByName(resultSet.getString(PERSON_ROLE_NAME_COLUMN))));
     }
 
-    @Override
-    public List<Bet> findByCompetitionId(Long id) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
-                findByCompetitionIdSql);
+    private void setId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+        if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
+            setFirstId(resultSet);
+        } else {
+            setCustomId(resultSet, bets, betAmount, idCounter);
+        }
+    }
+
+    private void setFirstId(ResultSet resultSet) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
+    }
+
+    private void setCustomId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+        final Long lastBetId = bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId();
+
+        if (lastBetId.equals(betAmount.get())) {
+            final long id = betAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_ID_COLUMN, id);
+        } else {
+            while (getIntermediateId(bets, idCounter).equals(idCounter.get())) {
+                idCounter.incrementAndGet();
+            }
+
+            checkExistingBet(bets, betAmount, idCounter);
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
+        }
+    }
+
+
+    private Long getIntermediateId(List<Bet> bets, AtomicLong idCounter) {
+        return bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
+    }
+
+    private void checkExistingBet(List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter) throws DaoException {
+        final Optional<Bet> optionalBet = this.findById(idCounter.get());
+        Bet bet = null;
+
+        if (optionalBet.isPresent()) {
+            bet = optionalBet.get();
+        }
+
+        if (bets.contains(bet)) {
+            idCounter.set(betAmount.incrementAndGet());
+        }
     }
 
 }

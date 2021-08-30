@@ -63,8 +63,10 @@ public class TeamDao extends CommonDao<Team> {
     protected void saveResultSet(ResultSet resultSet, Team team) {
         try {
             final List<Team> teams = this.findAll();
+            final AtomicLong personAmount = new AtomicLong(teams.size());
+            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
 
-            teamIdValidate(resultSet, teams);
+            setId(resultSet, teams, personAmount, idCounter);
 
             resultSet.updateString(TEAM_NAME_COLUMN, team.getName());
             resultSet.updateLong(SPORT_ID_COLUMN, team.getSport().getId());
@@ -80,7 +82,7 @@ public class TeamDao extends CommonDao<Team> {
     @Override
     protected void updateResultSet(ResultSet resultSet, Team team) {
         try {
-            long id = resultSet.getLong(INITIAL_INDEX_VALUE);
+            final long id = resultSet.getLong(INITIAL_INDEX_VALUE);
 
             if (id == team.getId()) {
                 resultSet.updateString(TEAM_NAME_COLUMN, team.getName());
@@ -101,28 +103,39 @@ public class TeamDao extends CommonDao<Team> {
                 Sport.resolveSportByName(resultSet.getString(SPORT_NAME_COLUMN)));
     }
 
-    private void teamIdValidate(ResultSet resultSet, List<Team> teams) throws SQLException {
+    private void setId(ResultSet resultSet, List<Team> teams, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
         if (teams.size() == EMPTY_LIST_SIZE_VALUE) {
-            resultSet.moveToInsertRow();
-            resultSet.updateLong(TEAM_ID_COLUMN, INITIAL_ID_VALUE);
+            setFirstId(resultSet);
         } else {
-            final AtomicLong personAmount = new AtomicLong(this.findAll().size());
-            final AtomicLong idCounter = new AtomicLong(INITIAL_ID_VALUE);
-
-            if (teams.get(teams.size() - INDEX_ROLLBACK_VALUE).getId().equals(personAmount.get())) {
-                long id = personAmount.incrementAndGet();
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(TEAM_ID_COLUMN, id);
-            } else {
-                while (teams.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId().equals(idCounter.get())) {
-                    idCounter.incrementAndGet();
-                }
-
-                resultSet.moveToInsertRow();
-                resultSet.updateLong(TEAM_ID_COLUMN, idCounter.get());
-            }
+            setCustomId(resultSet, teams, personAmount, idCounter);
         }
+    }
+
+    private void setFirstId(ResultSet resultSet) throws SQLException {
+        resultSet.moveToInsertRow();
+        resultSet.updateLong(TEAM_ID_COLUMN, INITIAL_ID_VALUE);
+    }
+
+    private void setCustomId(ResultSet resultSet, List<Team> teams, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
+        final Long lastTeamId = teams.get(teams.size() - INDEX_ROLLBACK_VALUE).getId();
+
+        if (lastTeamId.equals(personAmount.get())) {
+            final long id = personAmount.incrementAndGet();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(TEAM_ID_COLUMN, id);
+        } else {
+            while (getIntermediateId(teams, idCounter).equals(idCounter.get())) {
+                idCounter.incrementAndGet();
+            }
+
+            resultSet.moveToInsertRow();
+            resultSet.updateLong(TEAM_ID_COLUMN, idCounter.get());
+        }
+    }
+
+    private Long getIntermediateId(List<Team> teams, AtomicLong idCounter) {
+        return teams.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
     }
 
 }

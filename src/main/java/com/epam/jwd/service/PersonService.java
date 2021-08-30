@@ -65,7 +65,10 @@ public class PersonService implements PersonBaseService {
 
     @Override
     public void init() {
-        for (int i = 0; i < this.findAll().size(); i++) {
+        final List<Person> persons = this.findAll();
+        final int size = persons.size();
+
+        for (int i = 0; i < size; i++) {
             try {
                 this.logIn(this.findAll().get(i));
             } catch (DaoException e) {
