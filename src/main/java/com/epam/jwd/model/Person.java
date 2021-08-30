@@ -16,15 +16,6 @@ public class Person extends AbstractBaseEntity {
     private final Integer balance;
     private final Role role;
 
-    /**
-     * A constructor with ID that used for pull up person from database.
-     *
-     * @param id       a person ID.
-     * @param login    a person login.
-     * @param password a person password.
-     * @param balance  a person balance.
-     * @param role     a person role.
-     */
     public Person(Long id, String login, String password, Integer balance, Role role) {
         super(id);
         this.login = login;
@@ -33,41 +24,22 @@ public class Person extends AbstractBaseEntity {
         this.role = role;
     }
 
-    /**
-     * A constructor without ID that used for save person to database.
-     *
-     * @param login    a person login.
-     * @param password a person password.
-     * @param balance  a person balance.
-     */
     public Person(String login, String password, Integer balance) {
         this(null, login, password, balance, Role.USER);
     }
 
-    /**
-     * @return a person login.
-     */
     public String getLogin() {
         return login;
     }
 
-    /**
-     * @return a person password.
-     */
     public String getPassword() {
         return password;
     }
 
-    /**
-     * @return a person balance.
-     */
     public Integer getBalance() {
         return balance;
     }
 
-    /**
-     * @return a person role.
-     */
     public Role getRole() {
         return role;
     }

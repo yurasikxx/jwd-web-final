@@ -12,11 +12,6 @@ public abstract class AbstractBaseEntity implements BaseEntity {
 
     private final Long id;
 
-    /**
-     * An {@code AbstractBaseEntity} constructor.
-     *
-     * @param id entity ID.
-     */
     public AbstractBaseEntity(Long id) {
         this.id = id;
     }

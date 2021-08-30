@@ -24,12 +24,6 @@ public enum Role implements BaseEntity {
     private final Long id;
     private final String name;
 
-    /**
-     * A {@code Role} constructor.
-     *
-     * @param id   a role ID.
-     * @param name a role name.
-     */
     Role(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -40,29 +34,14 @@ public enum Role implements BaseEntity {
         return id;
     }
 
-    /**
-     * @return a role name.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Represents enum values as list elements.
-     *
-     * @return a role enum constants.
-     */
     public static List<Role> valuesAsList() {
         return ALL_AVAILABLE_ROLES;
     }
 
-    /**
-     * Looking for an enum constant by its ID.
-     *
-     * @param id a role ID.
-     * @return an enum constant if it exists.
-     * @throws UnknownEnumAttributeException if enum constant doesn't exist.
-     */
     public static Role resolveRoleById(Long id) throws UnknownEnumAttributeException {
         for (Role role : values()) {
             if (role.getId().equals(id)) {
@@ -73,13 +52,6 @@ public enum Role implements BaseEntity {
         throw new UnknownEnumAttributeException(String.format(UNKNOWN_ROLE_ID_MSG, id));
     }
 
-    /**
-     * Looking for an enum constant by its name.
-     *
-     * @param name a role name.
-     * @return an enum constant if it exists.
-     * @throws UnknownEnumAttributeException if enum constant doesn't exist.
-     */
     public static Role resolveRoleByName(String name) throws UnknownEnumAttributeException {
         for (Role role : values()) {
             if (role.getName().equals(name)) {

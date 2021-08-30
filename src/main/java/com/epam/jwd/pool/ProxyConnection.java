@@ -74,17 +74,11 @@ public class ProxyConnection implements Connection {
         actualConnection.rollback();
     }
 
-    /**
-     * Puts connection to pool instead of its real closing.
-     */
     @Override
     public void close() {
         ConnectionPoolManager.getInstance().releaseConnection(this);
     }
 
-    /**
-     * Really closes connection.
-     */
     void realClose() throws SQLException {
         actualConnection.close();
     }

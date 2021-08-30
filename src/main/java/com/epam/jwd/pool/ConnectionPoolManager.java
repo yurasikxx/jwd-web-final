@@ -203,11 +203,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**
-     * Registers JDBC drivers
-     *
-     * @throws CouldNotInitializeConnectionPoolException if failed to initialize connection pool.
-     */
     private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
@@ -246,9 +241,6 @@ public class ConnectionPoolManager implements ConnectionPool {
         }
     }
 
-    /**
-     * Deregisters JDBC drivers
-     */
     private void deregisterDrivers() {
         final Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {

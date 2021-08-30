@@ -20,19 +20,6 @@ public class BetHistory extends AbstractBaseEntity {
     private final CompetitionResult competitionResult;
     private final BetResult betResult;
 
-    /**
-     * A constructor with ID used to pull up bet history from database.
-     *
-     * @param id                a bet history ID.
-     * @param home              a bet history home team.
-     * @param away              a bet history away team.
-     * @param betType           a bet history bet type.
-     * @param coefficient       a bet history coefficient.
-     * @param betTotal          a bet history bet total.
-     * @param personLogin       a bet history person login.
-     * @param competitionResult a bet history competition result.
-     * @param betResult         a bet history bet result.
-     */
     public BetHistory(Long id, Team home, Team away, BetType betType, Integer coefficient, Integer betTotal,
                       String personLogin, CompetitionResult competitionResult, BetResult betResult) {
         super(id);
@@ -46,75 +33,39 @@ public class BetHistory extends AbstractBaseEntity {
         this.betResult = betResult;
     }
 
-    /**
-     * A constructor without ID used for save bet history to database.
-     *
-     * @param home              a bet history home team.
-     * @param away              a bet history away team.
-     * @param betType           a bet history bet type.
-     * @param coefficient       a bet history coefficient.
-     * @param betTotal          a bet history bet total.
-     * @param personLogin       a bet history person login.
-     * @param competitionResult a bet history competition result.
-     * @param betResult         a bet history bet result.
-     */
     public BetHistory(Team home, Team away, BetType betType, Integer coefficient, Integer betTotal,
                       String personLogin, CompetitionResult competitionResult, BetResult betResult) {
         this(null, home, away, betType, coefficient, betTotal, personLogin, competitionResult, betResult);
     }
 
-    /**
-     * @return a bet history home team.
-     */
     public Team getHome() {
         return home;
     }
 
-    /**
-     * @return a bet history away team.
-     */
     public Team getAway() {
         return away;
     }
 
-    /**
-     * @return a bet history bet type.
-     */
     public BetType getBetType() {
         return betType;
     }
 
-    /**
-     * @return a bet history coefficient.
-     */
     public Integer getCoefficient() {
         return coefficient;
     }
 
-    /**
-     * @return a bet history bet total.
-     */
     public Integer getBetTotal() {
         return betTotal;
     }
 
-    /**
-     * @return a bet history person login.
-     */
     public String getPersonLogin() {
         return personLogin;
     }
 
-    /**
-     * @return a bet history competition result.
-     */
     public CompetitionResult getCompetitionResult() {
         return competitionResult;
     }
 
-    /**
-     * @return a bet history bet result.
-     */
     public BetResult getBetResult() {
         return betResult;
     }

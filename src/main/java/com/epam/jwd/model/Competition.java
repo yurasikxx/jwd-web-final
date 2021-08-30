@@ -14,39 +14,20 @@ public class Competition extends AbstractBaseEntity {
     private final Team home;
     private final Team away;
 
-    /**
-     * A constructor with ID user for pull up competition from database.
-     *
-     * @param id   a competition ID.
-     * @param home a home team ID.
-     * @param away an away team ID.
-     */
     public Competition(Long id, Team home, Team away) {
         super(id);
         this.home = home;
         this.away = away;
     }
 
-    /**
-     * A constructor without ID used for save competition to database.
-     *
-     * @param home a home team ID.
-     * @param away an away team ID.
-     */
     public Competition(Team home, Team away) {
         this(null, home, away);
     }
 
-    /**
-     * @return a competition home team.
-     */
     public Team getHome() {
         return home;
     }
 
-    /**
-     * @return a competition away team.
-     */
     public Team getAway() {
         return away;
     }
