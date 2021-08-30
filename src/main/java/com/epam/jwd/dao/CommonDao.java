@@ -100,7 +100,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
 
             return entity;
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
-            e.printStackTrace();
             LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
@@ -116,15 +115,22 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
+            connection.setAutoCommit(false);
+
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
                     updateResultSet(resultSet, entity);
                 }
-            }
 
-            LOGGER.info(ENTITY_WAS_UPDATED_MSG);
+                connection.commit();
+                LOGGER.info(ENTITY_WAS_UPDATED_MSG);
+            } catch (SQLException e) {
+                connection.rollback();
+                LOGGER.error(ENTITY_WAS_NOT_UPDATED_MSG);
+            } finally {
+                connection.setAutoCommit(true);
+            }
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
-            LOGGER.error(ENTITY_WAS_NOT_UPDATED_MSG);
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
     }
@@ -133,15 +139,22 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                      ResultSet.CONCUR_UPDATABLE)) {
+            connection.setAutoCommit(false);
+
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
                     deleteResultSet(id, resultSet);
+                    connection.commit();
+                    LOGGER.info(ENTITY_WAS_DELETED_MSG);
                 }
+            } catch (SQLException e) {
+                connection.rollback();
+                LOGGER.error(ENTITY_WAS_NOT_DELETED_MSG);
+            } finally {
+                connection.setAutoCommit(true);
             }
 
-            LOGGER.info(ENTITY_WAS_DELETED_MSG);
         } catch (SQLException | InterruptedException e) {
-            LOGGER.error(ENTITY_WAS_NOT_DELETED_MSG);
             throw new DaoException(FAILED_TO_DELETE_ENTITY_MSG);
         }
     }
@@ -167,7 +180,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 }
 
                 LOGGER.info(PREPARED_ENTITIES_WERE_FOUND);
-
                 return entities;
             }
         } catch (SQLException | InterruptedException | UnknownEnumAttributeException e) {
@@ -187,7 +199,6 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 }
 
                 LOGGER.info(ENTITIES_WERE_FOUND_MSG);
-
                 return entities;
             }
         } catch (SQLException | InterruptedException | UnknownEnumAttributeException e) {
