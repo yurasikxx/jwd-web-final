@@ -13,6 +13,9 @@ import com.epam.jwd.model.Person;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
@@ -32,6 +35,8 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 public class RegisterCommand implements Command {
 
     private static final String REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.registration.invalid";
+    private static final String LOGIN_REGEX = "\\p{Lower}+_\\p{Lower}+";
+    private static final String PASSWORD_REGEX = "\\w";
 
     private static volatile RegisterCommand instance;
 
@@ -89,22 +94,30 @@ public class RegisterCommand implements Command {
     }
 
     private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String login;
+        final Pattern pattern = Pattern.compile(LOGIN_REGEX);
 
         if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
-            login = request.getParameter(LOGIN_PARAMETER_NAME);
-            return login;
+            final String login = request.getParameter(LOGIN_PARAMETER_NAME);
+            final Matcher matcher = pattern.matcher(login);
+
+            if (matcher.matches()) {
+                return login;
+            }
         }
 
         throw new IncorrectEnteredDataException(messageManager.getString(REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY));
     }
 
     private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String password;
+        final Pattern pattern = Pattern.compile(PASSWORD_REGEX);
 
         if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
-            password = request.getParameter(PASSWORD_PARAMETER_NAME);
-            return password;
+            final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
+            final Matcher matcher = pattern.matcher(password);
+
+            if (matcher.matches()) {
+                return password;
+            }
         }
 
         throw new IncorrectEnteredDataException(messageManager.getString(REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY));
