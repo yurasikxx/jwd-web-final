@@ -60,7 +60,8 @@ public class CompetitionResultsCommitCommand implements Command {
     private static final String COMPETITION_RESULTS_EMPTY_MESSAGE_KEY = "competition.results.empty";
     private static final String COMPETITION_NOT_SELECTED_MESSAGE_KEY = "competition.not.selected";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
-    private static final long RANDOM_COMPETITION_RESULT_ID = 1 + (long) (Math.random() * 3);
+    private static final int MIN_RANDOM_VALUE = 1;
+    private static final int MAX_RANDOM_VALUE = 3;
 
     private static volatile CompetitionResultsCommitCommand instance;
 
@@ -124,7 +125,7 @@ public class CompetitionResultsCommitCommand implements Command {
                 final Integer betTotal = bet.getBetTotal();
                 final String personLogin = bet.getPerson().getLogin();
                 final CompetitionResult competitionResult = CompetitionResult
-                        .resolveCompetitionResultById(RANDOM_COMPETITION_RESULT_ID);
+                        .resolveCompetitionResultById(MIN_RANDOM_VALUE + (long) (Math.random() * MAX_RANDOM_VALUE));
                 final BetResult betResult = getBetResult(betType, competitionResult);
                 historyBets.add(new BetHistory(home, away, betType, coefficient, betTotal,
                         personLogin, competitionResult, betResult));
