@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
@@ -174,7 +175,7 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
         resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException {
+    private void setCustomId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
         final Long getLastBet = bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (getLastBet.equals(betAmount.get())) {
@@ -187,6 +188,8 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
                 idCounter.incrementAndGet();
             }
 
+            checkExistingBet(bets, betAmount, idCounter);
+
             resultSet.moveToInsertRow();
             resultSet.updateLong(BET_HISTORY_ID_COLUMN, idCounter.get());
         }
@@ -194,6 +197,19 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
 
     private Long getIntermediateId(List<BetHistory> bets, AtomicLong idCounter) {
         return bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
+    }
+
+    private void checkExistingBet(List<BetHistory> betslips, AtomicLong betslipAmount, AtomicLong idCounter) throws DaoException {
+        final Optional<BetHistory> optionalBetslip = this.findById(idCounter.get());
+        BetHistory betslip = null;
+
+        if (optionalBetslip.isPresent()) {
+            betslip = optionalBetslip.get();
+        }
+
+        if (betslips.contains(betslip)) {
+            idCounter.set(betslipAmount.incrementAndGet());
+        }
     }
 
 }

@@ -34,6 +34,7 @@ import com.epam.jwd.command.management.ShowCompetitionManagementPageCommand;
 import com.epam.jwd.command.management.ShowPersonManagementPageCommand;
 import com.epam.jwd.command.page.ShowErrorPageCommand;
 import com.epam.jwd.command.page.ShowMainPageCommand;
+import com.epam.jwd.command.page.ShowSuccessPageCommand;
 import com.epam.jwd.command.view.ShowAllBetsViewingPageCommand;
 import com.epam.jwd.command.view.ShowBetHistoryPageCommand;
 import com.epam.jwd.command.view.ShowBetslipViewingPageCommand;
@@ -98,6 +99,7 @@ public enum BaseApplicationCommand {
     COMPETITION_RESULTS_COMMITTING_PAGE(ShowCompetitionResultsCommittingPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),
     SELECT_LANGUAGE(LanguageSelectionCommand.getInstance()),
+    SUCCESS(ShowSuccessPageCommand.getInstance()),
     ERROR(ShowErrorPageCommand.getInstance()),
     DEFAULT(ShowMainPageCommand.getInstance());
 

@@ -13,12 +13,12 @@ import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
 
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.BETSLIP_JSP_PATH;
 import static com.epam.jwd.constant.Constant.DELETING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_EMPTY_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -42,7 +42,7 @@ public class BetslipDeletingCommand implements Command {
     private BetslipDeletingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.betslipService = BetslipService.getInstance();
-        this.successDeletingCommandResponse = new CommandResponse(BETSLIP_JSP_PATH, true);
+        this.successDeletingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorDeletingCommandResponse = new CommandResponse(DELETING_JSP_PATH, false);
     }
 
@@ -78,12 +78,18 @@ public class BetslipDeletingCommand implements Command {
         } catch (IncorrectEnteredDataException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorDeletingCommandResponse;
         } catch (NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ID_EMPTY_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorDeletingCommandResponse;
         } catch (ServiceException | DaoException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_CANNOT_DELETE_MESSAGE_KEY));
             request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorDeletingCommandResponse;
         }
 
         return successDeletingCommandResponse;

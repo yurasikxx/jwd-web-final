@@ -18,12 +18,12 @@ import java.util.Objects;
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TEAM_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TEAM_SPORT_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
@@ -49,7 +49,7 @@ public class CompetitionAddingCommand implements Command {
     private CompetitionAddingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
-        this.successAddingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.successAddingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorAddingCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 

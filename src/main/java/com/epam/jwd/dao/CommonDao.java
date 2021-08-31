@@ -94,13 +94,14 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             } catch (SQLException e) {
                 connection.rollback();
                 LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
+                throw new DaoException(ENTITY_WAS_NOT_SAVED_MSG);
             } finally {
                 connection.setAutoCommit(true);
             }
 
             return entity;
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
-            LOGGER.error(ENTITY_WAS_NOT_SAVED_MSG);
+            LOGGER.error(FAILED_TO_SAVE_ENTITY_MSG);
             throw new DaoException(FAILED_TO_SAVE_ENTITY_MSG);
         }
     }
@@ -127,10 +128,12 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             } catch (SQLException e) {
                 connection.rollback();
                 LOGGER.error(ENTITY_WAS_NOT_UPDATED_MSG);
+                throw new DaoException(ENTITY_WAS_NOT_UPDATED_MSG);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException | InterruptedException | BusinessValidationException e) {
+            LOGGER.error(FAILED_TO_UPDATE_ENTITY_MSG);
             throw new DaoException(FAILED_TO_UPDATE_ENTITY_MSG);
         }
     }
@@ -144,23 +147,26 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
             try (final ResultSet resultSet = statement.executeQuery(selectAllSql)) {
                 while (resultSet.next()) {
                     deleteResultSet(id, resultSet);
-                    connection.commit();
-                    LOGGER.info(ENTITY_WAS_DELETED_MSG);
                 }
+
+                connection.commit();
+                LOGGER.info(ENTITY_WAS_DELETED_MSG);
             } catch (SQLException e) {
                 connection.rollback();
                 LOGGER.error(ENTITY_WAS_NOT_DELETED_MSG);
+                throw new DaoException(ENTITY_WAS_NOT_DELETED_MSG);
             } finally {
                 connection.setAutoCommit(true);
             }
 
         } catch (SQLException | InterruptedException e) {
+            LOGGER.error(FAILED_TO_DELETE_ENTITY_MSG);
             throw new DaoException(FAILED_TO_DELETE_ENTITY_MSG);
         }
     }
 
     private void deleteResultSet(Long id, ResultSet resultSet) throws SQLException {
-        long localId = resultSet.getLong(INITIAL_INDEX_VALUE);
+        final long localId = resultSet.getLong(INITIAL_INDEX_VALUE);
 
         if (localId == id) {
             resultSet.deleteRow();
@@ -171,8 +177,9 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final PreparedStatement statement = connection.prepareStatement(sql)) {
             preparationConsumer.accept(statement);
+
             try (final ResultSet resultSet = statement.executeQuery()) {
-                List<T> entities = new ArrayList<>();
+                final List<T> entities = new ArrayList<>();
 
                 while (resultSet.next()) {
                     final T entity = mapResultSet(resultSet);
@@ -192,7 +199,8 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement()) {
             try (final ResultSet resultSet = statement.executeQuery(sql)) {
-                List<T> entities = new ArrayList<>();
+                final List<T> entities = new ArrayList<>();
+
                 while (resultSet.next()) {
                     final T entity = mapResultSet(resultSet);
                     entities.add(entity);

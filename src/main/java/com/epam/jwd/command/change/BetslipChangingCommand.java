@@ -19,7 +19,6 @@ import com.epam.jwd.service.CompetitionService;
 
 import static com.epam.jwd.constant.Constant.BETSLIP_ALREADY_EXISTS_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.BETSLIP_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.BETSLIP_JSP_PATH;
 import static com.epam.jwd.constant.Constant.BET_TYPE_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COEFFICIENT_PARAMETER_NAME;
@@ -30,6 +29,7 @@ import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -54,7 +54,7 @@ public class BetslipChangingCommand implements Command {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
         this.betslipService = BetslipService.getInstance();
-        this.successChangingCommandResponse = new CommandResponse(BETSLIP_JSP_PATH, true);
+        this.successChangingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorChangingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 

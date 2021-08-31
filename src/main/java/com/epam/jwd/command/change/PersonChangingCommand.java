@@ -14,6 +14,9 @@ import com.epam.jwd.model.Role;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
@@ -21,10 +24,12 @@ import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.LOGIN_REGEX;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.PASSWORD_REGEX;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.PERSON_JSP_PATH;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -47,7 +52,7 @@ public class PersonChangingCommand implements Command {
     private PersonChangingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.personService = PersonService.getInstance();
-        this.successChangingCommandResponse = new CommandResponse(PERSON_JSP_PATH, true);
+        this.successChangingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorChangingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 
@@ -88,9 +93,13 @@ public class PersonChangingCommand implements Command {
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorChangingCommandResponse;
         } catch (DaoException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return errorChangingCommandResponse;
         }
 
         return successChangingCommandResponse;
@@ -108,22 +117,30 @@ public class PersonChangingCommand implements Command {
     }
 
     private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String login;
+        final Pattern pattern = Pattern.compile(LOGIN_REGEX);
 
         if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
-            login = request.getParameter(LOGIN_PARAMETER_NAME);
-            return login;
+            final String login = request.getParameter(LOGIN_PARAMETER_NAME);
+            final Matcher matcher = pattern.matcher(login);
+
+            if (matcher.matches()) {
+                return login;
+            }
         }
 
         throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String password;
+        final Pattern pattern = Pattern.compile(PASSWORD_REGEX);
 
         if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
-            password = request.getParameter(PASSWORD_PARAMETER_NAME);
-            return password;
+            final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
+            final Matcher matcher = pattern.matcher(password);
+
+            if (matcher.matches()) {
+                return password;
+            }
         }
 
         throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));

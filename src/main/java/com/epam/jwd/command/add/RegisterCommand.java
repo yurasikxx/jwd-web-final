@@ -18,12 +18,15 @@ import java.util.regex.Pattern;
 
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
-import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.INITIAL_BALANCE_VALUE;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.LOGIN_REGEX;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.PASSWORD_REGEX;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.REGISTER_JSP_PATH;
+import static com.epam.jwd.constant.Constant.REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -34,15 +37,11 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class RegisterCommand implements Command {
 
-    private static final String REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.registration.invalid";
-    private static final String LOGIN_REGEX = "\\p{Lower}+_\\p{Lower}+";
-    private static final String PASSWORD_REGEX = "\\w";
-
     private static volatile RegisterCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final PersonBaseService personService;
-    private final BaseCommandResponse registerSuccessCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+    private final BaseCommandResponse registerSuccessCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
     private final BaseCommandResponse registerErrorCommandResponse = new CommandResponse(REGISTER_JSP_PATH, false);
 
     private RegisterCommand() {

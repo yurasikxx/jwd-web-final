@@ -16,13 +16,13 @@ import com.epam.jwd.service.CompetitionService;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.HOME_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TEAM_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TEAM_SPORT_DIFFERENCE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
@@ -47,7 +47,7 @@ public class CompetitionChangingCommand implements Command {
     private CompetitionChangingCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.competitionService = CompetitionService.getInstance();
-        this.successChangingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.successChangingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorChangingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 

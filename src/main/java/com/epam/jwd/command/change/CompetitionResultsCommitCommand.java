@@ -34,11 +34,11 @@ import java.util.List;
 
 import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.BetResult.LOSS;
 import static com.epam.jwd.model.BetResult.WIN;
@@ -81,7 +81,7 @@ public class CompetitionResultsCommitCommand implements Command {
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
         this.betHistoryService = BetHistoryService.getInstance();
-        this.successCommittingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, true);
+        this.successCommittingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorCommittingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
     }
 

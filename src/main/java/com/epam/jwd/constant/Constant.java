@@ -16,6 +16,7 @@ public class Constant {
     public static final String VIEWING_JSP_PATH = "/jsp/viewing.jsp";
     public static final String CHANGING_JSP_PATH = "/jsp/changing.jsp";
     public static final String DELETING_JSP_PATH = "/jsp/deleting.jsp";
+    public static final String SUCCESS_JSP_PATH = "/jsp/success.jsp";
     public static final String INDEX_JSP_PATH = "/index.jsp";
 
     public static final String PERSON_ATTRIBUTE_NAME = "person";
@@ -57,6 +58,7 @@ public class Constant {
     public static final String PERSON_HAS_BET_MESSAGE_KEY = "person.has.bet";
     public static final String EMPTY_CREDENTIALS_MESSAGE_KEY = "credentials.empty";
     public static final String EMPTY_USER_MESSAGE_KEY = "person.empty";
+    public static final String REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.registration.invalid";
 
     public static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";
     public static final String FAILED_TO_FIND_PREPARED_ENTITIES_MSG = "Failed to find prepared entities";
@@ -72,6 +74,9 @@ public class Constant {
     public static final String PREPARED_ENTITIES_WERE_NOT_FOUND_MSG = "Prepared entities weren't found";
     public static final String ENTITIES_WERE_FOUND_MSG = "Entities were found";
     public static final String ENTITIES_WERE_NOT_FOUND_MSG = "Entities weren't found";
+
+    public static final String LOGIN_REGEX = "\\p{Lower}+_\\p{Lower}+";
+    public static final String PASSWORD_REGEX = "\\w+";
 
     public static final int EMPTY_LIST_SIZE_VALUE = 0;
     public static final int INITIAL_ID_VALUE = 1;

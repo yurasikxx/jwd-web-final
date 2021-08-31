@@ -32,13 +32,13 @@ import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INCORRECT_DATA_MESSAGE_KEY;
-import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_LONG_ID_VALUE;
 import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_HAS_BET_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_NAME_SESSION_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
 /**
@@ -66,7 +66,7 @@ public class BetAddingCommand implements Command {
         this.personService = PersonService.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betService = BetService.getInstance();
-        this.successAddingCommandResponse = new CommandResponse(INDEX_JSP_PATH, true);
+        this.successAddingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
         this.errorAddingCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
