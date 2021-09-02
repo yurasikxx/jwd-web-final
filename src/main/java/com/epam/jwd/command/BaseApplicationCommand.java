@@ -17,10 +17,12 @@ import com.epam.jwd.command.change.BetslipChangingCommand;
 import com.epam.jwd.command.change.CompetitionChangingCommand;
 import com.epam.jwd.command.change.CompetitionResultsCommitCommand;
 import com.epam.jwd.command.change.LanguageSelectionCommand;
+import com.epam.jwd.command.change.PasswordChangingCommand;
 import com.epam.jwd.command.change.PersonChangingCommand;
 import com.epam.jwd.command.change.ShowBetslipChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionResultsCommittingPageCommand;
+import com.epam.jwd.command.change.ShowPasswordChangingCommand;
 import com.epam.jwd.command.change.ShowPersonChangingPageCommand;
 import com.epam.jwd.command.delete.BetslipDeletingCommand;
 import com.epam.jwd.command.delete.CompetitionDeletingCommand;
@@ -66,6 +68,8 @@ public enum BaseApplicationCommand {
     LOG_IN(LogInCommand.getInstance(), UNAUTHORIZED),
     LOG_OUT(LogOutCommand.getInstance(), ADMINISTRATOR, BOOKMAKER, USER),
     PERSON_MANAGEMENT_PAGE(ShowPersonManagementPageCommand.getInstance(), ADMINISTRATOR),
+    PASSWORD_CHANGING_PAGE(ShowPasswordChangingCommand.getInstance(), USER),
+    PASSWORD_CHANGE(PasswordChangingCommand.getInstance(), USER),
     PERSON_LIST_PAGE(ShowPersonViewingPageCommand.getInstance(), ADMINISTRATOR),
     PERSON_ADDING_PAGE(ShowPersonAddingPageCommand.getInstance(), ADMINISTRATOR),
     PERSON_ADD(PersonAddingCommand.getInstance(), ADMINISTRATOR),

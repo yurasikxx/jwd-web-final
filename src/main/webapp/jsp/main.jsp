@@ -179,6 +179,12 @@
                                 <b><fmt:message key="log.out"/></b>
                             </a>
                         </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=password_changing_page">
+                                <b><fmt:message key="main.user.change.password"/></b>
+                            </a>
+                        </li>
                     </ul>
                     <h1><fmt:message key="main.user.page.title"/></h1>
                     <p><jwd:welcome/></p>

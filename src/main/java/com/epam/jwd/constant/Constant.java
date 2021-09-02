@@ -20,6 +20,7 @@ public class Constant {
     public static final String INDEX_JSP_PATH = "/index.jsp";
 
     public static final String PERSON_ATTRIBUTE_NAME = "person";
+    public static final String PASSWORD_CHANGING_ATTRIBUTE_NAME = "passwordChanging";
     public static final String SELECT_PERSON_ATTRIBUTE_NAME = "selectPerson";
     public static final String COMPETITION_ATTRIBUTE_NAME = "competition";
     public static final String SELECT_TEAM_ATTRIBUTE_NAME = "selectTeam";
@@ -84,6 +85,8 @@ public class Constant {
     public static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
     public static final int MIN_INDEX_VALUE = EMPTY_LIST_SIZE_VALUE;
     public static final int INITIAL_BALANCE_VALUE = 1000;
+    public static final int MAX_LOGIN_LENGTH = 25;
+    public static final int MAX_PASSWORD_LENGTH = MAX_LOGIN_LENGTH;
     public static final Long MIN_LONG_ID_VALUE = 1L;
 
     private Constant() {

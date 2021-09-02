@@ -22,6 +22,8 @@ import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
 import static com.epam.jwd.constant.Constant.LOCALE_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.LOGIN_JSP_PATH;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.MAX_LOGIN_LENGTH;
+import static com.epam.jwd.constant.Constant.MAX_PASSWORD_LENGTH;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.PERSON_BALANCE_SESSION_ATTRIBUTE_NAME;
@@ -83,7 +85,7 @@ public class LogInCommand implements Command {
 
             return addPersonInfoToSession(request, login);
         } catch (IncorrectEnteredDataException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(EMPTY_CREDENTIALS_MESSAGE_KEY));
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(INVALID_CREDENTIALS_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return loginErrorCommandResponse;
@@ -96,10 +98,9 @@ public class LogInCommand implements Command {
     }
 
     private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String login;
+        final String login = request.getParameter(LOGIN_PARAMETER_NAME);
 
-        if (request.getParameter(LOGIN_PARAMETER_NAME) != null) {
-            login = request.getParameter(LOGIN_PARAMETER_NAME);
+        if (login != null && login.length() <= MAX_LOGIN_LENGTH) {
             return login;
         }
 
@@ -107,14 +108,13 @@ public class LogInCommand implements Command {
     }
 
     private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final String password;
+        final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
 
-        if (request.getParameter(PASSWORD_PARAMETER_NAME) != null) {
-            password = request.getParameter(PASSWORD_PARAMETER_NAME);
+        if (password != null && password.length() <= MAX_PASSWORD_LENGTH) {
             return password;
         }
 
-        throw new IncorrectEnteredDataException(messageManager.getString(EMPTY_CREDENTIALS_MESSAGE_KEY));
+        throw new IncorrectEnteredDataException(messageManager.getString(INVALID_CREDENTIALS_MESSAGE_KEY));
     }
 
     private BaseCommandResponse prepareErrorPage(BaseCommandRequest request) {

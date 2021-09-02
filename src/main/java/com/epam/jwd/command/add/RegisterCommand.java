@@ -21,6 +21,8 @@ import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INITIAL_BALANCE_VALUE;
 import static com.epam.jwd.constant.Constant.LOGIN_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.LOGIN_REGEX;
+import static com.epam.jwd.constant.Constant.MAX_LOGIN_LENGTH;
+import static com.epam.jwd.constant.Constant.MAX_PASSWORD_LENGTH;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PASSWORD_REGEX;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
@@ -99,7 +101,7 @@ public class RegisterCommand implements Command {
             final String login = request.getParameter(LOGIN_PARAMETER_NAME);
             final Matcher matcher = pattern.matcher(login);
 
-            if (matcher.matches()) {
+            if (matcher.matches() && login.length() <= MAX_LOGIN_LENGTH) {
                 return login;
             }
         }
@@ -114,7 +116,7 @@ public class RegisterCommand implements Command {
             final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
             final Matcher matcher = pattern.matcher(password);
 
-            if (matcher.matches()) {
+            if (matcher.matches() && password.length() <= MAX_PASSWORD_LENGTH) {
                 return password;
             }
         }

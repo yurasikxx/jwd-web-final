@@ -50,10 +50,18 @@ public interface PersonBaseService extends BaseService<Person> {
     /**
      * Indicates if given person can log in.
      *
-     * @param person a given person
+     * @param person a given person.
      * @return {@code true} if person can log in; {@code false} otherwise.
      */
     boolean canLogIn(Person person);
+
+    /**
+     * Changes person password.
+     *
+     * @param person   a current person.
+     * @param password a new password.
+     */
+    void changePassword(Person person, String password) throws DaoException;
 
     /**
      * Looks for persons by accepting given role and return them.

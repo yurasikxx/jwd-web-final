@@ -57,6 +57,16 @@
                     </h2>
                 </c:if>
             </c:when>
+            <c:when test="${not empty requestScope.passwordChanging}">
+                <h1>${requestScope.passwordChanging}</h1>
+                <form action="${pageContext.request.contextPath}/controller?command=password_change" method="post">
+                    <label for="passwordChangingField"><fmt:message key="auth.password"/></label>
+                    <br>
+                    <input type="password" id="passwordChangingField" name="password">
+                    <br>
+                    <input type="submit" value="<fmt:message key="main.user.change.password"/>">
+                </form>
+            </c:when>
             <c:when test="${not empty requestScope.person}">
                 <h1>${requestScope.person}</h1>
                 <form action="${pageContext.request.contextPath}/controller?command=person_change" method="post">

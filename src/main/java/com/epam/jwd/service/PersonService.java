@@ -34,8 +34,6 @@ public class PersonService implements PersonBaseService {
     private static final String USER_CAN_NOT_LOG_IN_MSG = "User can't log in";
     private static final String PERSONS_WERE_NOT_INITIALIZED = "Persons weren't initialized";
     private static final String PERSONS_WERE_NOT_DESTROYED_MSG = "Persons weren't destroyed";
-    private static final int MAX_LOGIN_LENGTH = 40;
-    private static final int MAX_PASSWORD_LENGTH = 100;
 
     private static volatile PersonService instance;
 
@@ -121,9 +119,7 @@ public class PersonService implements PersonBaseService {
             logins.add(iteratedPerson.getLogin());
         }
 
-        return !logins.contains(person.getLogin())
-                && person.getLogin().length() > MIN_INDEX_VALUE && person.getLogin().length() <= MAX_LOGIN_LENGTH
-                && person.getPassword().length() > MIN_INDEX_VALUE && person.getPassword().length() <= MAX_PASSWORD_LENGTH;
+        return !logins.contains(person.getLogin());
     }
 
     @Override
@@ -147,6 +143,15 @@ public class PersonService implements PersonBaseService {
             LOGGER.error(USER_CAN_NOT_LOG_IN_MSG);
             return false;
         }
+    }
+
+    @Override
+    public void changePassword(Person person, String password) throws DaoException {
+        final Person updatedPerson = new Person(
+                person.getId(), person.getLogin(), password, person.getBalance(), person.getRole());
+        this.logIn(updatedPerson);
+        persons.remove(updatedPerson.getId().intValue() - INDEX_ROLLBACK_VALUE);
+        persons.add(updatedPerson.getId().intValue() - INDEX_ROLLBACK_VALUE, updatedPerson);
     }
 
     @Override
