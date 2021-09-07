@@ -102,8 +102,8 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
-                    <th><h2><fmt:message key="bet.type.id"/></h2></th>
-                    <th><h2><fmt:message key="bet.type"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type.id"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>
                 </tr>
                 <tr>
@@ -134,12 +134,12 @@
                     </td>
                     <td>
                         <c:forEach var="betslip" items="${requestScope.betslip}">
-                            <h3>${betslip.betType.id}</h3>
+                            <h3>${betslip.betslipType.id}</h3>
                         </c:forEach>
                     </td>
                     <td>
                         <c:forEach var="betslip" items="${requestScope.betslip}">
-                            <h3>${betslip.betType.name}</h3>
+                            <h3>${betslip.betslipType.name}</h3>
                         </c:forEach>
                     </td>
                     <td>
@@ -168,6 +168,8 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type.id"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type"/></h2></th>
                     <th><h2><fmt:message key="bet.type.id"/></h2></th>
                     <th><h2><fmt:message key="bet.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>
@@ -209,12 +211,22 @@
                     </td>
                     <td>
                         <c:forEach var="bet" items="${requestScope.bet}">
-                            <h3>${bet.betslip.betType.id}</h3>
+                            <h3>${bet.betslip.betslipType.id}</h3>
                         </c:forEach>
                     </td>
                     <td>
                         <c:forEach var="bet" items="${requestScope.bet}">
-                            <h3>${bet.betslip.betType.name}</h3>
+                            <h3>${bet.betslip.betslipType.name}</h3>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="bet" items="${requestScope.bet}">
+                            <h3>${bet.betType.id}</h3>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="bet" items="${requestScope.bet}">
+                            <h3>${bet.betType.name}</h3>
                         </c:forEach>
                     </td>
                     <td>
@@ -258,6 +270,7 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type"/></h2></th>
                     <th><h2><fmt:message key="bet.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>
                     <th><h2><fmt:message key="bet.total"/></h2></th>
@@ -284,6 +297,11 @@
                     <td>
                         <c:forEach var="betHistory" items="${requestScope.betHistory}">
                             <h3>${betHistory.away.name}</h3>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="betHistory" items="${requestScope.betHistory}">
+                            <h3>${betHistory.betslipType.name}</h3>
                         </c:forEach>
                     </td>
                     <td>
@@ -331,6 +349,7 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type"/></h2></th>
                     <th><h2><fmt:message key="bet.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>
                     <th><h2><fmt:message key="bet.total"/></h2></th>
@@ -353,7 +372,12 @@
                     </td>
                     <td>
                         <c:forEach var="personBet" items="${requestScope.personBet}">
-                            <h3>${personBet.betslip.betType.name}</h3>
+                            <h3>${personBet.betslip.betslipType.name}</h3>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="personBet" items="${requestScope.personBet}">
+                            <h3>${personBet.betType.name}</h3>
                         </c:forEach>
                     </td>
                     <td>
@@ -376,6 +400,7 @@
                     <th><h2><fmt:message key="sport"/></h2></th>
                     <th><h2><fmt:message key="home"/></h2></th>
                     <th><h2><fmt:message key="away"/></h2></th>
+                    <th><h2><fmt:message key="betslip.type"/></h2></th>
                     <th><h2><fmt:message key="bet.type"/></h2></th>
                     <th><h2><fmt:message key="coefficient"/></h2></th>
                     <th><h2><fmt:message key="bet.total"/></h2></th>
@@ -396,6 +421,11 @@
                     <td>
                         <c:forEach var="personBetHistory" items="${requestScope.personBetHistory}">
                             <h3>${personBetHistory.away.name}</h3>
+                        </c:forEach>
+                    </td>
+                    <td>
+                        <c:forEach var="personBetHistory" items="${requestScope.personBetHistory}">
+                            <h3>${personBetHistory.betslipType.name}</h3>
                         </c:forEach>
                     </td>
                     <td>

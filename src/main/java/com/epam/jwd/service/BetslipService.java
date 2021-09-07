@@ -4,7 +4,7 @@ import com.epam.jwd.dao.BetslipBaseDao;
 import com.epam.jwd.dao.BetslipDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
-import com.epam.jwd.model.BetType;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Betslip;
 
 import java.util.ArrayList;
@@ -52,10 +52,10 @@ public class BetslipService implements BetslipBaseService {
     public boolean canSave(Betslip betslip) {
         final List<Betslip> betslips = this.findAll();
         final List<Betslip> theseWithoutCoefficientBetslips = new ArrayList<>();
-        final Betslip withoutCoefficientBetslip = new Betslip(betslip.getCompetition(), betslip.getBetType());
+        final Betslip withoutCoefficientBetslip = new Betslip(betslip.getCompetition(), betslip.getBetslipType());
 
         for (Betslip iteratedBetslip : betslips) {
-            theseWithoutCoefficientBetslips.add(new Betslip(iteratedBetslip.getCompetition(), iteratedBetslip.getBetType()));
+            theseWithoutCoefficientBetslips.add(new Betslip(iteratedBetslip.getCompetition(), iteratedBetslip.getBetslipType()));
         }
 
         return !theseWithoutCoefficientBetslips.contains(withoutCoefficientBetslip);
@@ -83,8 +83,8 @@ public class BetslipService implements BetslipBaseService {
     }
 
     @Override
-    public List<Betslip> findByBetType(BetType betType) throws DaoException {
-        return betslipDao.findByBetType(betType);
+    public List<Betslip> findByBetType(BetslipType betslipType) throws DaoException {
+        return betslipDao.findByBetType(betslipType);
     }
 
     @Override

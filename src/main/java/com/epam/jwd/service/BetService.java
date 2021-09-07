@@ -5,6 +5,7 @@ import com.epam.jwd.dao.BetDao;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
+import com.epam.jwd.model.BetType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,11 @@ public class BetService implements BetBaseService {
     @Override
     public List<Bet> findByCompetitionId(Long id) throws DaoException {
         return betDao.findByCompetitionId(id);
+    }
+
+    @Override
+    public List<Bet> findByBetType(BetType betType) throws DaoException {
+        return betDao.findByBetType(betType);
     }
 
     @Override

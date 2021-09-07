@@ -153,6 +153,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 LOGGER.info(ENTITY_WAS_DELETED_MSG);
             } catch (SQLException e) {
                 connection.rollback();
+                e.printStackTrace();
                 LOGGER.error(ENTITY_WAS_NOT_DELETED_MSG);
                 throw new DaoException(ENTITY_WAS_NOT_DELETED_MSG);
             } finally {

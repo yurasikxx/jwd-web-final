@@ -1,15 +1,19 @@
 package com.epam.jwd.command;
 
-import com.epam.jwd.command.add.BetAddingCommand;
+import com.epam.jwd.command.add.ParlayBetAddingCommand;
+import com.epam.jwd.command.add.ShowParlayBetAddingPageCommand;
+import com.epam.jwd.command.add.ShowSystemBetAddingPageCommand;
+import com.epam.jwd.command.add.SingleBetAddingCommand;
 import com.epam.jwd.command.add.BetslipAddingCommand;
 import com.epam.jwd.command.add.CompetitionAddingCommand;
 import com.epam.jwd.command.add.PersonAddingCommand;
 import com.epam.jwd.command.add.RegisterCommand;
-import com.epam.jwd.command.add.ShowBetAddingPageCommand;
+import com.epam.jwd.command.add.ShowSingleBetAddingPageCommand;
 import com.epam.jwd.command.add.ShowBetslipAddingPageCommand;
 import com.epam.jwd.command.add.ShowCompetitionAddingPageCommand;
 import com.epam.jwd.command.add.ShowPersonAddingPageCommand;
 import com.epam.jwd.command.add.ShowRegistrationPageCommand;
+import com.epam.jwd.command.add.SystemBetAddingCommand;
 import com.epam.jwd.command.auth.LogInCommand;
 import com.epam.jwd.command.auth.LogOutCommand;
 import com.epam.jwd.command.auth.ShowLogInPageCommand;
@@ -21,7 +25,6 @@ import com.epam.jwd.command.change.PasswordChangingCommand;
 import com.epam.jwd.command.change.PersonChangingCommand;
 import com.epam.jwd.command.change.ShowBetslipChangingPageCommand;
 import com.epam.jwd.command.change.ShowCompetitionChangingPageCommand;
-import com.epam.jwd.command.change.ShowCompetitionResultsCommittingPageCommand;
 import com.epam.jwd.command.change.ShowPasswordChangingCommand;
 import com.epam.jwd.command.change.ShowPersonChangingPageCommand;
 import com.epam.jwd.command.delete.BetslipDeletingCommand;
@@ -97,10 +100,13 @@ public enum BaseApplicationCommand {
     BETSLIP_DELETE(BetslipDeletingCommand.getInstance(), BOOKMAKER),
     BET_MANAGEMENT_PAGE(ShowBetManagementPageCommand.getInstance(), ADMINISTRATOR),
     BET_LIST_PAGE(ShowAllBetsViewingPageCommand.getInstance(), ADMINISTRATOR),
-    BET_ADDING_PAGE(ShowBetAddingPageCommand.getInstance(), USER),
-    BET_ADD(BetAddingCommand.getInstance(), USER),
+    SINGLE_BET_ADDING_PAGE(ShowSingleBetAddingPageCommand.getInstance(), USER),
+    SINGLE_BET_ADD(SingleBetAddingCommand.getInstance(), USER),
+    PARLAY_BET_ADDING_PAGE(ShowParlayBetAddingPageCommand.getInstance(), USER),
+    PARLAY_BET_ADD(ParlayBetAddingCommand.getInstance(), USER),
+    SYSTEM_BET_ADDING_PAGE(ShowSystemBetAddingPageCommand.getInstance(), USER),
+    SYSTEM_BET_ADD(SystemBetAddingCommand.getInstance(), USER),
     BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR),
-    COMPETITION_RESULTS_COMMITTING_PAGE(ShowCompetitionResultsCommittingPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),
     SELECT_LANGUAGE(LanguageSelectionCommand.getInstance()),
     SUCCESS(ShowSuccessPageCommand.getInstance()),

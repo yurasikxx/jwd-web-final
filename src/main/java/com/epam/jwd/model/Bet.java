@@ -14,21 +14,23 @@ public class Bet extends AbstractBaseEntity {
 
     private final Betslip betslip;
     private final Integer betTotal;
+    private final BetType betType;
     private final Person person;
 
-    public Bet(Long id, Betslip betslip, Integer betTotal, Person person) {
+    public Bet(Long id, Betslip betslip, Integer betTotal, BetType betType, Person person) {
         super(id);
         this.betslip = betslip;
         this.betTotal = betTotal;
+        this.betType = betType;
         this.person = person;
     }
 
-    public Bet(Betslip betslip, Integer betTotal, Person person) {
-        this(null, betslip, betTotal, person);
+    public Bet(Betslip betslip, Integer betTotal, BetType betType, Person person) {
+        this(null, betslip, betTotal, betType, person);
     }
 
     public Bet(Betslip betslip, Person person) {
-        this(null, betslip, null, person);
+        this(null, betslip, null, null, person);
     }
 
     public Betslip getBetslip() {
@@ -37,6 +39,10 @@ public class Bet extends AbstractBaseEntity {
 
     public Integer getBetTotal() {
         return betTotal;
+    }
+
+    public BetType getBetType() {
+        return betType;
     }
 
     public Person getPerson() {
@@ -49,18 +55,19 @@ public class Bet extends AbstractBaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Bet bet = (Bet) o;
-        return Objects.equals(betslip, bet.betslip) && Objects.equals(betTotal, bet.betTotal) && Objects.equals(person, bet.person);
+        return Objects.equals(betslip, bet.betslip) && Objects.equals(betTotal, bet.betTotal) && betType == bet.betType && Objects.equals(person, bet.person);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), betslip, betTotal, person);
+        return Objects.hash(super.hashCode(), betslip, betTotal, betType, person);
     }
 
     @Override
     public String toString() {
         return "Betslip: " + betslip +
                 ", Total: " + betTotal +
+                ", Type: " + betType +
                 ", Person: " + person;
     }
 

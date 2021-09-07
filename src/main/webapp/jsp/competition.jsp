@@ -50,38 +50,37 @@
             </li>
         </ul>
         <h1><fmt:message key="competition.management"/></h1>
-        <ul id="competition-operation">
-            <li class="competition-operation">
-                <a class="competition-operation"
+        <ul id="default-operation">
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=competition_list_page">
                     <b><fmt:message key="competition.view"/></b>
                 </a>
             </li>
-            <li class="competition-operation">
-                <a class="competition-operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=competition_adding_page">
                     <b><fmt:message key="competition.add"/></b>
                 </a>
             </li>
-            <li class="competition-operation">
-                <a class="competition-operation"
-                   href="${pageContext.request.contextPath}/controller?command=competition_results_committing_page">
-                    <b><fmt:message key="competition.commit"/></b>
-                </a>
-            </li>
-            <li class="competition-operation">
-                <a class="competition-operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=competition_changing_page">
                     <b><fmt:message key="competition.change"/></b>
                 </a>
             </li>
-            <li class="competition-operation">
-                <a class="competition-operation"
+            <li class="default-operation">
+                <a class="default-operation"
                    href="${pageContext.request.contextPath}/controller?command=competition_deleting_page">
                     <b><fmt:message key="competition.delete"/></b>
                 </a>
             </li>
         </ul>
+        <br>
+        <br>
+        <form action="${pageContext.request.contextPath}/controller?command=commit_competition_results" method="post">
+            <input type="submit" name="competition-commit" value="<fmt:message key="competition.commit"/>">
+        </form>
         <h5>
             <label id="time"></label>
             <br>

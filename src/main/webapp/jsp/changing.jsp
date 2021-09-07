@@ -138,7 +138,7 @@
                     <select id="betslipSelect" name="id">
                         <option value="0"><fmt:message key="betslip.select"/></option>
                         <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
-                            <option value="${selectBetslip.id}">${selectBetslip.betType.name}, ${selectBetslip}</option>
+                            <option value="${selectBetslip.id}">${selectBetslip.betslipType.name}, ${selectBetslip}</option>
                         </c:forEach>
                     </select>
                     <label for="competitionIdSelect"><fmt:message key="competition"/></label>
@@ -148,9 +148,9 @@
                             <option value="${selectCompetition.id}">${selectCompetition}</option>
                         </c:forEach>
                     </select>
-                    <label for="betTypeSelect"><fmt:message key="bet.type"/></label>
+                    <label for="betTypeSelect"><fmt:message key="betslip.type"/></label>
                     <select id="betTypeSelect" name="betTypeId">
-                        <option value="0"><fmt:message key="bet.type.select"/></option>
+                        <option value="0"><fmt:message key="betslip.type.select"/></option>
                         <c:forEach var="selectBetType" items="${requestScope.selectBetType}">
                             <option value="${selectBetType.id}">${selectBetType.name}</option>
                         </c:forEach>

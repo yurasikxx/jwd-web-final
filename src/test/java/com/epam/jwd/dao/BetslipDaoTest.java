@@ -15,9 +15,9 @@ import java.util.Optional;
 
 import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
-import static com.epam.jwd.model.BetType.DRAW;
-import static com.epam.jwd.model.BetType.HOME_TEAM_WIN;
-import static com.epam.jwd.model.BetType.NO_DRAW;
+import static com.epam.jwd.model.BetslipType.DRAW;
+import static com.epam.jwd.model.BetslipType.HOME_TEAM_WIN;
+import static com.epam.jwd.model.BetslipType.NO_DRAW;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -82,7 +82,7 @@ public class BetslipDaoTest {
         final Betslip updatable = new Betslip(betslip.getId(), betslip.getCompetition(), NO_DRAW, COEFFICIENT);
         betslipDao.update(updatable);
         assertNotNull(updatable);
-        assertEquals(NO_DRAW, updatable.getBetType());
+        assertEquals(NO_DRAW, updatable.getBetslipType());
 
         betslipDao.delete(updatable.getId());
     }
@@ -92,7 +92,7 @@ public class BetslipDaoTest {
         final List<Betslip> betslips = betslipDao.findByBetType(HOME_TEAM_WIN);
         assertNotNull(betslips);
         assertFalse(betslips.isEmpty());
-        assertEquals(HOME_TEAM_WIN, betslips.get(MIN_INDEX_VALUE).getBetType());
+        assertEquals(HOME_TEAM_WIN, betslips.get(MIN_INDEX_VALUE).getBetslipType());
     }
 
     @Test

@@ -107,9 +107,9 @@
                             <option value="${selectCompetition.id}">${selectCompetition}</option>
                         </c:forEach>
                     </select>
-                    <label for="betTypeSelect"><fmt:message key="bet.type"/></label>
+                    <label for="betTypeSelect"><fmt:message key="betslip.type"/></label>
                     <select id="betTypeSelect" name="betTypeId">
-                        <option value="0"><fmt:message key="bet.type.select"/></option>
+                        <option value="0"><fmt:message key="betslip.type.select"/></option>
                         <c:forEach var="selectBetType" items="${requestScope.selectBetType}">
                             <option value="${selectBetType.id}">${selectBetType.name}</option>
                         </c:forEach>
@@ -128,17 +128,55 @@
                     </a>
                 </h2>
             </c:when>
-            <c:when test="${not empty requestScope.bet}">
-                <h1>${requestScope.bet}</h1>
+            <c:when test="${not empty requestScope.singleBet}">
+                <h1>${requestScope.singleBet}</h1>
                 <h2><fmt:message key="main.user.balance"/>: ${sessionScope.personBalance}</h2>
-                <form action="${pageContext.request.contextPath}/controller?command=bet_add" method="post">
+                <form action="${pageContext.request.contextPath}/controller?command=single_bet_add" method="post">
                     <label for="betslipSelect"><fmt:message key="betslip"/></label>
                     <select id="betslipSelect" name="betslipId">
                         <option value="0"><fmt:message key="betslip.select"/></option>
                         <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
-                            <option value="${selectBetslip.id}">${selectBetslip}, ${selectBetslip.betType.name}</option>
+                            <option value="${selectBetslip.id}">${selectBetslip}, ${selectBetslip.betslipType.name}</option>
                         </c:forEach>
                     </select>
+                    <label for="betTotalField"><fmt:message key="bet.total"/></label>
+                    <br>
+                    <input type="number" id="betTotalField" name="betTotal">
+                    <br>
+                    <input type="submit" value="<fmt:message key="add"/>">
+                </form>
+            </c:when>
+            <c:when test="${not empty requestScope.parlayBet}">
+                <h1>${requestScope.parlayBet}</h1>
+                <h2><fmt:message key="main.user.balance"/>: ${sessionScope.personBalance}</h2>
+                <form action="${pageContext.request.contextPath}/controller?command=parlay_bet_add" method="post">
+                    <label for="betslipSelect"><fmt:message key="betslip"/></label>
+                    <br>
+                    <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
+                        <input type="checkbox" id="betslipSelect" name="betslipId" value="${selectBetslip.id}">
+                        ${selectBetslip}, ${selectBetslip.betslipType.name}
+                        <br>
+                    </c:forEach>
+                    <br>
+                    <label for="betTotalField"><fmt:message key="bet.total"/></label>
+                    <br>
+                    <input type="number" id="betTotalField" name="betTotal">
+                    <br>
+                    <input type="submit" value="<fmt:message key="add"/>">
+                </form>
+            </c:when>
+            <c:when test="${not empty requestScope.systemBet}">
+                <h1>${requestScope.systemBet}</h1>
+                <h2><fmt:message key="main.user.balance"/>: ${sessionScope.personBalance}</h2>
+                <form action="${pageContext.request.contextPath}/controller?command=system_bet_add" method="post">
+                    <label for="betslipSelect"><fmt:message key="betslip"/></label>
+                    <br>
+                    <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
+                        <input type="checkbox" id="betslipSelect" name="betslipId" value="${selectBetslip.id}">
+                        ${selectBetslip}, ${selectBetslip.betslipType.name}
+                        <br>
+                    </c:forEach>
+                    <br>
                     <label for="betTotalField"><fmt:message key="bet.total"/></label>
                     <br>
                     <input type="number" id="betTotalField" name="betTotal">

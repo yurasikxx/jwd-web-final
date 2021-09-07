@@ -45,4 +45,12 @@ public interface BaseCommandRequest {
      */
     void setAttribute(String name, Object value);
 
+    /**
+     * Gets parameter values bt accepting name.
+     *
+     * @param name a parameter name.
+     * @return a parameter values array.
+     */
+    String[] getParameterValues(String name);
+
 }

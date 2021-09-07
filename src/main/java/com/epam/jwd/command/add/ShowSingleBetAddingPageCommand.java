@@ -15,36 +15,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.BET_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_BETSLIP_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.SINGLE_BET_ATTRIBUTE_NAME;
 
 /**
- * A {@code ShowBetAddingPageCommand} class implements {@code Command}
- * interface and execute command that showing person bet page.
+ * A {@code ShowSingleBetAddingPageCommand} class implements {@code Command}
+ * interface and execute command that showing person single bet page.
  *
  * @see Command
  */
-public class ShowBetAddingPageCommand implements Command {
+public class ShowSingleBetAddingPageCommand implements Command {
 
-    private static final String BET_ADDING_MESSAGE_KEY = "bet.adding";
+    private static final String SINGLE_BET_ADDING_MESSAGE_KEY = "bet.single.adding";
 
-    private static volatile ShowBetAddingPageCommand instance;
+    private static volatile ShowSingleBetAddingPageCommand instance;
 
     private final BaseApplicationMessageManager messageManager;
     private final BetslipBaseService betslipService;
     private final BaseCommandResponse betCommandResponse;
 
-    private ShowBetAddingPageCommand() {
+    private ShowSingleBetAddingPageCommand() {
         this.messageManager = ApplicationMessageManager.getInstance();
         this.betslipService = BetslipService.getInstance();
         this.betCommandResponse = new CommandResponse(ADDING_JSP_PATH, false);
     }
 
-    public static ShowBetAddingPageCommand getInstance() {
+    public static ShowSingleBetAddingPageCommand getInstance() {
         if (instance == null) {
-            synchronized (ShowBetAddingPageCommand.class) {
+            synchronized (ShowSingleBetAddingPageCommand.class) {
                 if (instance == null) {
-                    instance = new ShowBetAddingPageCommand();
+                    instance = new ShowSingleBetAddingPageCommand();
                 }
             }
         }
@@ -59,7 +59,7 @@ public class ShowBetAddingPageCommand implements Command {
                 .sorted(Comparator.comparing(o -> o.getCompetition().toString()))
                 .collect(Collectors.toList());
 
-        request.setAttribute(BET_ATTRIBUTE_NAME, messageManager.getString(BET_ADDING_MESSAGE_KEY));
+        request.setAttribute(SINGLE_BET_ATTRIBUTE_NAME, messageManager.getString(SINGLE_BET_ADDING_MESSAGE_KEY));
         request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
 
         return betCommandResponse;

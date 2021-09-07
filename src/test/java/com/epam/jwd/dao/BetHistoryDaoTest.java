@@ -7,6 +7,7 @@ import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetHistory;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Team;
 import com.epam.jwd.pool.ConnectionPoolManager;
@@ -41,13 +42,14 @@ public class BetHistoryDaoTest {
                 .get(betDao.findByCompetitionId(competition.getId()).size() - INDEX_ROLLBACK_VALUE);
         final Team home = competition.getHome();
         final Team away = competition.getAway();
-        final BetType betType = bet.getBetslip().getBetType();
+        final BetslipType betslipType = bet.getBetslip().getBetslipType();
+        final BetType betType = bet.getBetType();
         final Betslip betslip = bet.getBetslip();
         final Integer coefficient = betslip.getCoefficient();
         final Integer betTotal = bet.getBetTotal();
         final String personLogin = bet.getPerson().getLogin();
         final BetHistory savedBet = betHistoryDao.save(
-                new BetHistory(home, away, betType, coefficient, betTotal, personLogin, AWAY_TEAM, LOSS));
+                new BetHistory(home, away, betslipType, betType, coefficient, betTotal, personLogin, AWAY_TEAM, LOSS));
         assertNotNull(savedBet);
     }
 

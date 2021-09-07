@@ -12,30 +12,30 @@ import java.util.Objects;
 public class Betslip extends AbstractBaseEntity {
 
     private final Competition competition;
-    private final BetType betType;
+    private final BetslipType betslipType;
     private final Integer coefficient;
 
-    public Betslip(Long id, Competition competition, BetType betType, Integer coefficient) {
+    public Betslip(Long id, Competition competition, BetslipType betslipType, Integer coefficient) {
         super(id);
         this.competition = competition;
-        this.betType = betType;
+        this.betslipType = betslipType;
         this.coefficient = coefficient;
     }
 
-    public Betslip(Competition competition, BetType betType, Integer coefficient) {
-        this(null, competition, betType, coefficient);
+    public Betslip(Competition competition, BetslipType betslipType, Integer coefficient) {
+        this(null, competition, betslipType, coefficient);
     }
 
-    public Betslip(Competition competition, BetType betType) {
-        this(null, competition, betType, null);
+    public Betslip(Competition competition, BetslipType betslipType) {
+        this(null, competition, betslipType, null);
     }
 
     public Competition getCompetition() {
         return competition;
     }
 
-    public BetType getBetType() {
-        return betType;
+    public BetslipType getBetslipType() {
+        return betslipType;
     }
 
     public Integer getCoefficient() {
@@ -48,12 +48,12 @@ public class Betslip extends AbstractBaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Betslip betslip = (Betslip) o;
-        return Objects.equals(competition, betslip.competition) && betType == betslip.betType && Objects.equals(coefficient, betslip.coefficient);
+        return Objects.equals(competition, betslip.competition) && betslipType == betslip.betslipType && Objects.equals(coefficient, betslip.coefficient);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), competition, betType, coefficient);
+        return Objects.hash(super.hashCode(), competition, betslipType, coefficient);
     }
 
     @Override

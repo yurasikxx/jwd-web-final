@@ -5,6 +5,7 @@ import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Role;
@@ -36,12 +37,13 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(BetDao.class);
 
-    private final static String SELECT_ALL_SQL_QUERY = "select b.id, b.bs_id, b.bet_total, b.p_id from %s;";
+    private final static String SELECT_ALL_SQL_QUERY = "select b.id, b.bs_id, b.bet_total, b.bt_id, b.p_id from %s;";
     private final static String FIND_ALL_BET_SQL_QUERY = "select b.id, bs.c_id,\n" +
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
-            "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name \n" +
+            "b.bs_id, bst.bst_name, bs.coefficient, \n" +
+            "b.bet_total, b.bt_id, bt.bt_name,\n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -49,14 +51,16 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "join sport sh on th.s_id = sh.id\n" +
             "join team ta on c.t_away_id = ta.id\n" +
             "join sport sa on th.s_id = sa.id\n" +
-            "join bet_type bt on bs.bt_id = bt.id\n" +
+            "join betslip_type bst on bs.bst_id = bst.id\n" +
+            "join bet_type bt on b.bt_id = bt.id\n" +
             "join person p on b.p_id = p.id\n" +
             "join person_role pr on p.pr_id = pr.id;";
     private final static String FIND_BY_FIELD_SQL_QUERY = "select b.id, bs.c_id,\n" +
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
-            "b.bs_id, bt.bt_name, bs.coefficient, b.bet_total,\n" +
-            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name \n" +
+            "b.bs_id, bst.bst_name, bs.coefficient,\n" +
+            "b.bet_total, b.bt_id, bt.bt_name,\n" +
+            "b.p_id, p.p_login, p.p_password, p.p_balance, p.pr_id, pr.pr_name\n" +
             "from %s\n" +
             "join betslip bs on b.bs_id = bs.id\n" +
             "join competition c on bs.c_id = c.id\n" +
@@ -64,7 +68,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             "join sport sh on th.s_id = sh.id\n" +
             "join team ta on c.t_away_id = ta.id\n" +
             "join sport sa on th.s_id = sa.id\n" +
-            "join bet_type bt on bs.bt_id = bt.id\n" +
+            "join betslip_type bst on bs.bst_id = bst.id\n" +
+            "join bet_type bt on b.bt_id = bt.id\n" +
             "join person p on b.p_id = p.id\n" +
             "join person_role pr on p.pr_id = pr.id\n" +
             "where %s = ?;";
@@ -76,9 +81,11 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private static final String HOME_TEAM_NAME_COLUMN = "th.t_name";
     private static final String AWAY_TEAM_ID_COLUMN = "t_away_id";
     private static final String AWAY_TEAM_NAME_COLUMN = "ta.t_name";
-    private static final String BET_TYPE_NAME_COLUMN = "bt_name";
+    private static final String BETSLIP_TYPE_NAME_COLUMN = "bst_name";
     private static final String BETSLIP_COEFFICIENT_COLUMN = "coefficient";
     private static final String BET_TOTAL_COLUMN = "bet_total";
+    private static final String BET_TYPE_ID_COLUMN = "bt_id";
+    private static final String BET_TYPE_NAME_COLUMN = "bt_name";
     private static final String PERSON_ID_COLUMN = "p_id";
     private static final String PERSON_LOGIN_COLUMN = "p_login";
     private static final String PERSON_PASSWORD_COLUMN = "p_password";
@@ -94,6 +101,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private static volatile BetDao instance;
 
     private final String findByCompetitionIdSql;
+    private final String findByBetTypeSql;
 
     public static BetDao getInstance() {
         if (instance == null) {
@@ -110,12 +118,19 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
     private BetDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_BET_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BET_ID_COLUMN);
         this.findByCompetitionIdSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, COMPETITION_ID_COLUMN);
+        this.findByBetTypeSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BET_TYPE_NAME_COLUMN);
     }
 
     @Override
     public List<Bet> findByCompetitionId(Long id) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
                 findByCompetitionIdSql);
+    }
+
+    @Override
+    public List<Bet> findByBetType(BetType betType) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement
+                .setString(INITIAL_INDEX_VALUE, betType.getName()), findByBetTypeSql);
     }
 
     @Override
@@ -129,6 +144,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
             resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
             resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
+            resultSet.updateLong(BET_TYPE_ID_COLUMN, bet.getBetType().getId());
             resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
@@ -147,6 +163,7 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             if (id == bet.getId()) {
                 resultSet.updateLong(BETSLIP_ID_COLUMN, bet.getBetslip().getId());
                 resultSet.updateInt(BET_TOTAL_COLUMN, bet.getBetTotal());
+                resultSet.updateLong(BET_TYPE_ID_COLUMN, bet.getBetType().getId());
                 resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
                 resultSet.updateRow();
             }
@@ -168,9 +185,10 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                                 new Team(resultSet.getLong(AWAY_TEAM_ID_COLUMN),
                                         resultSet.getString(AWAY_TEAM_NAME_COLUMN),
                                         Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN)))),
-                        BetType.resolveBetTypeByName(resultSet.getString(BET_TYPE_NAME_COLUMN)),
+                        BetslipType.resolveBetslipTypeByName(resultSet.getString(BETSLIP_TYPE_NAME_COLUMN)),
                         resultSet.getInt(BETSLIP_COEFFICIENT_COLUMN)),
                 resultSet.getInt(BET_TOTAL_COLUMN),
+                BetType.resolveBetTypeById(resultSet.getLong(BET_TYPE_ID_COLUMN)),
                 new Person(resultSet.getLong(PERSON_ID_COLUMN),
                         resultSet.getString(PERSON_LOGIN_COLUMN),
                         resultSet.getString(PERSON_PASSWORD_COLUMN),

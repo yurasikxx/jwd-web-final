@@ -162,41 +162,6 @@ li.default-operation:active {
     text-decoration: none;
 }
 
-#competition-operation {
-    text-align: justify;
-    margin: 0;
-    padding: 0;
-    background-color: yellowgreen;
-}
-
-li.competition-operation {
-    display: inline-block;
-    border: 1px solid yellowgreen;
-    margin: 0;
-    width: 294px;
-}
-
-a:link.competition-operation, a:visited.competition-operation {
-    color: white;
-    text-decoration: none;
-}
-
-a:hover.competition-operation {
-    color: mediumturquoise;
-}
-
-a:active.competition-operation {
-    color: yellowgreen;
-    background-color: white;
-    text-decoration: none;
-}
-
-a.competition-operation {
-    display: block;
-    padding: 20px 0;
-    text-align: center;
-}
-
 a:link.changing, a:visited.changing {
     color: mediumturquoise;
     text-decoration: none;

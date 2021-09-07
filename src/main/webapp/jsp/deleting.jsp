@@ -95,7 +95,7 @@
                         <option value="0"><fmt:message key="betslip.select"/></option>
                         <c:forEach var="selectBetslip" items="${requestScope.selectBetslip}">
                             <option value="${selectBetslip.id}">
-                                    ${selectBetslip.id}, ${selectBetslip.betType.name}, ${selectBetslip}
+                                    ${selectBetslip.id}, ${selectBetslip.betslipType.name}, ${selectBetslip}
                             </option>
                         </c:forEach>
                     </select>

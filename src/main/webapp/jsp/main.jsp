@@ -152,12 +152,6 @@
                         </li>
                         <li class="menu">
                             <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=bet_adding_page">
-                                <b><fmt:message key="main.user.menu.place.bet"/></b>
-                            </a>
-                        </li>
-                        <li class="menu">
-                            <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
                                 <b><fmt:message key="betslip.list"/></b>
                             </a>
@@ -183,6 +177,24 @@
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=password_changing_page">
                                 <b><fmt:message key="main.user.change.password"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=single_bet_adding_page">
+                                <b><fmt:message key="main.user.menu.place.single.bet"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=parlay_bet_adding_page">
+                                <b><fmt:message key="main.user.menu.place.parlay.bet"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=system_bet_adding_page">
+                                <b><fmt:message key="main.user.menu.place.system.bet"/></b>
                             </a>
                         </li>
                     </ul>

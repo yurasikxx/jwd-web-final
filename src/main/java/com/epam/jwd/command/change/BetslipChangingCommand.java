@@ -10,7 +10,7 @@ import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.BetType;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.service.BetslipBaseService;
 import com.epam.jwd.service.BetslipService;
@@ -97,7 +97,7 @@ public class BetslipChangingCommand implements Command {
             }
 
             final Betslip betslip = new Betslip(id, competitionService.findById(competitionId),
-                    BetType.resolveBetTypeById(betTypeId), coefficient);
+                    BetslipType.resolveBetslipTypeById(betTypeId), coefficient);
 
             if (!betslipService.canSave(betslip)) {
                 request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_ALREADY_EXISTS_MESSAGE_KEY));

@@ -4,8 +4,8 @@ import com.epam.jwd.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
-import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Team;
 import com.epam.jwd.pool.ConnectionPoolManager;
@@ -44,7 +44,7 @@ public class BetslipServiceTest {
         assertNotNull(competition);
         assertEquals(competitionService.findAll().size(), competition.getId().intValue());
 
-        betslipService.save(new Betslip(competition, BetType.DRAW, COEFFICIENT));
+        betslipService.save(new Betslip(competition, BetslipType.DRAW, COEFFICIENT));
         final Betslip betslip = betslipService.findById((long) betslipService.findAll().size());
         assertNotNull(betslip);
         assertEquals(betslipService.findAll().size(), betslip.getId().intValue());

@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.MIN_INDEX_VALUE;
+import static com.epam.jwd.model.BetType.SINGLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -40,7 +41,7 @@ public class BetDaoTest {
         assertNotNull(betslip);
         final Person person = personDao.findAll().get(personDao.findAll().size() - INDEX_ROLLBACK_VALUE);
         assertNotNull(person);
-        final Bet savedBet = betDao.save(new Bet(betslip, BET_TOTAL, person));
+        final Bet savedBet = betDao.save(new Bet(betslip, BET_TOTAL, SINGLE, person));
         assertNotNull(savedBet);
         betDao.delete((long) betDao.findAll().size());
     }
@@ -58,7 +59,7 @@ public class BetDaoTest {
         assertNotNull(betslip);
         final Person person = personDao.findAll().get(personDao.findAll().size() - INDEX_ROLLBACK_VALUE);
         assertNotNull(person);
-        final Bet savedBet = betDao.save(new Bet(betslip, BET_TOTAL, person));
+        final Bet savedBet = betDao.save(new Bet(betslip, BET_TOTAL, SINGLE, person));
         assertNotNull(savedBet);
         final Optional<Bet> betById = betDao.findById((long) betDao.findAll().size());
         assertNotNull(betById);

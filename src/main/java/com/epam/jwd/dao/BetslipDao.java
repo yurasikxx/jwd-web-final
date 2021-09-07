@@ -2,8 +2,8 @@ package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
-import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
@@ -33,29 +33,29 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(BetslipDao.class);
 
-    private static final String SELECT_ALL_SQL_QUERY = "select bs.id, bs.c_id, bs.bt_id, bs.coefficient from %s;";
+    private static final String SELECT_ALL_SQL_QUERY = "select bs.id, bs.c_id, bs.bst_id, bs.coefficient from %s;";
     private static final String FIND_ALL_SQL_QUERY = "select bs.id, bs.c_id,\n" +
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
-            "bt.bt_name, bs.coefficient \n" +
+            "bst.bst_name, bs.coefficient \n" +
             "from %s\n" +
             "join competition c on bs.c_id = c.id\n" +
             "join team th on c.t_home_id = th.id\n" +
             "join sport sh on th.s_id = sh.id\n" +
             "join team ta on c.t_away_id = ta.id\n" +
             "join sport sa on th.s_id = sa.id\n" +
-            "join bet_type bt on bs.bt_id = bt.id;";
+            "join betslip_type bst on bs.bst_id = bst.id;";
     private static final String FIND_BY_FIELD_SQL_QUERY = "select bs.id, bs.c_id,\n" +
             "c.t_home_id, th.t_name, sh.id, sh.s_name,\n" +
             "c.t_away_id, ta.t_name, sa.id, sh.s_name,\n" +
-            "bt.bt_name, bs.coefficient \n" +
+            "bst.bst_name, bs.coefficient \n" +
             "from %s\n" +
             "join competition c on bs.c_id = c.id\n" +
             "join team th on c.t_home_id = th.id\n" +
             "join sport sh on th.s_id = sh.id\n" +
             "join team ta on c.t_away_id = ta.id\n" +
             "join sport sa on th.s_id = sa.id\n" +
-            "join bet_type bt on bs.bt_id = bt.id\n" +
+            "join betslip_type bst on bs.bst_id = bst.id\n" +
             "where %s = ?;";
     private static final String TABLE_NAME = "betslip bs";
     private static final String BETSLIP_ID_COLUMN = "bs.id";
@@ -64,8 +64,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
     private static final String HOME_TEAM_NAME_COLUMN = "th.t_name";
     private static final String AWAY_TEAM_ID_COLUMN = "t_away_id";
     private static final String AWAY_TEAM_NAME_COLUMN = "ta.t_name";
-    private static final String BET_TYPE_ID_COLUMN = "bt_id";
-    private static final String BET_TYPE_NAME_COLUMN = "bt_name";
+    private static final String BETSLIP_TYPE_ID_COLUMN = "bst_id";
+    private static final String BETSLIP_TYPE_NAME_COLUMN = "bst_name";
     private static final String BETSLIP_COEFFICIENT_COLUMN = "coefficient";
     private static final String SPORT_HOME_ID_COLUMN = "sh.id";
     private static final String SPORT_AWAY_ID_COLUMN = "sa.id";
@@ -93,14 +93,14 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
     private BetslipDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, FIND_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, BETSLIP_ID_COLUMN);
-        this.findByBetTypeSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BET_TYPE_NAME_COLUMN);
+        this.findByBetTypeSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, BETSLIP_TYPE_NAME_COLUMN);
         this.findByCompetitionIdSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, COMPETITION_ID_COLUMN);
     }
 
     @Override
-    public List<Betslip> findByBetType(BetType betType) throws DaoException {
+    public List<Betslip> findByBetType(BetslipType betslipType) throws DaoException {
         return findPreparedEntities(preparedStatement -> preparedStatement
-                .setString(INITIAL_INDEX_VALUE, betType.getName()), findByBetTypeSql);
+                .setString(INITIAL_INDEX_VALUE, betslipType.getName()), findByBetTypeSql);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
             setId(resultSet, betslips, betslipAmount, idCounter);
 
             resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
-            resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
+            resultSet.updateLong(BETSLIP_TYPE_ID_COLUMN, betslip.getBetslipType().getId());
             resultSet.updateInt(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
             resultSet.insertRow();
             resultSet.moveToCurrentRow();
@@ -137,7 +137,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
 
             if (id == betslip.getId()) {
                 resultSet.updateLong(COMPETITION_ID_COLUMN, betslip.getCompetition().getId());
-                resultSet.updateLong(BET_TYPE_ID_COLUMN, betslip.getBetType().getId());
+                resultSet.updateLong(BETSLIP_TYPE_ID_COLUMN, betslip.getBetslipType().getId());
                 resultSet.updateInt(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
                 resultSet.updateRow();
             }
@@ -158,7 +158,7 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
                         new Team(resultSet.getLong(AWAY_TEAM_ID_COLUMN),
                                 resultSet.getString(AWAY_TEAM_NAME_COLUMN),
                                 Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN)))),
-                BetType.resolveBetTypeByName(resultSet.getString(BET_TYPE_NAME_COLUMN)),
+                BetslipType.resolveBetslipTypeByName(resultSet.getString(BETSLIP_TYPE_NAME_COLUMN)),
                 resultSet.getInt(BETSLIP_COEFFICIENT_COLUMN));
     }
 

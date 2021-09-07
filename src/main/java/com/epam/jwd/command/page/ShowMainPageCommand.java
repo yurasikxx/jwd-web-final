@@ -19,12 +19,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 import static com.epam.jwd.constant.Constant.MAIN_JSP_PATH;
-import static com.epam.jwd.model.BetType.AWAY_TEAM_WILL_NOT_LOSE;
-import static com.epam.jwd.model.BetType.AWAY_TEAM_WIN;
-import static com.epam.jwd.model.BetType.DRAW;
-import static com.epam.jwd.model.BetType.HOME_TEAM_WILL_NOT_LOSE;
-import static com.epam.jwd.model.BetType.HOME_TEAM_WIN;
-import static com.epam.jwd.model.BetType.NO_DRAW;
+import static com.epam.jwd.model.BetslipType.AWAY_TEAM_WILL_NOT_LOSE;
+import static com.epam.jwd.model.BetslipType.AWAY_TEAM_WIN;
+import static com.epam.jwd.model.BetslipType.DRAW;
+import static com.epam.jwd.model.BetslipType.HOME_TEAM_WILL_NOT_LOSE;
+import static com.epam.jwd.model.BetslipType.HOME_TEAM_WIN;
+import static com.epam.jwd.model.BetslipType.NO_DRAW;
 import static com.epam.jwd.model.Sport.BASKETBALL;
 import static com.epam.jwd.model.Sport.FOOTBALL;
 import static com.epam.jwd.model.Sport.HOCKEY;

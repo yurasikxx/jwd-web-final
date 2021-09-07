@@ -6,11 +6,8 @@ import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetHistory;
-import com.epam.jwd.model.BetResult;
-import com.epam.jwd.model.BetType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.Competition;
-import com.epam.jwd.model.CompetitionResult;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.model.Team;
 import com.epam.jwd.pool.ConnectionPoolManager;
@@ -20,6 +17,10 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.epam.jwd.model.BetResult.LOSS;
+import static com.epam.jwd.model.BetType.SINGLE;
+import static com.epam.jwd.model.BetslipType.DRAW;
+import static com.epam.jwd.model.CompetitionResult.AWAY_TEAM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -61,19 +62,19 @@ public class BetHistoryServiceTest {
         assertNotNull(competition);
         assertEquals(competitionService.findAll().size(), competition.getId().intValue());
 
-        betslipService.save(new Betslip(competition, BetType.DRAW, COEFFICIENT));
+        betslipService.save(new Betslip(competition, DRAW, COEFFICIENT));
         final Betslip betslip = betslipService.findById((long) betslipService.findAll().size());
         assertNotNull(betslip);
         assertEquals(betslipService.findAll().size(), betslip.getId().intValue());
 
-        betService.save(new Bet(betslip, BET_TOTAL, person));
+        betService.save(new Bet(betslip, BET_TOTAL, SINGLE, person));
         final Bet bet = betService.findById((long) betService.findAll().size());
         assertNotNull(bet);
         assertEquals(betService.findAll().size(), bet.getId().intValue());
 
         betHistoryService.save(new BetHistory(
-                competition.getHome(), competition.getAway(), betslip.getBetType(), betslip.getCoefficient(),
-                bet.getBetTotal(), person.getLogin(), CompetitionResult.AWAY_TEAM, BetResult.LOSS)
+                competition.getHome(), competition.getAway(), betslip.getBetslipType(), bet.getBetType(),
+                betslip.getCoefficient(), bet.getBetTotal(), person.getLogin(), AWAY_TEAM, LOSS)
         );
 
         betService.delete(bet.getId());

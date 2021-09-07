@@ -6,7 +6,7 @@ import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
-import com.epam.jwd.model.BetType;
+import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Betslip;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.BetslipBaseService;
@@ -64,12 +64,12 @@ public class ShowBetslipChangingPageCommand implements Command {
     public BaseCommandResponse execute(BaseCommandRequest request) {
         final List<Betslip> betslips = betslipService.findAll();
         final List<Competition> competitions = competitionService.findAll();
-        final List<BetType> betTypes = Arrays.stream(BetType.values()).collect(Collectors.toList());
+        final List<BetslipType> betslipTypes = Arrays.stream(BetslipType.values()).collect(Collectors.toList());
 
         request.setAttribute(BETSLIP_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_CHANGING_MESSAGE_KEY));
         request.setAttribute(SELECT_BETSLIP_ATTRIBUTE_NAME, betslips);
         request.setAttribute(SELECT_COMPETITION_ATTRIBUTE_NAME, competitions);
-        request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betTypes);
+        request.setAttribute(SELECT_BET_TYPE_ATTRIBUTE_NAME, betslipTypes);
 
         return betslipCommandResponse;
     }

@@ -3,18 +3,15 @@ package com.epam.jwd.model;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 
 /**
- * Enum {@code BetType} is a bet result. Implements {@code BaseEntity} interface
+ * Enum {@code BetType} is a bet result. Implements {@code BaseEntity} interface.
  *
  * @see Bet
  */
 public enum BetType implements BaseEntity {
 
-    HOME_TEAM_WIN(1L, "Home team win"),
-    AWAY_TEAM_WIN(2L, "Away team win"),
-    DRAW(3L, "Draw"),
-    HOME_TEAM_WILL_NOT_LOSE(4L, "Home team won't lose"),
-    AWAY_TEAM_WILL_NOT_LOSE(5L, "Away team won't lose"),
-    NO_DRAW(6L, "No draw");
+    SINGLE(1L, "Single"),
+    PARLAY(2L, "Parlay"),
+    SYSTEM(3L, "System");
 
     private static final String UNKNOWN_BET_TYPE_ID_MSG = "Unknown bet type ID: %s";
     private static final String UNKNOWN_BET_TYPE_NAME_MSG = "Unknown bet type name: %s";

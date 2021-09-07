@@ -46,4 +46,9 @@ public class CommandRequest implements BaseCommandRequest {
         request.setAttribute(name, value);
     }
 
+    @Override
+    public String[] getParameterValues(String name) {
+        return request.getParameterValues(name);
+    }
+
 }
