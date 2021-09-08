@@ -4,7 +4,6 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.FIELDS_FILLED_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.ID_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
@@ -31,6 +29,7 @@ import static com.epam.jwd.constant.Constant.NUMBERS_POSITIVE_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PASSWORD_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.PASSWORD_REGEX;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
+import static com.epam.jwd.constant.Constant.REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
 import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 
@@ -97,8 +96,8 @@ public class PersonChangingCommand implements Command {
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return errorChangingCommandResponse;
-        } catch (DaoException | ServiceException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
+        } catch (ServiceException e) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return errorChangingCommandResponse;

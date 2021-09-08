@@ -23,8 +23,8 @@ public class ApplicationLifecycleListener implements ServletContextListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationLifecycleListener.class);
 
-    private static final String CONNECTION_POOL_WAS_NOT_INITIALIZED_MSG = "Connection pool wasn't initialized";
     private static final String CONNECTION_POOL_WAS_INITIALIZED_MSG = "Connection pool was initialized";
+    private static final String CONNECTION_POOL_WAS_NOT_INITIALIZED_MSG = "Connection pool wasn't initialized";
     private static final String CONNECTION_POOL_WAS_DESTROYED_MSG = "Connection pool was destroyed";
     private static final String CONNECTION_POOL_WAS_NOT_DESTROYED_MSG = "Connection pool wasn't destroyed";
 

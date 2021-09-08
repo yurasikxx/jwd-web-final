@@ -13,8 +13,11 @@ import com.epam.jwd.model.Competition;
 import com.epam.jwd.service.CompetitionBaseService;
 import com.epam.jwd.service.CompetitionService;
 
+import java.util.List;
+
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.COMPETITION_ALREADY_EXISTS_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
@@ -86,6 +89,10 @@ public class CompetitionChangingCommand implements Command {
                     competitionService.findTeamById(homeTeamId),
                     competitionService.findTeamById(awayTeamId));
 
+            if (checkIfExist(request, competition)) {
+                return errorChangingCommandResponse;
+            }
+
             competitionService.update(competition);
         } catch (IncorrectEnteredDataException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
@@ -100,33 +107,6 @@ public class CompetitionChangingCommand implements Command {
         }
 
         return successChangingCommandResponse;
-    }
-
-    private boolean cannotBeChanged(BaseCommandRequest request, Long id, Long homeTeamId, Long awayTeamId)
-            throws ServiceException, DaoException {
-        if (id < MIN_LONG_ID_VALUE || homeTeamId < MIN_LONG_ID_VALUE || awayTeamId < MIN_LONG_ID_VALUE) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_TEAM_SELECT_MESSAGE_KEY));
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
-            return true;
-        }
-
-        if (homeTeamId.equals(awayTeamId)) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(TEAM_DIFFERENCE_MESSAGE_KEY));
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
-            return true;
-        }
-
-        if (competitionService.findTeamById(homeTeamId).getSport()
-                != competitionService.findTeamById(awayTeamId).getSport()) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(TEAM_SPORT_DIFFERENCE_MESSAGE_KEY));
-            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
-            return true;
-        }
-
-        return false;
     }
 
     private Long getCheckedId(BaseCommandRequest request) throws IncorrectEnteredDataException {
@@ -160,6 +140,45 @@ public class CompetitionChangingCommand implements Command {
         }
 
         throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
+    }
+
+    private boolean cannotBeChanged(BaseCommandRequest request, Long id, Long homeTeamId, Long awayTeamId)
+            throws ServiceException, DaoException {
+        if (id < MIN_LONG_ID_VALUE || homeTeamId < MIN_LONG_ID_VALUE || awayTeamId < MIN_LONG_ID_VALUE) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_TEAM_SELECT_MESSAGE_KEY));
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return true;
+        }
+
+        if (homeTeamId.equals(awayTeamId)) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(TEAM_DIFFERENCE_MESSAGE_KEY));
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return true;
+        }
+
+        if (competitionService.findTeamById(homeTeamId).getSport()
+                != competitionService.findTeamById(awayTeamId).getSport()) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(TEAM_SPORT_DIFFERENCE_MESSAGE_KEY));
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean checkIfExist(BaseCommandRequest request, Competition competition) {
+        final List<Competition> competitions = competitionService.findAll();
+
+        if (!competitions.contains(competition)) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_ALREADY_EXISTS_MESSAGE_KEY));
+            request.setAttribute(COMPETITION_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+            return true;
+        }
+        return false;
     }
 
 }

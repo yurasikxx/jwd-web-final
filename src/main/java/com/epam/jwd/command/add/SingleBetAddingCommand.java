@@ -4,7 +4,6 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
@@ -86,13 +85,7 @@ public class SingleBetAddingCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         try {
-            final Optional<HttpSession> session = request.getCurrentSession();
-            HttpSession currentSession = null;
-
-            if (session.isPresent()) {
-                currentSession = session.get();
-            }
-
+            final HttpSession currentSession = getCurrentSession(request);
             final String currentPersonLogin = extractPersonNameFromSession(currentSession);
             final Long betslipId = getCheckedBetslipId(request);
             final Integer betTotal = getCheckedBetTotal(request);
@@ -116,7 +109,7 @@ public class SingleBetAddingCommand implements Command {
             request.setAttribute(SINGLE_BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return errorAddingCommandResponse;
-        } catch (DaoException | ServiceException e) {
+        } catch (ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(SINGLE_BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
@@ -124,6 +117,44 @@ public class SingleBetAddingCommand implements Command {
         }
 
         return successAddingCommandResponse;
+    }
+
+    private HttpSession getCurrentSession(BaseCommandRequest request) {
+        final Optional<HttpSession> session = request.getCurrentSession();
+        HttpSession currentSession = null;
+
+        if (session.isPresent()) {
+            currentSession = session.get();
+        }
+        return currentSession;
+    }
+
+    private String extractPersonNameFromSession(HttpSession session) {
+        return session != null && session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME) != null
+                ? (String) session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME)
+                : Role.UNAUTHORIZED.getName();
+    }
+
+    private Long getCheckedBetslipId(BaseCommandRequest request) throws IncorrectEnteredDataException {
+        final long id;
+
+        if (request.getParameter(BETSLIP_PARAMETER_NAME) != null) {
+            id = Long.parseLong(request.getParameter(BETSLIP_PARAMETER_NAME));
+            return id;
+        }
+
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
+    }
+
+    private Integer getCheckedBetTotal(BaseCommandRequest request) throws IncorrectEnteredDataException {
+        final int betTotal;
+
+        if (request.getParameter(BET_TOTAL_PARAMETER_NAME) != null) {
+            betTotal = Integer.parseInt(request.getParameter(BET_TOTAL_PARAMETER_NAME));
+            return betTotal;
+        }
+
+        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
     private boolean cannotBeSaved(BaseCommandRequest request, Long betslipId, Integer betTotal, Person person, Bet bet) {
@@ -156,34 +187,6 @@ public class SingleBetAddingCommand implements Command {
         }
 
         return false;
-    }
-
-    private Long getCheckedBetslipId(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final long id;
-
-        if (request.getParameter(BETSLIP_PARAMETER_NAME) != null) {
-            id = Long.parseLong(request.getParameter(BETSLIP_PARAMETER_NAME));
-            return id;
-        }
-
-        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
-    }
-
-    private Integer getCheckedBetTotal(BaseCommandRequest request) throws IncorrectEnteredDataException {
-        final int betTotal;
-
-        if (request.getParameter(BET_TOTAL_PARAMETER_NAME) != null) {
-            betTotal = Integer.parseInt(request.getParameter(BET_TOTAL_PARAMETER_NAME));
-            return betTotal;
-        }
-
-        throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
-    }
-
-    private String extractPersonNameFromSession(HttpSession session) {
-        return session != null && session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME) != null
-                ? (String) session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME)
-                : Role.UNAUTHORIZED.getName();
     }
 
 }

@@ -1,8 +1,7 @@
 package com.epam.jwd.service;
 
-import com.epam.jwd.exception.DaoException;
-import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 
 import java.util.List;
 
@@ -28,17 +27,15 @@ public interface BetslipBaseService extends BaseService<Betslip> {
      *
      * @param id a given competition ID.
      * @return a found betslips.
-     * @throws DaoException if betslips weren't found.
      */
-    List<Betslip> findByCompetitionId(Long id) throws DaoException;
+    List<Betslip> findByCompetitionId(Long id);
 
     /**
      * Looks for betslips by accepting betslip type and returns them.
      *
      * @param betslipType a given betslip type.
      * @return a found betslips.
-     * @throws DaoException if betslips weren't found.
      */
-    List<Betslip> findByBetType(BetslipType betslipType) throws DaoException;
+    List<Betslip> findByBetType(BetslipType betslipType);
 
 }

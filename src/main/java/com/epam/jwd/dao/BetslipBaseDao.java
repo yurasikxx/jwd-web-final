@@ -1,8 +1,8 @@
 package com.epam.jwd.dao;
 
 import com.epam.jwd.exception.DaoException;
-import com.epam.jwd.model.BetslipType;
 import com.epam.jwd.model.Betslip;
+import com.epam.jwd.model.BetslipType;
 
 import java.util.List;
 

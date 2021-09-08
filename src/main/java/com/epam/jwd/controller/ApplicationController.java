@@ -5,6 +5,7 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandRequest;
+import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.service.PersonBaseService;
 import com.epam.jwd.service.PersonService;
 import org.apache.logging.log4j.LogManager;
@@ -33,12 +34,23 @@ public class ApplicationController extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(ApplicationController.class);
 
+    private static final String PERSONS_WERE_INITIALIZED_MSG = "Persons were initialized";
+    private static final String PERSONS_WERE_NOT_INITIALIZED_MSG = "Persons weren't initialized";
+    private static final String PERSONS_WERE_DESTROYED_MSG = "Persons were destroyed";
+    private static final String PERSONS_WERE_NOT_DESTROYED_MSG = "Persons weren't destroyed";
+
     private final PersonBaseService personService = PersonService.getInstance();
 
     @Override
     public void init() throws ServletException {
         super.init();
-        personService.init();
+
+        try {
+            personService.init();
+            LOGGER.info(PERSONS_WERE_INITIALIZED_MSG);
+        } catch (ServiceException e) {
+            LOGGER.error(PERSONS_WERE_NOT_INITIALIZED_MSG);
+        }
     }
 
     @Override
@@ -53,7 +65,13 @@ public class ApplicationController extends HttpServlet {
 
     @Override
     public void destroy() {
-        personService.destroy();
+        try {
+            personService.destroy();
+            LOGGER.info(PERSONS_WERE_DESTROYED_MSG);
+        } catch (ServiceException e) {
+            LOGGER.error(PERSONS_WERE_NOT_DESTROYED_MSG);
+        }
+
         super.destroy();
     }
 

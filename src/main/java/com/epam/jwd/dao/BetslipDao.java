@@ -140,9 +140,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
                 resultSet.updateLong(BETSLIP_TYPE_ID_COLUMN, betslip.getBetslipType().getId());
                 resultSet.updateInt(BETSLIP_COEFFICIENT_COLUMN, betslip.getCoefficient());
                 resultSet.updateRow();
+                LOGGER.info(BETSLIP_WAS_UPDATED_MSG);
             }
-
-            LOGGER.info(BETSLIP_WAS_UPDATED_MSG);
         } catch (SQLException e) {
             LOGGER.error(BETSLIP_WAS_NOT_UPDATED_MSG);
         }
@@ -162,7 +161,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
                 resultSet.getInt(BETSLIP_COEFFICIENT_COLUMN));
     }
 
-    private void setId(ResultSet resultSet, List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setId(ResultSet resultSet, List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         if (betslips.size() == EMPTY_LIST_SIZE_VALUE) {
             setFirstId(resultSet);
         } else {
@@ -175,7 +175,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
         resultSet.updateLong(BETSLIP_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setCustomId(ResultSet resultSet, List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         final Long lastBetslipId = betslips.get(betslips.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (lastBetslipId.equals(betslipAmount.get())) {
@@ -199,7 +200,8 @@ public class BetslipDao extends CommonDao<Betslip> implements BetslipBaseDao {
         return betslips.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
     }
 
-    private void checkExistingBetslip(List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter) throws DaoException {
+    private void checkExistingBetslip(List<Betslip> betslips, AtomicLong betslipAmount, AtomicLong idCounter)
+            throws DaoException {
         final Optional<Betslip> optionalBetslip = this.findById(idCounter.get());
         Betslip betslip = null;
 

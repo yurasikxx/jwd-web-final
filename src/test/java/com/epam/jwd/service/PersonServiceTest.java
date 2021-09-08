@@ -2,7 +2,6 @@ package com.epam.jwd.service;
 
 import com.epam.jwd.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Person;
 import com.epam.jwd.pool.ConnectionPoolManager;
@@ -30,7 +29,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void testSaveAndDelete() throws ServiceException, DaoException {
+    public void testSaveAndDelete() throws ServiceException {
         personService.save(new Person(LOGIN, PASSWORD, BALANCE));
         final Person person = personService.findByLogin(LOGIN);
         assertNotNull(person);

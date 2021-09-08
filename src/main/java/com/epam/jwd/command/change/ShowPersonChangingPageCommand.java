@@ -4,7 +4,6 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.manager.ApplicationMessageManager;
 import com.epam.jwd.manager.BaseApplicationMessageManager;
 import com.epam.jwd.model.Person;
@@ -15,7 +14,6 @@ import com.epam.jwd.service.PersonService;
 import java.util.List;
 
 import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
-import static com.epam.jwd.constant.Constant.EMPTY_USER_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.PERSON_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.SELECT_PERSON_ATTRIBUTE_NAME;
 
@@ -55,15 +53,10 @@ public class ShowPersonChangingPageCommand implements Command {
 
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
-        try {
-            final List<Person> users = personService.findByRole(Role.USER);
+        final List<Person> users = personService.findByRole(Role.USER);
 
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_CHANGING_MESSAGE_KEY));
-            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, users);
-        } catch (DaoException e) {
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_CHANGING_MESSAGE_KEY));
-            request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, messageManager.getString(EMPTY_USER_MESSAGE_KEY));
-        }
+        request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(PERSON_CHANGING_MESSAGE_KEY));
+        request.setAttribute(SELECT_PERSON_ATTRIBUTE_NAME, users);
 
         return personCommandResponse;
     }

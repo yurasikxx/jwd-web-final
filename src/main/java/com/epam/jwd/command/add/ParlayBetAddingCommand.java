@@ -95,33 +95,19 @@ public class ParlayBetAddingCommand implements Command {
     @Override
     public BaseCommandResponse execute(BaseCommandRequest request) {
         try {
-            final Optional<HttpSession> session = request.getCurrentSession();
-            HttpSession currentSession = null;
-
-            if (session.isPresent()) {
-                currentSession = session.get();
-            }
-
+            final HttpSession currentSession = getCurrentSession(request);
             final String currentPersonLogin = extractPersonNameFromSession(currentSession);
             final List<Long> betslipIds = getCheckedBetslipIds(request);
             final Integer betTotal = getCheckedBetTotal(request);
-            final List<Bet> parlayBets = betService.findByBetType(PARLAY);
             final List<Betslip> betslips = new ArrayList<>();
             final List<Bet> savedBets = new ArrayList<>();
             Person updatedPerson = null;
 
-            for (Bet parlayBet : parlayBets) {
-                if (parlayBet.getPerson().getLogin().equals(currentPersonLogin)) {
-                    request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_PARLAY_AMOUNT_MESSAGE_KEY));
-                    request.setAttribute(PARLAY_BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
-                    return errorAddingCommandResponse;
-                }
+            if (checkParlayPresence(request, currentPersonLogin)) {
+                return errorAddingCommandResponse;
             }
 
-            for (Long betslipId : betslipIds) {
-                betslips.add(betslipService.findById(betslipId));
-            }
+            fillBetslips(betslipIds, betslips);
 
             for (Betslip betslip : betslips) {
                 final Person person = personService.findByLogin(currentPersonLogin);
@@ -154,6 +140,22 @@ public class ParlayBetAddingCommand implements Command {
         return successAddingCommandResponse;
     }
 
+    private HttpSession getCurrentSession(BaseCommandRequest request) {
+        final Optional<HttpSession> session = request.getCurrentSession();
+        HttpSession currentSession = null;
+
+        if (session.isPresent()) {
+            currentSession = session.get();
+        }
+        return currentSession;
+    }
+
+    private String extractPersonNameFromSession(HttpSession session) {
+        return session != null && session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME) != null
+                ? (String) session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME)
+                : Role.UNAUTHORIZED.getName();
+    }
+
     private List<Long> getCheckedBetslipIds(BaseCommandRequest request) throws IncorrectEnteredDataException {
         if (request.getParameter(BETSLIP_PARAMETER_NAME) != null) {
             return Arrays.stream(request.getParameterValues(BETSLIP_PARAMETER_NAME))
@@ -175,10 +177,24 @@ public class ParlayBetAddingCommand implements Command {
         throw new IncorrectEnteredDataException(messageManager.getString(FIELDS_FILLED_MESSAGE_KEY));
     }
 
-    private String extractPersonNameFromSession(HttpSession session) {
-        return session != null && session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME) != null
-                ? (String) session.getAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME)
-                : Role.UNAUTHORIZED.getName();
+    private boolean checkParlayPresence(BaseCommandRequest request, String currentPersonLogin) {
+        final List<Bet> parlayBets = betService.findByBetType(PARLAY);
+
+        for (Bet parlayBet : parlayBets) {
+            if (parlayBet.getPerson().getLogin().equals(currentPersonLogin)) {
+                request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(BETSLIP_PARLAY_AMOUNT_MESSAGE_KEY));
+                request.setAttribute(PARLAY_BET_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void fillBetslips(List<Long> betslipIds, List<Betslip> betslips) {
+        for (Long betslipId : betslipIds) {
+            betslips.add(betslipService.findById(betslipId));
+        }
     }
 
     private boolean cannotBeSaved(BaseCommandRequest request, List<Long> betslipIds, List<Betslip> betslips,
@@ -244,7 +260,6 @@ public class ParlayBetAddingCommand implements Command {
 
     private void updateSessionInfo(HttpSession currentSession, Person updatedPerson) throws DaoException, ServiceException {
         personService.updateBalance(updatedPerson);
-
         Objects.requireNonNull(currentSession).setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME,
                 Objects.requireNonNull(updatedPerson).getBalance());
     }

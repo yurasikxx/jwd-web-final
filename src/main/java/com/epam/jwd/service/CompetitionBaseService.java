@@ -1,7 +1,5 @@
 package com.epam.jwd.service;
 
-import com.epam.jwd.exception.DaoException;
-import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Competition;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
@@ -30,19 +28,16 @@ public interface CompetitionBaseService extends BaseService<Competition> {
      *
      * @param id a given team ID.
      * @return a found team.
-     * @throws DaoException     if team wasn't found by database causes.
-     * @throws ServiceException if team wasn't found by application causes.
      */
-    Team findTeamById(Long id) throws DaoException, ServiceException;
+    Team findTeamById(Long id);
 
     /**
      * Looks for competitions by accepting sport and returns them.
      *
      * @param sport a given sport.
      * @return a found competitions.
-     * @throws DaoException if competitions weren't found.
      */
-    List<Competition> findBySportName(Sport sport) throws DaoException;
+    List<Competition> findBySportName(Sport sport);
 
     /**
      * Looks for all teams.

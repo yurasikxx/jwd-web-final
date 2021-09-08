@@ -58,10 +58,10 @@ public class Constant {
     public static final String ID_EMPTY_MESSAGE_KEY = "id.empty";
     public static final String NUMBERS_POSITIVE_MESSAGE_KEY = "numbers.positive";
     public static final String INCORRECT_DATA_MESSAGE_KEY = "data.incorrect";
+    public static final String COMPETITION_ALREADY_EXISTS_MESSAGE_KEY = "competition.team.exists";
     public static final String BETSLIP_ALREADY_EXISTS_MESSAGE_KEY = "betslip.already.exists";
     public static final String PERSON_HAS_BET_MESSAGE_KEY = "person.has.bet";
     public static final String EMPTY_CREDENTIALS_MESSAGE_KEY = "credentials.empty";
-    public static final String EMPTY_USER_MESSAGE_KEY = "person.empty";
     public static final String REGISTRATION_INVALID_CREDENTIALS_MESSAGE_KEY = "credentials.registration.invalid";
 
     public static final String FAILED_TO_SAVE_ENTITY_MSG = "Failed to save entity";

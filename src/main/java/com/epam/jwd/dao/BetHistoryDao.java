@@ -172,7 +172,8 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
                 BetResult.resolveBetResultById(resultSet.getLong(BET_RESULT_ID_COLUMN)));
     }
 
-    private void setId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
             setFirstId(resultSet);
         } else {
@@ -185,7 +186,8 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
         resultSet.updateLong(BET_HISTORY_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setCustomId(ResultSet resultSet, List<BetHistory> bets, AtomicLong betAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         final Long getLastBet = bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (getLastBet.equals(betAmount.get())) {
@@ -209,7 +211,8 @@ public class BetHistoryDao extends CommonDao<BetHistory> {
         return bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();
     }
 
-    private void checkExistingBet(List<BetHistory> betslips, AtomicLong betslipAmount, AtomicLong idCounter) throws DaoException {
+    private void checkExistingBet(List<BetHistory> betslips, AtomicLong betslipAmount, AtomicLong idCounter)
+            throws DaoException {
         final Optional<BetHistory> optionalBetslip = this.findById(idCounter.get());
         BetHistory betslip = null;
 

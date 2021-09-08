@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,19 +61,19 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
     }
 
     @Override
-    public List<T> findAll() {
+    public void update(T entity) throws DaoException {
+        updateEntities(entity);
+    }
+
+    @Override
+    public List<T> findAll() throws DaoException {
         return findEntities(findAllSql);
     }
 
     @Override
     public Optional<T> findById(Long id) throws DaoException {
-        return takeFirstNotNull(findPreparedEntities
-                (preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id), findByIdSql));
-    }
-
-    @Override
-    public void update(T entity) throws DaoException {
-        updateEntities(entity);
+        return takeFirstNotNull(findPreparedEntities(preparedStatement -> preparedStatement
+                .setLong(INITIAL_INDEX_VALUE, id), findByIdSql));
     }
 
     @Override
@@ -174,7 +173,8 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         }
     }
 
-    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer, String sql) throws DaoException {
+    protected List<T> findPreparedEntities(SqlThrowingConsumer<PreparedStatement> preparationConsumer, String sql)
+            throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final PreparedStatement statement = connection.prepareStatement(sql)) {
             preparationConsumer.accept(statement);
@@ -196,7 +196,7 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
         }
     }
 
-    protected List<T> findEntities(String sql) {
+    protected List<T> findEntities(String sql) throws DaoException {
         try (final Connection connection = ConnectionPoolManager.getInstance().takeConnection();
              final Statement statement = connection.createStatement()) {
             try (final ResultSet resultSet = statement.executeQuery(sql)) {
@@ -208,11 +208,12 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
                 }
 
                 LOGGER.info(ENTITIES_WERE_FOUND_MSG);
+
                 return entities;
             }
         } catch (SQLException | InterruptedException | UnknownEnumAttributeException e) {
             LOGGER.error(ENTITIES_WERE_NOT_FOUND_MSG);
-            return Collections.emptyList();
+            throw new DaoException(ENTITIES_WERE_NOT_FOUND_MSG);
         }
     }
 
@@ -237,8 +238,10 @@ public abstract class CommonDao<T extends BaseEntity> implements BaseDao<T> {
      * @param resultSet a given result set.
      * @param entity    a given entity.
      * @throws BusinessValidationException if unauthorized person will try update entity.
+     * @throws DaoException                if entity wasn't updated.
      */
-    protected abstract void updateResultSet(ResultSet resultSet, T entity) throws BusinessValidationException;
+    protected abstract void updateResultSet(ResultSet resultSet, T entity)
+            throws BusinessValidationException, DaoException;
 
     /**
      * Retrieves objects from the database.

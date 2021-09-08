@@ -78,15 +78,14 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
 
     @Override
     public Optional<Person> findByLogin(String login) throws DaoException {
-        return takeFirstNotNull(findPreparedEntities(
-                preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, login), findByLoginSql)
-        );
+        return takeFirstNotNull(findPreparedEntities(preparedStatement -> preparedStatement
+                .setString(INITIAL_INDEX_VALUE, login), findByLoginSql));
     }
 
     @Override
     public List<Person> findByRole(Role role) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, role.getName()),
-                findByRoleSql);
+        return findPreparedEntities(preparedStatement -> preparedStatement
+                .setString(INITIAL_INDEX_VALUE, role.getName()), findByRoleSql);
     }
 
     @Override
@@ -108,13 +107,13 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
             resultSet.moveToCurrentRow();
 
             LOGGER.info(PERSON_WAS_SAVED_MSG);
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             LOGGER.error(PERSON_WAS_NOT_SAVED_MSG);
         }
     }
 
     @Override
-    protected void updateResultSet(ResultSet resultSet, Person person) throws BusinessValidationException {
+    protected void updateResultSet(ResultSet resultSet, Person person) throws BusinessValidationException, DaoException {
         personRoleValidate(person);
 
         try {
@@ -126,11 +125,12 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
                 resultSet.updateInt(PERSON_BALANCE_COLUMN, person.getBalance());
                 resultSet.updateLong(PERSON_ROLE_ID_COLUMN, person.getRole().getId());
                 resultSet.updateRow();
-            }
 
-            LOGGER.info(PERSON_WAS_UPDATED_MSG);
+                LOGGER.info(PERSON_WAS_UPDATED_MSG);
+            }
         } catch (SQLException e) {
             LOGGER.error(PERSON_WAS_NOT_UPDATED_MSG);
+            throw new DaoException(PERSON_WAS_NOT_UPDATED_MSG);
         }
     }
 
@@ -149,7 +149,8 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         }
     }
 
-    private void setId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
+    private void setId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter)
+            throws SQLException {
         if (persons.size() == EMPTY_LIST_SIZE_VALUE) {
             setFirstId(resultSet);
         } else {
@@ -162,7 +163,8 @@ public class PersonDao extends CommonDao<Person> implements PersonBaseDao {
         resultSet.updateLong(PERSON_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter) throws SQLException {
+    private void setCustomId(ResultSet resultSet, List<Person> persons, AtomicLong personAmount, AtomicLong idCounter)
+            throws SQLException {
         final Long lastPersonId = persons.get(persons.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (lastPersonId.equals(personAmount.get())) {

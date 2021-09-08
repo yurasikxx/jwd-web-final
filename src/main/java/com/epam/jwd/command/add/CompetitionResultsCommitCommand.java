@@ -1,4 +1,4 @@
-package com.epam.jwd.command.change;
+package com.epam.jwd.command.add;
 
 import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
@@ -132,12 +132,6 @@ public class CompetitionResultsCommitCommand implements Command {
         return successCommittingCommandResponse;
     }
 
-    private void saveHistoryBet(List<BetHistory> historyBets) throws ServiceException, DaoException {
-        for (BetHistory historyBet : historyBets) {
-            betHistoryService.save(historyBet);
-        }
-    }
-
     private List<BetHistory> createHistoryBet(List<Bet> bets, BetType betType) throws UnknownEnumAttributeException {
         final List<BetHistory> historyBets = new ArrayList<>();
 
@@ -158,6 +152,12 @@ public class CompetitionResultsCommitCommand implements Command {
         }
 
         return historyBets;
+    }
+
+    private void saveHistoryBet(List<BetHistory> historyBets) throws ServiceException, DaoException {
+        for (BetHistory historyBet : historyBets) {
+            betHistoryService.save(historyBet);
+        }
     }
 
     private BetResult getBetResult(BetslipType betslipType, CompetitionResult competitionResult) throws UnknownEnumAttributeException {

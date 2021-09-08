@@ -54,7 +54,7 @@ public class BetHistoryDaoTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAll() throws DaoException {
         final List<BetHistory> betHistoryList = betHistoryDao.findAll();
         assertNotNull(betHistoryList);
         assertFalse(betHistoryList.isEmpty());

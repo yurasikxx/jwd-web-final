@@ -4,7 +4,6 @@ import com.epam.jwd.command.BaseCommandRequest;
 import com.epam.jwd.command.BaseCommandResponse;
 import com.epam.jwd.command.Command;
 import com.epam.jwd.command.CommandResponse;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.IncorrectEnteredDataException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.manager.ApplicationMessageManager;
@@ -16,6 +15,7 @@ import com.epam.jwd.service.PersonService;
 import javax.servlet.http.HttpSession;
 
 import static com.epam.jwd.constant.Constant.EMPTY_CREDENTIALS_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.INDEX_JSP_PATH;
@@ -84,13 +84,8 @@ public class LogInCommand implements Command {
             }
 
             return addPersonInfoToSession(request, login);
-        } catch (IncorrectEnteredDataException e) {
+        } catch (IncorrectEnteredDataException | ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(INVALID_CREDENTIALS_MESSAGE_KEY));
-            request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
-            return loginErrorCommandResponse;
-        } catch (ServiceException | DaoException e) {
-            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 
             return loginErrorCommandResponse;
@@ -100,7 +95,9 @@ public class LogInCommand implements Command {
     private String getCheckedLogin(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String login = request.getParameter(LOGIN_PARAMETER_NAME);
 
-        if (login != null && login.length() <= MAX_LOGIN_LENGTH) {
+        if (login != null
+                && login.length() != EMPTY_LIST_SIZE_VALUE
+                && login.length() <= MAX_LOGIN_LENGTH) {
             return login;
         }
 
@@ -110,7 +107,9 @@ public class LogInCommand implements Command {
     private String getCheckedPassword(BaseCommandRequest request) throws IncorrectEnteredDataException {
         final String password = request.getParameter(PASSWORD_PARAMETER_NAME);
 
-        if (password != null && password.length() <= MAX_PASSWORD_LENGTH) {
+        if (password != null
+                && password.length() != EMPTY_LIST_SIZE_VALUE
+                && password.length() <= MAX_PASSWORD_LENGTH) {
             return password;
         }
 
@@ -143,7 +142,7 @@ public class LogInCommand implements Command {
             session.setAttribute(PERSON_NAME_SESSION_ATTRIBUTE_NAME, loggedInPerson.getLogin());
             session.setAttribute(PERSON_ROLE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getRole());
             session.setAttribute(PERSON_BALANCE_SESSION_ATTRIBUTE_NAME, loggedInPerson.getBalance());
-        } catch (ServiceException | DaoException e) {
+        } catch (ServiceException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
             request.setAttribute(PERSON_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
 

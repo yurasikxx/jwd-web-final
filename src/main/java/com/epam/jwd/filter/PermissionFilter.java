@@ -53,7 +53,8 @@ public class PermissionFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final BaseApplicationCommand command = BaseApplicationCommand.of(request.getParameter(COMMAND_PARAMETER_NAME));
         final HttpSession session = request.getSession(false);

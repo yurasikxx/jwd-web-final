@@ -1,6 +1,5 @@
 package com.epam.jwd.service;
 
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.BaseEntity;
 
@@ -18,19 +17,17 @@ public interface BaseService<T extends BaseEntity> {
      * Accepts and corrects entity and save it to database.
      *
      * @param entity a given entity
-     * @throws ServiceException if failed to save entity by application causes.
-     * @throws DaoException     if failed to save entity by database causes.
+     * @throws ServiceException if failed to save entity.
      */
-    void save(T entity) throws ServiceException, DaoException;
+    void save(T entity) throws ServiceException;
 
     /**
      * Accepts and corrects entity and update it inside database.
      *
      * @param entity a given entity
-     * @throws ServiceException if failed to update entity by application causes.
-     * @throws DaoException     if failed to update entity by database causes.
+     * @throws ServiceException if failed to update entity.
      */
-    void update(T entity) throws ServiceException, DaoException;
+    void update(T entity) throws ServiceException;
 
     /**
      * Looks for entities inside database and returns them.
@@ -44,28 +41,23 @@ public interface BaseService<T extends BaseEntity> {
      *
      * @param id given entity ID.
      * @return a found entity
-     * @throws ServiceException if entity wasn't found by application causes.
-     * @throws DaoException     if entity wasn't found by database causes.
      */
-    T findById(Long id) throws ServiceException, DaoException;
+    T findById(Long id);
 
     /**
      * Accepts entity ID and delete it.
      *
      * @param id given entity ID
-     * @throws ServiceException if entity wasn't deleted by application causes.
-     * @throws DaoException     if entity wasn't deleted by database causes.
+     * @throws ServiceException if entity wasn't deleted.
      */
-    void delete(Long id) throws ServiceException, DaoException;
+    void delete(Long id) throws ServiceException;
 
     /**
      * Indicates if object by given ID can be deleted.
      *
      * @param id given entity ID.
      * @return {@code true} if object can be deleted; {@code false} otherwise.
-     * @throws ServiceException if entity cannot be deleted by application causes.
-     * @throws DaoException     if entity cannot be deleted by database causes.
      */
-    boolean canBeDeleted(Long id) throws ServiceException, DaoException;
+    boolean canBeDeleted(Long id);
 
 }

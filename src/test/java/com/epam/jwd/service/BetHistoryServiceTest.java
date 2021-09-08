@@ -2,7 +2,6 @@ package com.epam.jwd.service;
 
 import com.epam.jwd.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.exception.CouldNotInitializeConnectionPoolException;
-import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetHistory;
@@ -47,7 +46,7 @@ public class BetHistoryServiceTest {
     }
 
     @Test
-    public void testSaveAndDelete() throws ServiceException, DaoException {
+    public void testSaveAndDelete() throws ServiceException {
         final List<Team> teams = competitionService.findAllTeams();
         final Team home = teams.get(HOME_TEAM_INDEX);
         final Team away = teams.get(AWAY_TEAM_INDEX);

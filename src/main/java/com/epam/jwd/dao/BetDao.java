@@ -123,8 +123,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
 
     @Override
     public List<Bet> findByCompetitionId(Long id) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setLong(INITIAL_INDEX_VALUE, id),
-                findByCompetitionIdSql);
+        return findPreparedEntities(preparedStatement -> preparedStatement
+                .setLong(INITIAL_INDEX_VALUE, id), findByCompetitionIdSql);
     }
 
     @Override
@@ -166,9 +166,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                 resultSet.updateLong(BET_TYPE_ID_COLUMN, bet.getBetType().getId());
                 resultSet.updateLong(PERSON_ID_COLUMN, bet.getPerson().getId());
                 resultSet.updateRow();
+                LOGGER.info(BET_WAS_UPDATED_MSG);
             }
-
-            LOGGER.info(BET_WAS_UPDATED_MSG);
         } catch (SQLException e) {
             LOGGER.error(BET_WAS_NOT_UPDATED_MSG);
         }
@@ -196,7 +195,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
                         Role.resolveRoleByName(resultSet.getString(PERSON_ROLE_NAME_COLUMN))));
     }
 
-    private void setId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         if (bets.size() == EMPTY_LIST_SIZE_VALUE) {
             setFirstId(resultSet);
         } else {
@@ -209,7 +209,8 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
         resultSet.updateLong(BET_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter) throws SQLException, DaoException {
+    private void setCustomId(ResultSet resultSet, List<Bet> bets, AtomicLong betAmount, AtomicLong idCounter)
+            throws SQLException, DaoException {
         final Long lastBetId = bets.get(bets.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (lastBetId.equals(betAmount.get())) {
@@ -228,7 +229,6 @@ public class BetDao extends CommonDao<Bet> implements BetBaseDao {
             resultSet.updateLong(BET_ID_COLUMN, idCounter.get());
         }
     }
-
 
     private Long getIntermediateId(List<Bet> bets, AtomicLong idCounter) {
         return bets.get((int) (idCounter.get() - INDEX_ROLLBACK_VALUE)).getId();

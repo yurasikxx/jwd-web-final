@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import static com.epam.jwd.constant.Constant.ADDING_JSP_PATH;
 import static com.epam.jwd.constant.Constant.AWAY_TEAM_PARAMETER_NAME;
+import static com.epam.jwd.constant.Constant.COMPETITION_ALREADY_EXISTS_MESSAGE_KEY;
 import static com.epam.jwd.constant.Constant.COMPETITION_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
@@ -36,7 +37,6 @@ import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
  */
 public class CompetitionAddingCommand implements Command {
 
-    private static final String COMPETITION_ALREADY_EXISTS_MESSAGE_KEY = "competition.team.exists";
     private static final String TEAM_SELECT_MESSAGE_KEY = "team.select";
 
     private static volatile CompetitionAddingCommand instance;

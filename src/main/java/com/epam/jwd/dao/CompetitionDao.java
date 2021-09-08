@@ -85,8 +85,8 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
 
     @Override
     public List<Competition> findBySportName(Sport sport) throws DaoException {
-        return findPreparedEntities(preparedStatement -> preparedStatement.setString(INITIAL_INDEX_VALUE, sport.getName()),
-                findBySportSql);
+        return findPreparedEntities(preparedStatement -> preparedStatement
+                .setString(INITIAL_INDEX_VALUE, sport.getName()), findBySportSql);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
             resultSet.moveToCurrentRow();
 
             LOGGER.info(COMPETITION_WAS_SAVED_MSG);
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             LOGGER.error(COMPETITION_WAS_NOT_SAVED_MSG);
         }
     }
@@ -118,9 +118,8 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
                 resultSet.updateLong(HOME_TEAM_ID_COLUMN, competition.getHome().getId());
                 resultSet.updateLong(AWAY_TEAM_ID_COLUMN, competition.getAway().getId());
                 resultSet.updateRow();
+                LOGGER.info(COMPETITION_WAS_UPDATED_MSG);
             }
-
-            LOGGER.info(COMPETITION_WAS_UPDATED_MSG);
         } catch (SQLException e) {
             LOGGER.error(COMPETITION_WERE_NOT_UPDATED_MSG);
         }
@@ -137,7 +136,8 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
                         Sport.resolveSportById(resultSet.getLong(SPORT_AWAY_ID_COLUMN))));
     }
 
-    private void setId(ResultSet resultSet, List<Competition> competitions, AtomicLong competitionAmount, AtomicLong idCounter) throws SQLException {
+    private void setId(ResultSet resultSet, List<Competition> competitions, AtomicLong competitionAmount, AtomicLong idCounter)
+            throws SQLException {
         if (competitions.size() == EMPTY_LIST_SIZE_VALUE) {
             setFirstId(resultSet);
         } else {
@@ -150,7 +150,8 @@ public class CompetitionDao extends CommonDao<Competition> implements Competitio
         resultSet.updateLong(COMPETITION_ID_COLUMN, INITIAL_ID_VALUE);
     }
 
-    private void setCustomId(ResultSet resultSet, List<Competition> competitions, AtomicLong competitionAmount, AtomicLong idCounter) throws SQLException {
+    private void setCustomId(ResultSet resultSet, List<Competition> competitions, AtomicLong competitionAmount, AtomicLong idCounter)
+            throws SQLException {
         final Long lastCompetitionId = competitions.get(competitions.size() - INDEX_ROLLBACK_VALUE).getId();
 
         if (lastCompetitionId.equals(competitionAmount.get())) {

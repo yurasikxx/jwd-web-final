@@ -152,12 +152,6 @@
                         </li>
                         <li class="menu">
                             <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
-                                <b><fmt:message key="betslip.list"/></b>
-                            </a>
-                        </li>
-                        <li class="menu">
-                            <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=person_bets_list_page">
                                 <b><fmt:message key="main.user.menu.bets"/></b>
                             </a>
@@ -166,17 +160,6 @@
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=person_bet_history_page">
                                 <b><fmt:message key="main.user.menu.history.bet"/></b>
-                            </a>
-                        </li>
-                        <li class="menu">
-                            <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
-                                <b><fmt:message key="log.out"/></b>
-                            </a>
-                        </li>
-                        <li class="menu">
-                            <a class="menu"
-                               href="${pageContext.request.contextPath}/controller?command=password_changing_page">
-                                <b><fmt:message key="main.user.change.password"/></b>
                             </a>
                         </li>
                         <li class="menu">
@@ -195,6 +178,23 @@
                             <a class="menu"
                                href="${pageContext.request.contextPath}/controller?command=system_bet_adding_page">
                                 <b><fmt:message key="main.user.menu.place.system.bet"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=betslip_list_page">
+                                <b><fmt:message key="betslip.list"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu"
+                               href="${pageContext.request.contextPath}/controller?command=password_changing_page">
+                                <b><fmt:message key="main.user.change.password"/></b>
+                            </a>
+                        </li>
+                        <li class="menu">
+                            <a class="menu" href="${pageContext.request.contextPath}/controller?command=log_out">
+                                <b><fmt:message key="log.out"/></b>
                             </a>
                         </li>
                     </ul>

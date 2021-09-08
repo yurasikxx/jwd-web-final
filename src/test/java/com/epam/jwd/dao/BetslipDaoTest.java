@@ -47,7 +47,7 @@ public class BetslipDaoTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAll() throws DaoException {
         final List<Betslip> betslips = betslipDao.findAll();
         assertNotNull(betslips);
     }

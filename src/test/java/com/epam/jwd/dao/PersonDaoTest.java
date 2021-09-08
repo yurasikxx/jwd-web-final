@@ -66,7 +66,7 @@ public class PersonDaoTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAll() throws DaoException {
         final List<Person> persons = dao.findAll();
         assertNotNull(persons);
     }

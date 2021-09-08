@@ -71,7 +71,7 @@ public class CompetitionDaoTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testFindAll() throws DaoException {
         final List<Competition> competitions = competitionDao.findAll();
         assertNotNull(competitions);
     }

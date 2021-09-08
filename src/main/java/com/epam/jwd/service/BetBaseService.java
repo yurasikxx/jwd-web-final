@@ -1,7 +1,5 @@
 package com.epam.jwd.service;
 
-import com.epam.jwd.exception.DaoException;
-import com.epam.jwd.exception.ServiceException;
 import com.epam.jwd.model.Bet;
 import com.epam.jwd.model.BetType;
 
@@ -29,17 +27,15 @@ public interface BetBaseService extends BaseService<Bet> {
      *
      * @param id a given competition ID.
      * @return a found bets.
-     * @throws DaoException if bets weren't found.
      */
-    List<Bet> findByCompetitionId(Long id) throws DaoException;
+    List<Bet> findByCompetitionId(Long id);
 
     /**
      * Looks for bets by accepting bet type and returns them.
      *
      * @param betType a given bet type.
      * @return a found bets.
-     * @throws DaoException if bets weren't found.
      */
-    List<Bet> findByBetType(BetType betType) throws DaoException;
+    List<Bet> findByBetType(BetType betType);
 
 }

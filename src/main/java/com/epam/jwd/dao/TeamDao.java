@@ -1,5 +1,6 @@
 package com.epam.jwd.dao;
 
+import com.epam.jwd.exception.DaoException;
 import com.epam.jwd.exception.UnknownEnumAttributeException;
 import com.epam.jwd.model.Sport;
 import com.epam.jwd.model.Team;
@@ -74,7 +75,7 @@ public class TeamDao extends CommonDao<Team> {
             resultSet.moveToCurrentRow();
 
             LOGGER.info(TEAM_WAS_SAVED_MSG);
-        } catch (SQLException e) {
+        } catch (SQLException | DaoException e) {
             LOGGER.error(TEAM_WAS_NOT_SAVED_MSG);
         }
     }
