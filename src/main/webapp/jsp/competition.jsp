@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="jwd" uri="custom" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="application"/>
 <html>
@@ -77,9 +78,15 @@
             </li>
         </ul>
         <br>
+        <c:if test="${not empty requestScope.error}">
+            <p>${requestScope.error}</p>
+        </c:if>
         <br>
         <form action="${pageContext.request.contextPath}/controller?command=commit_competition_results" method="post">
             <input type="submit" name="competition-commit" value="<fmt:message key="competition.commit"/>">
+        </form>
+        <form action="${pageContext.request.contextPath}/controller?command=random_competitions_add" method="post">
+            <input type="submit" name="competition-add-random" value="<fmt:message key="competition.add.random"/>">
         </form>
         <h5>
             <label id="time"></label>

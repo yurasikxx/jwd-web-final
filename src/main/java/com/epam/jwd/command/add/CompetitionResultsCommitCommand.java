@@ -35,15 +35,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.jwd.constant.Constant.BET_HISTORY_ATTRIBUTE_NAME;
-import static com.epam.jwd.constant.Constant.CHANGING_JSP_PATH;
+import static com.epam.jwd.constant.Constant.COMPETITION_JSP_PATH;
 import static com.epam.jwd.constant.Constant.EMPTY_LIST_SIZE_VALUE;
 import static com.epam.jwd.constant.Constant.ERROR_ATTRIBUTE_NAME;
 import static com.epam.jwd.constant.Constant.ERROR_MESSAGE_KEY;
+import static com.epam.jwd.constant.Constant.HALF_DENOMINATOR;
 import static com.epam.jwd.constant.Constant.INDEX_ROLLBACK_VALUE;
 import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
 import static com.epam.jwd.constant.Constant.SUCCESS_JSP_PATH;
-import static com.epam.jwd.constant.Constant.TRY_AGAIN_MESSAGE_KEY;
 import static com.epam.jwd.model.BetResult.LOSS;
 import static com.epam.jwd.model.BetResult.WIN;
 import static com.epam.jwd.model.BetType.PARLAY;
@@ -64,10 +63,10 @@ import static com.epam.jwd.model.BetslipType.NO_DRAW;
  */
 public class CompetitionResultsCommitCommand implements Command {
 
+    private static final String COMPETITION_RESULTS_MESSAGE_KEY = "competition.results.no.placed.bets";
     private static final String RESULT_WAS_NOT_FOUND_MSG = "Result wasn't found: %s";
     private static final int MIN_RANDOM_VALUE = 1;
     private static final int MAX_RANDOM_VALUE = 3;
-    private static final int SYSTEM_GROUP_HALF_DENOMINATOR = 2;
 
     private static volatile CompetitionResultsCommitCommand instance;
 
@@ -88,7 +87,7 @@ public class CompetitionResultsCommitCommand implements Command {
         this.betService = BetService.getInstance();
         this.betHistoryService = BetHistoryService.getInstance();
         this.successCommittingCommandResponse = new CommandResponse(SUCCESS_JSP_PATH, true);
-        this.errorCommittingCommandResponse = new CommandResponse(CHANGING_JSP_PATH, false);
+        this.errorCommittingCommandResponse = new CommandResponse(COMPETITION_JSP_PATH, false);
     }
 
     public static CompetitionResultsCommitCommand getInstance() {
@@ -109,6 +108,11 @@ public class CompetitionResultsCommitCommand implements Command {
             final List<Bet> singleBets = betService.findByBetType(SINGLE);
             final List<Bet> parlayBets = betService.findByBetType(PARLAY);
             final List<Bet> systemBets = betService.findByBetType(SYSTEM);
+
+            if (checkBetsPresence(request, singleBets, parlayBets, systemBets)) {
+                return errorCommittingCommandResponse;
+            }
+
             final List<BetHistory> singleHistoryBets = createHistoryBet(singleBets, SINGLE);
             final List<BetHistory> parlayHistoryBets = createHistoryBet(parlayBets, PARLAY);
             final List<BetHistory> systemHistoryBets = createHistoryBet(systemBets, SYSTEM);
@@ -124,12 +128,19 @@ public class CompetitionResultsCommitCommand implements Command {
             deleteBetRelatedInfo();
         } catch (DaoException | ServiceException | UnknownEnumAttributeException e) {
             request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(ERROR_MESSAGE_KEY));
-            request.setAttribute(BET_HISTORY_ATTRIBUTE_NAME, messageManager.getString(TRY_AGAIN_MESSAGE_KEY));
-
             return errorCommittingCommandResponse;
         }
 
         return successCommittingCommandResponse;
+    }
+
+    private boolean checkBetsPresence(BaseCommandRequest request, List<Bet> singleBets, List<Bet> parlayBets, List<Bet> systemBets) {
+        if (singleBets.isEmpty() && parlayBets.isEmpty() && systemBets.isEmpty()) {
+            request.setAttribute(ERROR_ATTRIBUTE_NAME, messageManager.getString(COMPETITION_RESULTS_MESSAGE_KEY));
+            return true;
+        }
+
+        return false;
     }
 
     private List<BetHistory> createHistoryBet(List<Bet> bets, BetType betType) throws UnknownEnumAttributeException {
@@ -306,7 +317,7 @@ public class CompetitionResultsCommitCommand implements Command {
                 winnerLogin = historyBet.getPersonLogin();
             }
 
-            if (winCounter >= groupedByPersonHistoryBet.size() / SYSTEM_GROUP_HALF_DENOMINATOR) {
+            if (winCounter >= groupedByPersonHistoryBet.size() / HALF_DENOMINATOR) {
                 final Person person = personService.findByLogin(winnerLogin);
                 final int newBalance = person.getBalance() + winBetTotal * parlayCoefficient;
                 final Person updatedPerson = new Person(person.getId(), person.getLogin(), person.getPassword(),

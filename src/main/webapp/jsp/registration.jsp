@@ -25,10 +25,12 @@
             <c:otherwise>
                 <form action="${pageContext.request.contextPath}/controller?command=register" method="post">
                     <label for="loginField"><fmt:message key="auth.login"/></label>
-                    <input type="text" id="loginField" name="login" placeholder="firstname_lastname">
+                    <input type="text" id="loginField" name="login"
+                           placeholder="<fmt:message key="registration.login.placeholder"/>">
                     <br>
                     <label for="passwordField"><fmt:message key="auth.password"/></label>
-                    <input type="password" id="passwordField" name="password" placeholder="password123">
+                    <input type="password" id="passwordField" name="password"
+                           placeholder="<fmt:message key="registration.password.placeholder"/> ">
                     <br>
                     <input type="submit" value="<fmt:message key="sign.up"/>">
                 </form>

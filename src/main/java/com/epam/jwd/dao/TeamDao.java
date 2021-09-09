@@ -23,7 +23,7 @@ import static com.epam.jwd.constant.Constant.INITIAL_INDEX_VALUE;
  *
  * @see CommonDao
  */
-public class TeamDao extends CommonDao<Team> {
+public class TeamDao extends CommonDao<Team> implements TeamBaseDao {
 
     private static final Logger LOGGER = LogManager.getLogger(TeamDao.class);
 
@@ -44,6 +44,8 @@ public class TeamDao extends CommonDao<Team> {
 
     private static volatile TeamDao instance;
 
+    private final String findBySportSql;
+
     public static TeamDao getInstance() {
         if (instance == null) {
             synchronized (TeamDao.class) {
@@ -58,6 +60,13 @@ public class TeamDao extends CommonDao<Team> {
 
     private TeamDao() {
         super(TABLE_NAME, SELECT_ALL_SQL_QUERY, SELECT_ALL_SQL_QUERY, FIND_BY_FIELD_SQL_QUERY, TEAM_ID_COLUMN);
+        this.findBySportSql = String.format(FIND_BY_FIELD_SQL_QUERY, TABLE_NAME, SPORT_NAME_COLUMN);
+    }
+
+    @Override
+    public List<Team> findBySportName(Sport sport) throws DaoException {
+        return findPreparedEntities(preparedStatement -> preparedStatement
+                .setString(INITIAL_INDEX_VALUE, sport.getName()), findBySportSql);
     }
 
     @Override

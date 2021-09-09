@@ -87,6 +87,7 @@ public class Constant {
     public static final int INDEX_ROLLBACK_VALUE = INITIAL_ID_VALUE;
     public static final int INITIAL_INDEX_VALUE = INITIAL_ID_VALUE;
     public static final int MIN_INDEX_VALUE = EMPTY_LIST_SIZE_VALUE;
+    public static final int HALF_DENOMINATOR = 2;
     public static final int INITIAL_BALANCE_VALUE = 1000;
     public static final int MAX_LOGIN_LENGTH = 25;
     public static final int MAX_PASSWORD_LENGTH = MAX_LOGIN_LENGTH;

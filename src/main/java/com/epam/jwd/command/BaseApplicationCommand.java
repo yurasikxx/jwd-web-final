@@ -5,6 +5,8 @@ import com.epam.jwd.command.add.CompetitionAddingCommand;
 import com.epam.jwd.command.add.CompetitionResultsCommitCommand;
 import com.epam.jwd.command.add.ParlayBetAddingCommand;
 import com.epam.jwd.command.add.PersonAddingCommand;
+import com.epam.jwd.command.add.RandomBetslipsAddingCommand;
+import com.epam.jwd.command.add.RandomCompetitionsAddingCommand;
 import com.epam.jwd.command.add.RegisterCommand;
 import com.epam.jwd.command.add.ShowBetslipAddingPageCommand;
 import com.epam.jwd.command.add.ShowCompetitionAddingPageCommand;
@@ -108,6 +110,8 @@ public enum BaseApplicationCommand {
     SYSTEM_BET_ADD(SystemBetAddingCommand.getInstance(), USER),
     BET_HISTORY_PAGE(ShowBetHistoryPageCommand.getInstance(), ADMINISTRATOR),
     COMMIT_COMPETITION_RESULTS(CompetitionResultsCommitCommand.getInstance(), ADMINISTRATOR),
+    RANDOM_COMPETITIONS_ADD(RandomCompetitionsAddingCommand.getInstance(), ADMINISTRATOR),
+    RANDOM_BETSLIPS_ADD(RandomBetslipsAddingCommand.getInstance(), BOOKMAKER),
     SELECT_LANGUAGE(LanguageSelectionCommand.getInstance()),
     SUCCESS(ShowSuccessPageCommand.getInstance()),
     ERROR(ShowErrorPageCommand.getInstance()),

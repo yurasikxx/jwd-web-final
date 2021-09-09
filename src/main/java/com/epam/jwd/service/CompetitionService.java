@@ -194,4 +194,16 @@ public class CompetitionService implements CompetitionBaseService {
         }
     }
 
+    @Override
+    public List<Team> findTeamsBySportName(Sport sport) {
+        try {
+            final List<Team> teams = teamDao.findBySportName(sport);
+            LOGGER.info(TEAMS_WERE_FOUND_MSG);
+            return teams;
+        } catch (DaoException e) {
+            LOGGER.error(TEAMS_WERE_NOT_FOUND_MSG);
+            return Collections.emptyList();
+        }
+    }
+
 }

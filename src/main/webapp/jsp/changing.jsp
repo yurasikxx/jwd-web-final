@@ -48,14 +48,6 @@
                         </a>
                     </h2>
                 </c:if>
-                <c:if test="${not empty requestScope.betHistory}">
-                    <h2>
-                        <a class="changing"
-                           href="${pageContext.request.contextPath}/controller?command=competition_results_committing_page">
-                                ${requestScope.betHistory}
-                        </a>
-                    </h2>
-                </c:if>
             </c:when>
             <c:when test="${not empty requestScope.passwordChanging}">
                 <h1>${requestScope.passwordChanging}</h1>

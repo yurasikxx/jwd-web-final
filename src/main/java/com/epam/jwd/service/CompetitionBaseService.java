@@ -46,4 +46,12 @@ public interface CompetitionBaseService extends BaseService<Competition> {
      */
     List<Team> findAllTeams();
 
+    /**
+     * Looks for teams by accepting sport and returns them.
+     *
+     * @param sport a given sport.
+     * @return a found teams.
+     */
+    List<Team> findTeamsBySportName(Sport sport);
+
 }
